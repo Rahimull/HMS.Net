@@ -7,8 +7,6 @@ namespace HMSApi.Mudoles.Reception.DTOs;
 public class UpdatePatientDto
 {
 
-    // Id Primary key
-    public int Id { get; set; }
     // First Name Of Patient
     [Required]
     [MaxLength(100)]
