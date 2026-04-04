@@ -1,3 +1,4 @@
+namespace HMSApi.Common.Enums;
 public enum AppointmentStatus
  { 
     Pending=1,

@@ -1,3 +1,5 @@
+namespace HMSApi.Common.Enums;
+
 public enum Gender
 {
     Unknown = 0,

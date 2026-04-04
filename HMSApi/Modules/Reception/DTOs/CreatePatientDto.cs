@@ -1,13 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using HMSApi.Common.Enums;
-using HMSApi.Models;
-using Microsoft.EntityFrameworkCore;
 
-namespace HMSApi.Mudoles.Reception.Entities;
+namespace HMSApi.Mudoles.Reception.DTOs;
 
-// Phone is Index
-[Index(nameof(Phone), IsUnique = true)]
-public class Patient : BaseEntity<int>
+
+public class CreatePatientDto
 {
     // First Name Of Patient
     [Required]
@@ -19,8 +16,8 @@ public class Patient : BaseEntity<int>
     [MaxLength(100)]
     public string LastName { get; set; } = null!;
 
-    // Patient Gender that is enum like Gender = {Male=1, Female=2}
-    [Range(1, 2)]
+    // Patient Gender that is enum like Gender = {Unknown=0, Male=1, Female=2}
+    [Range(0, 2)]
     public Gender Gender { get; set; }
 
     // Patient Date Of Birth
@@ -41,11 +38,4 @@ public class Patient : BaseEntity<int>
     [MaxLength(50)]
     public string? NationalId { get; set; }
 
-    // one-to-many Navivation
-    [Required]
-    public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
-
-    // One-to-One 
-    [Required]
-    public MedicalRecord MedicalRecord { get; set; } = null!;
 }
