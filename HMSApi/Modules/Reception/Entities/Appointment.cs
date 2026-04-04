@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HMSApi.Mudoles.Reception.Entities;
 
-[Index(nameof(AppointmentDate), IsUnique = true)]
+// Appontment Date is Index
+[Index(nameof(AppointmentDate), nameof(DoctorId))]
 public class Appointment : BaseEntity<int>
 {
     // Appointment Status = {Pending=1, Completed=2, Cancelled=3}
@@ -14,9 +15,11 @@ public class Appointment : BaseEntity<int>
     public AppointmentStatus AppointmentStatus { get; set; } = AppointmentStatus.Pending;
 
     // Appointment date only
+    [Required]
     public DateOnly AppointmentDate { get; set; }
 
     // appointment Time Only
+    [Required]
     public TimeOnly AppointmentTime { get; set; }
     [MaxLength(255)]
 
@@ -46,5 +49,5 @@ public class Appointment : BaseEntity<int>
 
     // Navigation from Department
     [Required]
-    public Department Departemnt { get; set; } = null!;
+    public Department Department { get; set; } = null!;
 }

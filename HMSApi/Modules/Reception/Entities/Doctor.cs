@@ -4,21 +4,26 @@ using HMSApi.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace HMSApi.Mudoles.Reception.Entities;
+
 public class Doctor : BaseEntity<int>
 {
+    // Doctor Full Name 
     [Required]
     [MaxLength(150)]
     public string FullName { get; set; } = null!;
-
-    [Precision(10,2)]
+    // Doctor Fee
+    [Precision(10, 2)]
     public decimal Fee { get; set; }
 
+    // FK form Department
     [Required]
     [ForeignKey(nameof(DepartmentId))]
     public int DepartmentId { get; set; }
 
+    // Navigation form Department
     [Required]
     public Department Department { get; set; } = null!;
 
+    // Navigation from Appointment
     public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
 }
