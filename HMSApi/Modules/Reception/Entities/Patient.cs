@@ -7,7 +7,7 @@ namespace HMSApi.Mudoles.Reception.Entities;
 
 // Phone is Index
 [Index(nameof(Phone), IsUnique = true)]
-public class Patient : BaseEntity<int>
+public class Patient : BaseEntity
 {
     // First Name Of Patient
     [Required]

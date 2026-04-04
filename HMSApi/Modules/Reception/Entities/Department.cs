@@ -4,7 +4,7 @@ using HMSApi.Models;
 namespace HMSApi.Mudoles.Reception.Entities;
 
 
-public class Department : BaseEntity<int>
+public class Department : BaseEntity
 {
     // Department Name
     [Required]

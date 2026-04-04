@@ -1,0 +1,55 @@
+
+
+
+using HMSApi.Data;
+using HMSApi.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace HMSApi.Repositories;
+
+public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : BaseEntity
+{
+    protected readonly HMSDBC _context;
+    protected readonly DbSet<TEntity> _dbSet;
+
+    public BaseRepository(HMSDBC context)
+    {
+       _context=context;
+       _dbSet=context.Set<TEntity>(); 
+    }
+
+    public async Task AddAsync(TEntity entity)
+    {
+        await _dbSet.AddAsync(entity);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<bool> ExistsAsync(int id)
+    {
+        return await _dbSet.AnyAsync(x => x.Id == id);
+    }
+
+    public async Task<List<TEntity>> GetAllAsync()
+    {
+        return await _dbSet.ToListAsync();
+    }
+
+    public async Task<TEntity?> GetByIdAsync(int id)
+    {
+        return await _dbSet.FirstOrDefaultAsync(x=> x.Id == id);
+    }
+
+    public async Task SoftDeleteAsync(TEntity entity)
+    {
+        entity.IsDeleted = true;
+        _dbSet.Update(entity);
+        await _context.SaveChangesAsync();
+
+    }
+
+    public async Task UpdateAsync(TEntity entity)
+    {
+        _dbSet.Update(entity);
+        await _context.SaveChangesAsync();
+    }
+}

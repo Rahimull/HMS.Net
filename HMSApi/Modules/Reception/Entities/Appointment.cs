@@ -8,7 +8,7 @@ namespace HMSApi.Mudoles.Reception.Entities;
 
 // Appontment Date is Index
 [Index(nameof(AppointmentDate), nameof(ReceptionDoctorId))]
-public class Appointment : BaseEntity<int>
+public class Appointment : BaseEntity
 {
     // Appointment Status = {Pending=1, Completed=2, Cancelled=3}
     // Defalt is Pending

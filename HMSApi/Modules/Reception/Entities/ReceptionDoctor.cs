@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HMSApi.Mudoles.Reception.Entities;
 
-public class ReceptionDoctor : BaseEntity<int>
+public class ReceptionDoctor : BaseEntity
 {
     // Doctor Full Name 
     [Required]

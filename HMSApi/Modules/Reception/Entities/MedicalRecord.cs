@@ -7,7 +7,7 @@ namespace HMSApi.Mudoles.Reception.Entities;
 
 // RecordNumber is Index in the MedicalRecord
 [Index(nameof(RecordNumber), IsUnique = true)]
-public class MedicalRecord : BaseEntity<int>
+public class MedicalRecord : BaseEntity
 {
     // Record Number this Indixing
     [MaxLength(50)]

@@ -1,6 +1,6 @@
 namespace HMSApi.Models;
 
-public class BaseEntity<TKey>
+public abstract class BaseEntity
 {
      // Primary Key
     public int Id { get; set; } = default;
