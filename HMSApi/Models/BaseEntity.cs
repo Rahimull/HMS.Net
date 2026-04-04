@@ -2,12 +2,12 @@ namespace HMSApi.Models;
 
 public class BaseEntity<TKey>
 {
-    // Id is Premary key for every childe class
+     // Primary Key
     public int Id { get; set; } = default;
 
-    // Created at is also automathicly added for every childe class
+    // Automatically set on inserف
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    // Is Deleted is soft delet for every childe class
+    //  Soft Delete Flag
     public bool IsDeleted { get; set; }
 }
