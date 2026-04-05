@@ -29,6 +29,18 @@ builder.Services.AddReceptionModule();
 builder.Services.AddControllers();
 
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReact",
+        p => p.WithOrigins("http://localhost:5173")
+              .AllowAnyMethod()
+              .AllowAnyHeader());
+});
+
+app.UseCors("AllowReact");
+
+
+
 var app = builder.Build();
 
 
@@ -47,6 +59,8 @@ if (app.Environment.IsDevelopment())
 }
 
 // app.UseHttpsRedirection();
+
+app.MapControllers();
 
 var summaries = new[]
 {

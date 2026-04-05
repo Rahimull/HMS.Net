@@ -10,7 +10,7 @@ public class HMSDBCFactory
     public HMSDBC CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<HMSDBC>();
-        optionsBuilder.UseSqlite("Data Source=Market.db");
+        optionsBuilder.UseSqlite("Data Source=HMSDBC.db");
 
         return new HMSDBC(optionsBuilder.Options);
     }
