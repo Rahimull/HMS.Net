@@ -1,4 +1,7 @@
 using HMSApi.Data;
+using HMSApi.Models;
+using HMSApi.Mudoles.Reception;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,11 +12,28 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
-
 builder.Services.AddDbContext<HMSDBC>(options =>
     options.UseSqlite("Data Source=HMSDBC.db")
 );
+
+
+
+// Identity (اگر دارید)
+builder.Services
+    .AddIdentity<AppUser, IdentityRole<int>>()
+    .AddEntityFrameworkStores<HMSDBC>()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddReceptionModule();
+
+builder.Services.AddControllers();
+
+
+var app = builder.Build();
+
+
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -53,3 +73,6 @@ record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
+
+
+

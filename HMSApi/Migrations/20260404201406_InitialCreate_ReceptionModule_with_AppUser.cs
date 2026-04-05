@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HMSApi.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate_ReceptionModule : Migration
+    public partial class InitialCreate_ReceptionModule_with_AppUser : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

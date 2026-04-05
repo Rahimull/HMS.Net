@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HMSApi.Migrations
 {
     [DbContext(typeof(HMSDBC))]
-    [Migration("20260404112338_InitialCreate_ReceptionModule")]
-    partial class InitialCreate_ReceptionModule
+    [Migration("20260404201406_InitialCreate_ReceptionModule_with_AppUser")]
+    partial class InitialCreate_ReceptionModule_with_AppUser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

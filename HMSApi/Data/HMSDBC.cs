@@ -1,13 +1,14 @@
 using System.Linq.Expressions;
 using HMSApi.Models;
 using HMSApi.Mudoles.Reception.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 
 namespace HMSApi.Data;
 
-public class HMSDBC : IdentityDbContext<AppUser>
+public class HMSDBC : IdentityDbContext<AppUser, IdentityRole<int>, int>
 {
     public HMSDBC(DbContextOptions<HMSDBC> options) : base(options) { }
 
@@ -38,13 +39,13 @@ public class HMSDBC : IdentityDbContext<AppUser>
 
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
-            if (typeof(BaseEntity<int>).IsAssignableFrom(entityType.ClrType))
+            if (typeof(BaseEntity).IsAssignableFrom(entityType.ClrType))
             {
                 // e =>
                 var parameter = Expression.Parameter(entityType.ClrType, "e");
 
                 // e.IsDeleted
-                var property = Expression.Property(parameter, nameof(BaseEntity<int>.IsDeleted));
+                var property = Expression.Property(parameter, nameof(BaseEntity.IsDeleted));
 
                 // e.IsDeleted == false
                 var condition = Expression.Equal(
