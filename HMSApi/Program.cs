@@ -1,4 +1,5 @@
 using HMSApi.Data;
+using HMSApi.Middleware;
 using HMSApi.Models;
 using HMSApi.Mudoles.Reception;
 using Microsoft.AspNetCore.Identity;
@@ -28,7 +29,6 @@ builder.Services.AddReceptionModule();
 
 builder.Services.AddControllers();
 
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReact",
@@ -37,7 +37,7 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader());
 });
 
-app.UseCors("AllowReact");
+
 
 
 
@@ -80,6 +80,9 @@ app.MapGet("/weatherforecast", () =>
     return forecast;
 })
 .WithName("GetWeatherForecast");
+app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseCors("AllowReact");
 
 app.Run();
 

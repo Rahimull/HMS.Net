@@ -8,13 +8,11 @@ public record AppointmentDto(
     string? Notes,
 
     int PatientId,
-    string PateintName,
 
     int ReceptionDoctorId,
-    string ReceptionDoctorName,
 
-    int DepartmentId, 
-    string DepartmentName
+    int DepartmentId 
+  
 );
 
 

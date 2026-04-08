@@ -4,12 +4,19 @@ const useCrud = (service) => {
   const [data, setData] = useState([]);
 
   const fetchData = async () => {
-    const res = await service.getAll();
-    setData(res.data);
+    try {
+      const res = await service.getAll();
+      console.log("API Response:", res);
+      setData(res.data);
+    } catch (error) {
+      console.error("API Error:", error);
+    }
   };
 
   const createItem = async (item) => {
+    console.log("Item created:", item);
     await service.create(item);
+
     fetchData();
   };
 
@@ -19,8 +26,11 @@ const useCrud = (service) => {
   };
 
   const deleteItem = async (id) => {
-    await service.remove(id);
-    fetchData();
+    if (window.confirm("Are you Sure...!")) {
+      console.log("remove");
+      await service.delete(id);
+      fetchData();
+    }
   };
 
   useEffect(() => {

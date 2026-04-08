@@ -14,10 +14,11 @@ public class BaseService<TEntity, TDto, TCreateDto, TUpdateDto>
         _mapper = mapper;
     }
 
-    public async Task AddAsync(TCreateDto dto)
+    public virtual async Task<TDto> AddAsync(TCreateDto dto)
     {
         var entity = _mapper.Map<TEntity>(dto);
         await _repo.AddAsync(entity);
+        return _mapper.Map<TDto>(entity);
     }
 
     public async Task<bool> ExistsAsync(int id)

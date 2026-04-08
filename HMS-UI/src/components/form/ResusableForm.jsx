@@ -1,8 +1,11 @@
-// src/components/Form/ReusableForm.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-const ReusableForm = ({ fields, onSubmit, submitText = "Submit" }) => {
-  // ایجاد state اولیه برای تمام فیلدها
+const ReusableForm = ({
+  fields,
+  onSubmit,
+  initialValues = null,
+  submitText = "Submit",
+}) => {
   const initialState = {};
   fields.forEach((f) => {
     initialState[f.name] = f.defaultValue || "";
@@ -11,14 +14,35 @@ const ReusableForm = ({ fields, onSubmit, submitText = "Submit" }) => {
   const [formData, setFormData] = useState(initialState);
   const [errors, setErrors] = useState({});
 
-  // تغییر مقدار فیلد
+  // ✅ Sync form with edit/add mode
+  useEffect(() => {
+    if (initialValues) {
+      setFormData({
+        ...initialState,
+        ...initialValues,
+      });
+    } else {
+      setFormData(initialState);
+    }
+  }, [initialValues]);
+
+  // ✅ Correct type handling
   const handleChange = (e, field) => {
-    setFormData({ ...formData, [field.name]: e.target.value });
+    let value = e.target.value;
+
+    if (field.type === "select") {
+      value = value === "" ? "" : Number(value);
+    }
+
+    setFormData({
+      ...formData,
+      [field.name]: value,
+    });
   };
 
-  // Submit فرم
   const handleSubmit = (e) => {
     e.preventDefault();
+
     let valid = true;
     const newErrors = {};
 
@@ -33,30 +57,29 @@ const ReusableForm = ({ fields, onSubmit, submitText = "Submit" }) => {
 
     if (valid) {
       onSubmit(formData);
-      // reset form if needed
-      // setFormData(initialState);
+
+      // ✅ reset form only in add mode
+      if (!initialValues) {
+        setFormData(initialState);
+      }
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-4 bg-white p-4 rounded shadow mt-6"
-    >
+    <form onSubmit={handleSubmit} className="space-y-4 bg-white p-4 rounded shadow mt-6">
       {fields.map((field) => (
         <div key={field.name}>
           <label className="block mb-1 font-medium">{field.label}</label>
 
           {field.type === "textarea" ? (
             <textarea
-              value={formData[field.name]}
+              value={formData[field.name] || ""}
               onChange={(e) => handleChange(e, field)}
-              placeholder={field.placeholder || ""}
               className="w-full border rounded p-2"
             />
           ) : field.type === "select" ? (
             <select
-              value={formData[field.name]}
+              value={formData[field.name] ?? ""}
               onChange={(e) => handleChange(e, field)}
               className="w-full border rounded p-2"
             >
@@ -70,27 +93,23 @@ const ReusableForm = ({ fields, onSubmit, submitText = "Submit" }) => {
           ) : (
             <input
               type={field.type || "text"}
-              value={formData[field.name]}
+              value={formData[field.name] || ""}
               onChange={(e) => handleChange(e, field)}
-              placeholder={field.placeholder || ""}
               className="w-full border rounded p-2"
             />
           )}
 
           {errors[field.name] && (
-            <p className="text-red-500 text-sm mt-1">{errors[field.name]}</p>
+            <p className="text-red-500 text-sm">{errors[field.name]}</p>
           )}
         </div>
       ))}
 
-      <button
-        type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded"
-      >
+      <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-900">
         {submitText}
       </button>
     </form>
   );
-}
+};
 
 export default ReusableForm;

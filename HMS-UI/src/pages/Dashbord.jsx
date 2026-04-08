@@ -1,6 +1,5 @@
 import Layout from "../components/layout/Layout";
 import Card from "../components/common/Card";
-import Table from "../components/common/Table";
 import ReusableForm from "../components/form/ResusableForm";
 
 

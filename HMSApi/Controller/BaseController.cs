@@ -1,5 +1,6 @@
 
 
+using HMSApi.ApiResponse;
 using Microsoft.AspNetCore.Mvc;
 namespace HMSApi.Controllers;
 
@@ -21,7 +22,14 @@ where TUpdateDto : class
     public virtual async Task<IActionResult> GetAll()
     {
         var result = await _service.GetAllAsync();
-        return Ok(result);
+        // return Ok(result);
+        
+        return Ok(new ApiResponse<IEnumerable<TDto>>
+        {
+            Success = true,
+            Message = $"{typeof(TDto).Name} fetched successfully",
+            Data = result
+        });
     }
 
     [HttpGet("{id:int}")]
@@ -29,15 +37,29 @@ where TUpdateDto : class
     {
         var result = await _service.GetByIdAsync(id);
         if (result == null) return NotFound();
-        return Ok(result);
+        // return Ok(result);
+
+        return Ok(new ApiResponse<TDto>
+        {
+            Success = true,
+            Message = $"{typeof(TDto).Name} fetched successfully",
+            Data = result
+        });
     }
 
     [HttpPost]
     public virtual async Task<IActionResult> Create([FromBody] TCreateDto dto)
     {
 
-        await _service.AddAsync(dto);
-        return CreatedAtAction(nameof(GetAll), null);
+        var result = await _service.AddAsync(dto);
+        // return CreatedAtAction(nameof(GetAll), null);
+
+        return Ok(new ApiResponse<TDto>
+        {
+            Success = true,
+            Message = $"{typeof(TDto).Name} Create successfulldy",
+            Data = result
+        });
 
     }
 

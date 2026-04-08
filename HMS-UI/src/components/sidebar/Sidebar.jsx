@@ -5,7 +5,11 @@ const Sidebar = () => {
     { name: "Layout", link: "/" },
     { name: "Dashboard", link: "/Dashboard" },
     { name: "Patient", link: "/patient" },
-    { name: "Settings", link: "/settings" },
+    { name: "Department", link: "/Department" },
+    { name: "Appointment", link: "/Appointment" },
+    { name: "MedicalRecord", link: "/MedicalRecord" },
+    { name: "ReceptionDoctor", link: "/ReceptionDoctor" },
+    
   ];
 
   return (
