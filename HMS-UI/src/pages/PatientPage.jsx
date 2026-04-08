@@ -4,9 +4,10 @@ import useCrud from "../hooks/useCurd";
 import DataTable from "../components/common/DataTable";
 import Layout from "../components/layout/Layout";
 import ReusableForm from "../components/form/ResusableForm";
+import Loader from "../components/common/Loader";
 
 const PatientPage = () => {
-  const { data, createItem, updateItem, deleteItem } = useCrud(PatientApi);
+  const { data, loading, error, createItem, updateItem, deleteItem } = useCrud(PatientApi);
   const [editing, setEditing] = useState(null);
 
 
@@ -68,18 +69,29 @@ const PatientPage = () => {
 
   return (
     <Layout>
+
+      {/* Form */}
       <ReusableForm
         fields={patientFields}
         initialValues={editing}
         onSubmit={handleSubmit}
         submitText={editing ? "Update Patient" : "Register Patient"}
       />
+
+      {/* Error */}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      {/* Loader or Table */}
+      {loading ? (
+        <Loader text="Fetching Patients..." />
+      ) : (
       <DataTable
         columns={patientColumns}
         data={data}
         onEdit={setEditing}
         onDelete={deleteItem}
       />
+      )};
     </Layout>
   );
 };

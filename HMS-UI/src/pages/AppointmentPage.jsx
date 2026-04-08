@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import AppointmentApi from "../api/AppointmentApi";
 import PatientApi from "../api/PatientApi";
 import DepartmentApi from "../api/DepartmentApi";
@@ -7,41 +7,39 @@ import useCrud from "../hooks/useCurd";
 import DataTable from "../components/common/DataTable";
 import Layout from "../components/layout/Layout";
 import ReusableForm from "../components/form/ResusableForm";
+import Loader from "../components/common/Loader";
 
 const AppointmentPage = () => {
-  const { data, createItem, updateItem, deleteItem } = useCrud(AppointmentApi);
-  const [editing, setEditing] = useState(null);
+  const { data, loading, error, createItem, updateItem, deleteItem } =
+    useCrud(AppointmentApi);
 
-  // Select or Fk rendering
-  const [departments, setDepartments] = useState([]);
+  const [editing, setEditing] = useState(null);
   const [patients, setPatients] = useState([]);
   const [receptionDoctor, setReceptionDoctor] = useState([]);
 
-  
-  useEffect(()=>{
-    DepartmentApi.getAll().then(res => setDepartments(res.data))
-  },[])
-  useEffect(()=>{
-    PatientApi.getAll().then(res => setPatients(res.data))
-  },[])
-  useEffect(()=>{
-    ReceptionDoctorApi.getAll().then((res)=> setReceptionDoctor(res.data));
-  },[])
+  useEffect(() => {
+    PatientApi.getAll().then((res) => {
+      console.log("Patients Api: ",res.data.data);
+      setPatients(res.data.data);
+    });
+  }, []);
+  useEffect(() => {
+    ReceptionDoctorApi.getAll().then((res) => {
+      setReceptionDoctor(res.data.data);
+    });
+  }, []);
 
-  const departmentOptions = departments.map((d) => ({
-    value: d.id,
-    label: d.name,
-  }));
+ 
   const patientOptions = patients.map((d) => ({
     value: d.id,
-    label: d.name,
+    label: `${d.firstName} ${d.lastName}`,
   }));
   const receptionDoctorOptions = receptionDoctor.map((d) => ({
     value: d.id,
-    label: d.name,
+    label: d.fullName,
   }));
 
-  // Handle Create and Update
+  // Submit (create / update)
   const handleSubmit = (formData) => {
     const payload = {
       appointmentDate: formData.appointmentDate,
@@ -60,8 +58,22 @@ const AppointmentPage = () => {
     }
   };
 
-  // Every Field for the Create and Update
+  // From Fields
   const AppointmentFields = [
+    {
+      name: "patientId",
+      label: "Patient",
+      type: "select",
+      options: patientOptions,
+      required: true,
+    },
+    {
+      name: "receptionDoctorId",
+      label: "Doctor",
+      type: "select",
+      options: receptionDoctorOptions,
+      required: true,
+    },
     {
       name: "appointmentDate",
       label: "Appointment Date",
@@ -74,7 +86,7 @@ const AppointmentPage = () => {
       type: "time",
       required: true,
     },
-    { name: "netes", label: "Notes", type: "text" },
+    { name: "notes", label: "Notes", type: "textarea" },
     {
       name: "gender",
       label: "Gender",
@@ -87,7 +99,7 @@ const AppointmentPage = () => {
     },
   ];
 
-  // Every Field for Select
+  // Table Columns
   const AppointmentColumns = [
     { key: "id", label: "ID" },
     { key: "appointmentDate", label: "Appointment Date" },
@@ -100,18 +112,30 @@ const AppointmentPage = () => {
 
   return (
     <Layout>
+      {/* Form */}
       <ReusableForm
         fields={AppointmentFields}
         initialValues={editing}
         onSubmit={handleSubmit}
         submitText={editing ? "Update Appointment" : "Register Appointment"}
       />
-      <DataTable
+
+      {/* Errors */}
+      {error && <p style={{color: "red" }}> {error}</p>}
+
+      {/* Loader or Table */}
+      {loading ?
+      (
+        <Loader />
+      ) :(
+        <DataTable
         columns={AppointmentColumns}
         data={data}
         onEdit={setEditing}
         onDelete={deleteItem}
       />
+      )}
+      
     </Layout>
   );
 };

@@ -5,16 +5,17 @@ import useCrud from "../hooks/useCurd";
 import DataTable from "../components/common/DataTable";
 import Layout from "../components/layout/Layout";
 import ReusableForm from "../components/form/ResusableForm";
+import Loader from "../components/common/Loader";
 
 const MedicalRecordPage = () => {
-  const { data, createItem, updateItem, deleteItem } = useCrud(MedicalRecordApi);
+  const { data, loading, error, createItem, updateItem, deleteItem } = useCrud(MedicalRecordApi);
   const [editing, setEditing] = useState(null);
 
 
   // Fk or relation rendring
   const [patients, setPatients] = useState([]);
   useEffect(()=>{
-    PatientApi.getAll().then(res => setPatients(res.data))
+    PatientApi.getAll().then(res => setPatients(res.data.data))
   },[])
 
   const patientOptions = patients.map(p => ({
@@ -62,6 +63,7 @@ const MedicalRecordPage = () => {
 
 
   return (
+    // From
     <Layout>
       <ReusableForm
         fields={MedicalRecordFields}
@@ -69,12 +71,21 @@ const MedicalRecordPage = () => {
         onSubmit={handleSubmit}
         submitText={editing ? "Update MedicalRecord" : "Register MedicalRecord"}
       />
-      <DataTable
-        columns={MedicalRecordColumns}
-        data={data}
-        onEdit={setEditing}
-        onDelete={deleteItem}
-      />
+
+      {/* Error */}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      {/* Loader or Table */} 
+      {loading ? (
+        <Loader text="Fetching MedicalRecords..." />    
+      ) : (
+        <DataTable
+          columns={MedicalRecordColumns}
+          data={data}
+          onEdit={setEditing}
+          onDelete={deleteItem}
+        />
+      )}  
     </Layout>
   );
 };

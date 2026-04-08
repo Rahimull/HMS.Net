@@ -5,24 +5,25 @@ import useCrud from "../hooks/useCurd";
 import DataTable from "../components/common/DataTable";
 import Layout from "../components/layout/Layout";
 import ReusableForm from "../components/form/ResusableForm";
+import Loader from "../components/common/Loader";
 
 const ReceptionDoctorPage = () => {
-  const { data, createItem, updateItem, deleteItem } = useCrud(ReceptionDoctorApi);
+  const { data, loading, error, createItem, updateItem, deleteItem } =
+    useCrud(ReceptionDoctorApi);
   const [editing, setEditing] = useState(null);
 
-  const [departments, setDepartments]=useState([]);
+  const [departments, setDepartments] = useState([]);
 
-  useEffect(()=>{
-    DepartmentApi.getAll().then(res => setDepartments(res.data))
-  },[])
+  useEffect(() => {
+    DepartmentApi.getAll().then((res) => setDepartments(res.data.data));
+  }, []);
 
-  const departmentOptions = departments.map(d => ({
+  const departmentOptions = departments.map((d) => ({
     value: d.id,
-    label: d.name
+    label: d.name,
   }));
 
-
-// Handle Create and Update
+  // Handle Create and Update
   const handleSubmit = (formData) => {
     const payload = {
       fullName: formData.fullName,
@@ -38,8 +39,7 @@ const ReceptionDoctorPage = () => {
     }
   };
 
-
-// Every Field for the Create and Update
+  // Every Field for the Create and Update
   const ReceptionDoctorFields = [
     { name: "fullName", label: "Full Name", type: "text", required: true },
     {
@@ -52,7 +52,6 @@ const ReceptionDoctorPage = () => {
     { name: "fee", label: "Fee", type: "number" },
   ];
 
-
   // Every Field for Select
   const ReceptionDoctorColumns = [
     { key: "id", label: "ID" },
@@ -61,21 +60,32 @@ const ReceptionDoctorPage = () => {
     { key: "fee", label: "Fee" },
   ];
 
-
   return (
+    // Layout
     <Layout>
+      {/* Form */}
       <ReusableForm
         fields={ReceptionDoctorFields}
         initialValues={editing}
         onSubmit={handleSubmit}
-        submitText={editing ? "Update ReceptionDoctor" : "Register ReceptionDoctor"}
+        submitText={
+          editing ? "Update ReceptionDoctor" : "Register ReceptionDoctor"
+        }
       />
-      <DataTable
-        columns={ReceptionDoctorColumns}
-        data={data}
-        onEdit={setEditing}
-        onDelete={deleteItem}
-      />
+      {/* Erorr */}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {/* Loader or Table */}
+      {loading ? (
+        <Loader text="Fetching ReceptionDoctor..." />
+      ) : (
+        <DataTable
+          columns={ReceptionDoctorColumns}
+          data={data}
+          onEdit={setEditing}
+          onDelete={deleteItem}
+        />
+      )}
+      ;
     </Layout>
   );
 };
