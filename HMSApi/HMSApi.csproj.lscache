@@ -66,9 +66,11 @@ Common/
   BedStatus.cs
   BedType.cs
   Gender.cs
+  InvoiceStatus.cs
   LabOrderStatus.cs
   Status.cs
   TestType.cs
+  TriageLevel.cs
   VisitType.cs
  Execptions/NotfoundException.cs
  Middleware/ExceptionMiddleware.cs
@@ -94,7 +96,15 @@ Modules/Doctors/Entities/
  Prescriptions.cs
 Modules/
  Doctors/ReceptionModule.cs
+ Emergency/Entities/
+  EmergencyPatients.cs
+  EmergencyTreatments.cs
  Emergency/ReceptionModule.cs
+ Finance/Entities/
+  InvoiceDetails.cs
+  Invoices.cs
+  Payments.cs
+ Finance/ReceptionModule.cs
  IPD/Entities/
   Admissions.cs
   Beds.cs
