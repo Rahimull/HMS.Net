@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using HMSApi.Common.Enums;
 using HMSApi.Models;
+using HMSApi.Modules.Doctors.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace HMSApi.Mudoles.Reception.Entities;
@@ -48,4 +49,7 @@ public class Patient : BaseEntity
     // One-to-One 
     [Required]
     public MedicalRecord MedicalRecord { get; set; } = null!;
+
+    // one-to-many Navigation
+    public ICollection<Consulations> Consulations { get; set; } = new List<Consulations>();
 }

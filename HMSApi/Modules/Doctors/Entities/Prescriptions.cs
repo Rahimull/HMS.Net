@@ -23,4 +23,7 @@ public class Prescriptions : BaseEntity
     // Navigation property to Patient.
     public int PatientId { get; set; }
     public Patient Patient { get; set; } = null!;
+
+    // Navigation property to PrescriptionDetails
+    public ICollection<PrescriptionDetails> PrescriptionDetails { get; set; } = new List<PrescriptionDetails>();
 }

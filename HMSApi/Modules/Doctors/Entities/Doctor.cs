@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 using HMSApi.Models;
 using HMSApi.Mudoles.Reception.Entities;
 
-namespace HMSApi.Mudoles.Doctors.Entities;
+namespace HMSApi.Modules.Doctors.Entities;
 
 
-class Doctor : BaseEntity
+class Doctors : BaseEntity
 {
     [Required]
     [MaxLength(100)]
@@ -37,4 +37,7 @@ class Doctor : BaseEntity
 
     // Navigation property for DoctorSchedules
     public ICollection<DoctorSchedules> DoctorSchedules { get; set; } = new List<DoctorSchedules>();
+
+    // Navigation property for Consulations
+    public ICollection<Consulations> Consulations { get; set; } = new List<Consulations>();
 }
