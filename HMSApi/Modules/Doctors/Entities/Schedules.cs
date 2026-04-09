@@ -18,5 +18,5 @@ public class Schedules : BaseEntity
     [ForeignKey(nameof(DoctorId))]
     public int DoctorId { get; set; }
     [Required]
-    public Doctors Doctors { get; set; } = null!;
+    public Doctor Doctor { get; set; } = null!;
 }

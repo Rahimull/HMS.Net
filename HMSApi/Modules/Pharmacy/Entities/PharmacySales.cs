@@ -1,9 +1,8 @@
 using HMSApi.Models;
 using HMSApi.Modules.Doctors.Entities;
-using HMSApi.Mudoles.Reception.Entities;
+using HMSApi.Modules.Reception.Entities;
 
 namespace HMSApi.Modules.Pharmacy.Entities;
-
 
 public class PharmacySales : BaseEntity
 {
@@ -11,13 +10,14 @@ public class PharmacySales : BaseEntity
     public decimal TotalAmount { get; set; }
     public string? Notes { get; set; }
 
-    // Foreign Keys
     public int PatientId { get; set; }
-    public int DoctorId { get; set; }
-    public int PrescriptionId { get; set; }
-
-
-    // Navigation properties
     public Patient Patient { get; set; } = null!;
-    public Doctors Doctor { get; set; } = null!;
+
+    public int DoctorId { get; set; }
+    public Doctor Doctor { get; set; } = null!;
+
+    public int PrescriptionId { get; set; }
     public Prescriptions Prescription { get; set; } = null!;
+
+    public ICollection<PharmacySalesdetails> SaleDetails { get; set; } = new List<PharmacySalesdetails>();
+}

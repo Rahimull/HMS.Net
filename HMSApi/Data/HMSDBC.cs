@@ -1,6 +1,19 @@
 using System.Linq.Expressions;
 using HMSApi.Models;
-using HMSApi.Mudoles.Reception.Entities;
+using HMSApi.Modules.Doctors.Entities;
+using HMSApi.Modules.Emergencies.Entities;
+using HMSApi.Modules.Finance.Entities;
+using HMSApi.Modules.HR.Entities;
+using HMSApi.Modules.IPD.Entities;
+using HMSApi.Modules.Laboratory.Entities;
+using HMSApi.Modules.Nursing.Entities;
+using HMSApi.Modules.OPD.Entities;
+using HMSApi.Modules.Pharmacy.Entities;
+using HMSApi.Modules.Radiology.Entities;
+using HMSApi.Modules.Reception.Entities;
+using HMSApi.Modules.Reports.Entities;
+using HMSApi.Modules.Store.Entities;
+using HMSApi.Modules.SupportServices.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -14,12 +27,77 @@ public class HMSDBC : IdentityDbContext<AppUser, IdentityRole<int>, int>
 
     public DbSet<Appointment> Appointments => Set<Appointment>();
     public DbSet<Department> Departments => Set<Department>();
-    public DbSet<ReceptionDoctor> ReceptionDoctors => Set<ReceptionDoctor>();
     public DbSet<MedicalRecord> MedicalRecords => Set<MedicalRecord>();
     public DbSet<Patient> Patients => Set<Patient>();
 
+    // Doctor Module
+    public DbSet<Consultation> Consultations => Set<Consultation>();
+    public DbSet<Diagnosis> Diagnosis => Set<Diagnosis>();
+    public DbSet<Doctor> Doctors => Set<Doctor>();
+    public DbSet<PrescriptionDetails> PrescriptionDetails => Set<PrescriptionDetails>();
+    public DbSet<Prescriptions> Prescriptions => Set<Prescriptions>();
+    public DbSet<Schedules> Schedules => Set<Schedules>();
+
+    // Emergency Modules
+    public DbSet<Emergency> Emergencies => Set<Emergency>();
+    public DbSet<EmergencyTreatments> EmergencyTreatments => Set<EmergencyTreatments>();
+
+    // Finance Modules
+    public DbSet<InvoiceDetails> InvoiceDetails => Set<InvoiceDetails>();
+    public DbSet<Invoice> Invoices => Set<Invoice>();public DbSet<Payment> Payments => Set<Payment>();
+
+    // HR Modules
+    public DbSet<Employees> Employees => Set<Employees>();
+    public DbSet<Payrolls> Payrolls => Set<Payrolls>();
+    public DbSet<Shift> Shifts => Set<Shift>();
+
+    // IPD Modules
+    public DbSet<Admission> Admissions => Set<Admission>();
+    public DbSet<Beds> Beds => Set<Beds>();
+    public DbSet<IPDConsultation> IPDConsultations => Set<IPDConsultation>();
+
+    // Laboratory Modules
+    public DbSet<Laboratory> Laboratories => Set<Laboratory>();
+    public DbSet<LabOrderDetails> LabOrderDetails => Set<LabOrderDetails>();
+    public DbSet<LabOrder> LabOrders => Set<LabOrder>();
+    public DbSet<LabTests> LabTests => Set<LabTests>();
+
+    // Nursing Modules
+    public DbSet<Nurses> Nurses => Set<Nurses>();
+    public DbSet<PatientCare> PatientCares => Set<PatientCare>();
+    public DbSet<VitalSigns> VitalSigns => Set<VitalSigns>();
+
+    // OPD Modules
+    public DbSet<OPDConsulations> OPDConsulations => Set<OPDConsulations>();
+    public DbSet<OPDPrescriptionDetails> OPDPrescriptionDetails => Set<OPDPrescriptionDetails>();
+    public DbSet<OPDPrescriptions> OPDPrescriptions => Set<OPDPrescriptions>();
+    public DbSet<OPDVisits> OPDVisits => Set<OPDVisits>();
+
+    // Pharmacy Modules
+    public DbSet<Medicines> Medicines => Set<Medicines>();
+    public DbSet<MedicineStock> MedicineStocks => Set<MedicineStock>();
+    public DbSet<PharmacySales> PharmacySales => Set<PharmacySales>();
+    public DbSet<PharmacySalesdetails> PharmacySalesdetails => Set<PharmacySalesdetails>();
+
+    // Radiology Modules
+    public DbSet<ImagingOrders> ImagingOrders => Set<ImagingOrders>();
+    public DbSet<ImagingOrdersDetails> ImagingOrdersDetails => Set<ImagingOrdersDetails>();
+    public DbSet<ImagingTest> ImagingTests => Set<ImagingTest>();
 
 
+    // Reprots Modules
+    public DbSet<Reports> Reports => Set<Reports>();
+
+    // Store Modules
+    public DbSet<Items> Items => Set<Items>();
+    public DbSet<ItemStock> ItemStocks => Set<ItemStock>();
+    public DbSet<PurchaseDetail> PurchaseDetails => Set<PurchaseDetail>();
+    public DbSet<Purchases> Purchases => Set<Purchases>();
+    public DbSet<Suppliers> Suppliers => Set<Suppliers>();
+
+    // Support Services Modules
+    public DbSet<SupportStaff> SupportStaffs => Set<SupportStaff>();
+    public DbSet<SupportTasks> SupportTasks => Set<SupportTasks>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

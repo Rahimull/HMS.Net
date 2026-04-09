@@ -92,9 +92,9 @@ Models/
  AppUser.cs
  BaseEntity.cs
 Modules/Doctors/Entities/
- Consulations.cs
- Diagnoses.cs
- Doctors.cs
+ Consulatations.cs
+ Diagnosis.cs
+ Doctor.cs
  PrescriptionDetails.cs
  Prescriptions.cs
  Schedules.cs
@@ -107,17 +107,17 @@ Modules/
  Finance/Entities/
   InvoiceDetails.cs
   Invoices.cs
-  Payments.cs
+  Payment.cs
  Finance/ReceptionModule.cs
  HR/Entities/
   Employees.cs
   Payrolls.cs
-  Shifts.cs
+  Shift.cs
  HR/ReceptionModule.cs
  IPD/Entities/
-  Admissions.cs
+  Admission.cs
   Beds.cs
-  IPDconsultaions.cs
+  IPDConsultaions.cs
  IPD/ReceptionModule.cs
  Laboratory/Entities/
   Laboratory.cs

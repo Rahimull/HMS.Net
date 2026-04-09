@@ -1,7 +1,6 @@
 using HMSApi.Common.Enums;
 using HMSApi.Models;
 using HMSApi.Modules.Reception.Entities;
-using HMSApi.Mudoles.Reception.Entities;
 
 namespace HMSApi.Modules.HR.Entities;
 

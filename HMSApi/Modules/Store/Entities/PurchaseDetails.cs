@@ -2,18 +2,17 @@ using HMSApi.Models;
 
 namespace HMSApi.Modules.Store.Entities;
 
-
-public class PurchasesDetails : BaseEntity
+public class PurchaseDetail : BaseEntity
 {
-   
-  
     public int Quantity { get; set; }
     public decimal UnitPrice { get; set; }
     public decimal SubTotal { get; set; }
     public string? BatchNumber { get; set; }
     public DateOnly ExpiryDate { get; set; }
 
-    // foreign key
     public int PurchaseId { get; set; }
-    public int ItemId1 { get; set; }
+    public Purchases Purchase { get; set; } = null!;
+
+    public int ItemId { get; set; }
+    public Items Item { get; set; } = null!;
 }

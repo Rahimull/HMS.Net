@@ -1,11 +1,12 @@
 using HMSApi.Common.Enums;
 using HMSApi.Models;
+using HMSApi.Modules.Doctors.Entities;
 using HMSApi.Modules.Reception.Entities;
 
-namespace HMSApi.Modules.Emergency.Entities;
+namespace HMSApi.Modules.Emergencies.Entities;
 
 
-public class Emergency : BaseEntity
+public class Emergency  : BaseEntity
 {
     public string Name { get; set; } = null!;
     public int Age { get; set; }
@@ -18,10 +19,10 @@ public class Emergency : BaseEntity
 
     // foreign keys
     public int? DoctorId { get; set; }
-    public int patientId { get; set; }
+    public int PatientId { get; set; }
 
     // navigation properties
-    public Doctors? Doctor { get; set; }
+    public Doctor? Doctor { get; set; }
     public Patient Patient { get; set; } = null!;
 
 }

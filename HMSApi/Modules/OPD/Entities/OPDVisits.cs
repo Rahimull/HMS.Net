@@ -1,5 +1,6 @@
 using HMSApi.Common.Enums;
 using HMSApi.Models;
+using HMSApi.Modules.Doctors.Entities;
 using HMSApi.Modules.Reception.Entities;
 
 namespace HMSApi.Modules.OPD.Entities;
@@ -28,10 +29,10 @@ public class OPDVisits : BaseEntity
     // Foreign key to Doctor
     public int DoctorId { get; set; }
     // Navigation property
-    public Doctors Doctors { get; set; } = null!;
+    public Doctor Doctors { get; set; } = null!;
 
     // Foreign key to appointment
-    public int AppointmentId { get; set; }
+    public int AppointmentId { get; set; } 
     // Navigation property
     public Appointment? Appointment { get; set; }
     public ICollection<OPDPrescriptions> OPDPrescriptions {get; set;} = new List<OPDPrescriptions>();

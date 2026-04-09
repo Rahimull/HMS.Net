@@ -1,6 +1,7 @@
 using HMSApi.Models;
+using HMSApi.Modules.Doctors.Entities;
 
-namespace HMSApi.Modules.Emergency.Entities;
+namespace HMSApi.Modules.Emergencies.Entities;
 
 public class EmergencyTreatments : BaseEntity
 {
@@ -16,6 +17,6 @@ public class EmergencyTreatments : BaseEntity
 
 
     // navigation properties
-    public EmergencyPatients EmergencyPatient { get; set; } = null!;
-    public Doctors Doctor { get; set; } = null!;
+    public Emergency Emergency { get; set; } = null!;
+    public Doctor Doctor { get; set; } = null!;
 }

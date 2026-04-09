@@ -1,7 +1,5 @@
 using HMSApi.Models;
-using HMSApi.Modules.Pharmacy.Entities;
-
-namespace HMSApi.modoules.Pharmacy.Entities;
+namespace HMSApi.Modules.Pharmacy.Entities;
 
 
 public class MedicineStock : BaseEntity

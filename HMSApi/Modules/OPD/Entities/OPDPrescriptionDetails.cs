@@ -1,7 +1,7 @@
 using HMSApi.Models;
+using HMSApi.Modules.Doctors.Entities;
 using HMSApi.Modules.Pharmacy.Entities;
 using HMSApi.Modules.Reception.Entities;
-using HMSApi.Mudoles.Reception.Entities;
 
 namespace HMSApi.Modules.OPD.Entities;
 
@@ -25,7 +25,7 @@ public class OPDPrescriptionDetails : BaseEntity
     public int DoctorId { get; set; }
     public int OPDPrescriptionId {get; set;}
     // Navigation property
-    public Doctors Doctor { get; set; } = null!;
+    public Doctor Doctor { get; set; } = null!;
 
     // Foreign key to Patient
     public int PatientId { get; set; }
