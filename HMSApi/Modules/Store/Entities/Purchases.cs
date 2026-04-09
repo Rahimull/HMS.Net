@@ -17,4 +17,5 @@ public class Purchases : BaseEntity
     // navigation property
     public Items Item { get; set; } = null!;
     public Suppliers Supplier { get; set; } = null!;
+    public ICollection<PurchasesDetails> PurchasesDetails { get; set; } = new List<PurchasesDetails>();
 }

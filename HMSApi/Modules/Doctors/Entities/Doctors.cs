@@ -1,12 +1,17 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using HMSApi.Models;
-using HMSApi.Mudoles.Reception.Entities;
-
+using HMSApi.Modules.Emergency.Entities;
+using HMSApi.Modules.IPD.Entities;
+using HMSApi.Modules.Laboratory.Entities;
+using HMSApi.Modules.OPD.Entities;
+using HMSApi.Modules.Pharmacy.Entities;
+using HMSApi.Modules.Radiology.Entities;
+using HMSApi.Modules.Reception.Entities;
 namespace HMSApi.Modules.Doctors.Entities;
 
 
-class Doctors : BaseEntity
+public class Doctors : BaseEntity
 {
     [Required]
     [MaxLength(100)]
@@ -36,8 +41,20 @@ class Doctors : BaseEntity
     public Department Department { get; set; } = null!;
 
     // Navigation property for DoctorSchedules
-    public ICollection<DoctorSchedules> DoctorSchedules { get; set; } = new List<DoctorSchedules>();
+    public ICollection<Schedules> Schedules { get; set; } = new List<Schedules>();
 
     // Navigation property for Consulations
     public ICollection<Consulations> Consulations { get; set; } = new List<Consulations>();
+    public ICollection<Appointment> Appointments {get; set;} = new List<Appointment>();
+    public ICollection<OPDVisits> OPDVisits {get; set; } = new List<OPDVisits>();
+
+    public ICollection<Admissions> Admissions {get; set;} = new List<Admissions>();
+
+    public ICollection<PharmacySales> PharmacySales {get; set;} = new List<PharmacySales>();
+
+    public ICollection<LabOrders> LabOrders {get; set;} = new List<LabOrders>();
+
+    public ICollection<ImagingOrders> ImagingOrders {get; set;} = new List<ImagingOrders>();
+
+    public ICollection<EmergencyTreatments> EmergencyTreatments { get; set; } = new List<EmergencyTreatments>();
 }

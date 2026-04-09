@@ -1,5 +1,5 @@
 using HMSApi.Models;
-using HMSApi.Mudoles.Reception.Entities;
+using HMSApi.Modules.Reception.Entities;
 
 namespace HMSApi.Modules.IPD.Entities;
 
@@ -29,4 +29,6 @@ public class Admissions : BaseEntity
     public string DoctorId { get; set; } = null!;
     // navigation property
     public Doctors Doctor { get; set; } = null!;
+
+    public ICollection<IPDConsultations> IPDConsultations {get; set;} = new List<IPDConsultations>();
 }

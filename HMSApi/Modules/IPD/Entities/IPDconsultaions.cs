@@ -1,3 +1,5 @@
+using HMSApi.Models;
+
 namespace HMSApi.Modules.IPD.Entities;
 
 

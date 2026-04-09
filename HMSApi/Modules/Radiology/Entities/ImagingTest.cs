@@ -9,4 +9,6 @@ public class ImagingTest : BaseEntity
     public string? Description { get; set; }
     public string Modality { get; set; } = null!;
     public decimal Price { get; set; }
+
+    public ICollection<ImagingOrdersDetails> ImagingOrdersDetails { get; set; } = new List<ImagingOrdersDetails>();
 }

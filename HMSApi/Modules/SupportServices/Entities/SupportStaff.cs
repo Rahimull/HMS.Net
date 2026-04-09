@@ -1,5 +1,6 @@
 using HMSApi.Models;
 using HMSApi.Modules.HR.Entities;
+using HMSApi.Modules.Reception.Entities;
 using HMSApi.Mudoles.Reception.Entities;
 
 namespace HMSApi.Modules.SupportServices.Entities;
@@ -18,4 +19,9 @@ public class SupportStaff : BaseEntity
     // Navigation Property
     public Department Department { get; set; } = null!;
     public Shifts Shifts { get; set; } = null!;
+
+    public ICollection<SupportTasks> SupportTasks { get; set; } = new List<SupportTasks>();
+   
+
+
 }

@@ -11,4 +11,6 @@ public class LabTests : BaseEntity
     public string? ReferenceRange {get; set; }
     public string? Description { get; set; }
     public decimal Price { get; set; }
+
+    public ICollection<LabOrderDetails> LabOrderDetails {get; set;} = new List<LabOrderDetails>();
 }

@@ -1,4 +1,5 @@
 using HMSApi.Models;
+using HMSApi.Modules.Pharmacy.Entities;
 
 namespace HMSApi.Modules.Doctors.Entities;
 
@@ -16,5 +17,5 @@ public class PrescriptionDetails : BaseEntity
 
     // Navigation property to Medicine 
     public int MedicineId { get; set; }
-    public Medicine Medicine { get; set; } = null!;
+    public Medicines Medicine { get; set; } = null!;
 }

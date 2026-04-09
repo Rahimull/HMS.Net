@@ -9,5 +9,7 @@ public class Suppliers : BaseEntity
     public string Name { get; set; } = null!;
     public string ContactInfo { get; set; } = null!;
     public string? Address { get; set; }
+
+    public ICollection<Purchases> Purchases { get; set; } = new List<Purchases>();
     
 }

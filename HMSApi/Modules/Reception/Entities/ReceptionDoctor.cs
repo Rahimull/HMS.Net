@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using HMSApi.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace HMSApi.Mudoles.Reception.Entities;
+namespace HMSApi.Modules.Reception.Entities;
 
 public class ReceptionDoctor : BaseEntity
 {

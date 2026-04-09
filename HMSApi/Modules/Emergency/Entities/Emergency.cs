@@ -1,11 +1,11 @@
 using HMSApi.Common.Enums;
 using HMSApi.Models;
-using HMSApi.Mudoles.Reception.Entities;
+using HMSApi.Modules.Reception.Entities;
 
 namespace HMSApi.Modules.Emergency.Entities;
 
 
-public class EmergencyPatients : BaseEntity
+public class Emergency : BaseEntity
 {
     public string Name { get; set; } = null!;
     public int Age { get; set; }

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using HMSApi.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace HMSApi.Mudoles.Reception.Entities;
+namespace HMSApi.Modules.Reception.Entities;
 
 // RecordNumber is Index in the MedicalRecord
 [Index(nameof(RecordNumber), IsUnique = true)]

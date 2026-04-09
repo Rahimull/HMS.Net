@@ -4,10 +4,10 @@ using HMSApi.Common.Enums;
 using HMSApi.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace HMSApi.Mudoles.Reception.Entities;
+namespace HMSApi.Modules.Reception.Entities;
 
 // Appontment Date is Index
-[Index(nameof(AppointmentDate), nameof(ReceptionDoctorId))]
+[Index(nameof(AppointmentDate), nameof(DoctorId))]
 public class Appointment : BaseEntity
 {
     // Appointment Status = {Pending=1, Completed=2, Cancelled=3}
@@ -37,12 +37,12 @@ public class Appointment : BaseEntity
     public Patient Patient { get; set; } = null!;
 
     // Fk from Doctors
-    [ForeignKey(nameof(ReceptionDoctorId))]
-    public int ReceptionDoctorId { get; set; }
+    [ForeignKey(nameof(DoctorId))]
+    public int DoctorId { get; set; }
 
     // Navigation form Doctors
     [Required]
-    public ReceptionDoctor ReceptionDoctor{ get; set; } = null!;
+    public Doctors Doctors{ get; set; } = null!;
 
     // FK from Department 
     [ForeignKey(nameof(DepartmentId))]

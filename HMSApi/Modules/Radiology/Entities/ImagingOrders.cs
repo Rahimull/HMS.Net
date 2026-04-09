@@ -2,6 +2,7 @@ using HMSApi.Common.Enums;
 using HMSApi.Models;
 using HMSApi.Modules.IPD.Entities;
 using HMSApi.Modules.OPD.Entities;
+using HMSApi.Modules.Reception.Entities;
 using HMSApi.Mudoles.Reception.Entities;
 
 namespace HMSApi.Modules.Radiology.Entities;
@@ -31,4 +32,6 @@ public class ImagingOrders : BaseEntity
     public Doctors Doctor { get; set; } = null!;
     public OPDVisits OPDVisit { get; set; } = null!;
     public Admissions Admission { get; set; } = null!;
+
+    public ICollection<ImagingOrdersDetails> ImagingOrdersDetails { get; set; } = new List<ImagingOrdersDetails>();
 }

@@ -2,9 +2,15 @@ using System.ComponentModel.DataAnnotations;
 using HMSApi.Common.Enums;
 using HMSApi.Models;
 using HMSApi.Modules.Doctors.Entities;
+using HMSApi.Modules.Finance.Entities;
+using HMSApi.Modules.IPD.Entities;
+using HMSApi.Modules.Laboratory.Entities;
+using HMSApi.Modules.Nursing.Entities;
+using HMSApi.Modules.Pharmacy.Entities;
+using HMSApi.Modules.Radiology.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace HMSApi.Mudoles.Reception.Entities;
+namespace HMSApi.Modules.Reception.Entities;
 
 // Phone is Index
 [Index(nameof(Phone), IsUnique = true)]
@@ -52,4 +58,20 @@ public class Patient : BaseEntity
 
     // one-to-many Navigation
     public ICollection<Consulations> Consulations { get; set; } = new List<Consulations>();
+
+    // Navigation Properties
+    public ICollection<Doctors> Doctors { get; set; } = new List<Doctors>();
+    public ICollection<Admissions> Admissions {get; set;} = new List<Admissions>();
+    public Beds? Beds {get; set;}
+    public ICollection<PharmacySales> PharmacySales {get; set;} = new List<PharmacySales>();
+    public ICollection<LabOrders> LabOrders {get; set;} = new List<LabOrders>();
+    public ICollection<ImagingOrders> ImagingOrders {get; set;} = new List<ImagingOrders>();
+
+    public ICollection<Emergency> Emergencies { get; set; } = new List<Emergency>();
+
+    public ICollection<Invoices> Invoices { get; set; } = new List<Invoices>();
+    public ICollection<PatientCare> PatientCare { get; set; } = new List<PatientCare>();
+    public ICollection<VitalSigns> VitalSigns { get; set; } = new List<VitalSigns>();
+
+    
 }

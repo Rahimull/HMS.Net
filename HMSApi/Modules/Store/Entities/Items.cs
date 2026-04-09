@@ -11,4 +11,6 @@ public class Items : BaseEntity
     public string Unit { get; set; } = null!;
     public decimal Price { get; set; }
     public int QuantityInStock { get; set; }
+
+    public ICollection<ItemStock> ItemStocks { get; set; } = new List<ItemStock>();
 }

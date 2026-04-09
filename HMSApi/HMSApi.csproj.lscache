@@ -65,6 +65,7 @@ Common/
   AppointmentStatus.cs
   BedStatus.cs
   BedType.cs
+  DayOfWeek.cs
   EmployeeStatus.cs
   Gender.cs
   InvoiceStatus.cs
@@ -93,14 +94,14 @@ Models/
 Modules/Doctors/Entities/
  Consulations.cs
  Diagnoses.cs
- Doctor.cs
- DoctorSchedules.cs
+ Doctors.cs
  PrescriptionDetails.cs
  Prescriptions.cs
+ Schedules.cs
 Modules/
  Doctors/ReceptionModule.cs
  Emergency/Entities/
-  EmergencyPatients.cs
+  Emergency.cs
   EmergencyTreatments.cs
  Emergency/ReceptionModule.cs
  Finance/Entities/

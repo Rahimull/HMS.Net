@@ -1,5 +1,6 @@
 
 using HMSApi.Models;
+using HMSApi.Modules.Reception.Entities;
 using HMSApi.Mudoles.Reception.Entities;
 
 namespace HMSApi.Modules.OPD.Entities;
@@ -30,4 +31,5 @@ public class OPDPrescriptions : BaseEntity
     public int PatientId { get; set; }
     // Navigation property
     public Patient Patient { get; set; } = null!;
+    public ICollection<OPDPrescriptionDetails> OPDPrescriptionDetails {get; set;} = new List<OPDPrescriptionDetails>();
 }

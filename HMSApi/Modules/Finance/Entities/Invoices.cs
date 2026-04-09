@@ -3,6 +3,7 @@ using HMSApi.Models;
 using HMSApi.Modules.Emergency.Entities;
 using HMSApi.Modules.IPD.Entities;
 using HMSApi.Modules.OPD.Entities;
+using HMSApi.Modules.Reception.Entities;
 using HMSApi.Mudoles.Reception.Entities;
 
 namespace HMSApi.Modules.Finance.Entities;
@@ -30,4 +31,7 @@ public class Invoices : BaseEntity
     public OPDVisits? OPDVisit { get; set; }
     public Admissions? Admission { get; set; }
     public EmergencyTreatments? EmergencyVisit { get; set; }
+
+    public ICollection<InvoiceDetails> InvoiceDetails { get; set; } = new List<InvoiceDetails>();
+    public ICollection<Payments> Payments { get; set; } = new List<Payments>();
 }

@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using HMSApi.Models;
-
-namespace HMSApi.Mudoles.Reception.Entities;
+namespace HMSApi.Modules.Reception.Entities;
 
 
 public class Department : BaseEntity
@@ -14,4 +13,8 @@ public class Department : BaseEntity
 
     // Department Description
     public string? Description { get; set; }
+
+    // Navigation Property
+    public ICollection<Doctors> Doctors {get; set;} = new List<Doctors>();
+    public ICollection<Appointment> Appointments{get; set;} = new List<Appointment>();
 }

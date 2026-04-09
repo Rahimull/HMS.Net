@@ -1,8 +1,5 @@
 using HMSApi.Models;
-using HMSApi.Mudoles.Doctors.Entities;
 using HMSApi.Mudoles.Reception.Entities;
-using Microsoft.VisualBasic;
-
 namespace HMSApi.Modules.Doctors.Entities;
 
 public class Consulations : BaseEntity
@@ -16,10 +13,12 @@ public class Consulations : BaseEntity
 
     // Navigation property to Doctor
     public int DoctorId { get; set; }   
-    public Doctor Doctor { get; set; } = null!;
+    public Doctors Doctor { get; set; } = null!;
     // Navigation property to Patient
     public int PatientId { get; set; }
     public Patient Patient { get; set; } = null!;
 
     // Navigation property to Prescriptions
+    public ICollection<Diagnoses> Diagnoses {get; set;} = new List<Diagnoses>();
+    public ICollection<Prescriptions> Prescriptions{get; set;} = new List<Prescriptions>();
 }
