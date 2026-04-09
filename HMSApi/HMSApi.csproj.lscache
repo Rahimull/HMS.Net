@@ -105,6 +105,9 @@ Modules/
   Invoices.cs
   Payments.cs
  Finance/ReceptionModule.cs
+ HR/
+  Entities/Employees.cs
+  ReceptionModule.cs
  IPD/Entities/
   Admissions.cs
   Beds.cs
@@ -116,6 +119,11 @@ Modules/
   LabOrders.cs
   LabTests.cs
  Laboratory/ReceptionModule.cs
+ Nursing/Entities/
+  Nurses.cs
+  PatientCare.cs
+  VitalSigns.cs
+ Nursing/ReceptionModule.cs
  OPD/Entities/
   OPDConsulations.cs
   OPDPrescriptionDetails.cs
@@ -186,6 +194,13 @@ Modules/
    MedicalRecordService.cs
    PatientService.cs
    ReceptionDoctorService.cs
+ Store/Entities/
+  Items.cs
+  ItemStock.cs
+  PurchaseDetails.cs
+  Purchases.cs
+  ُSuplier.cs
+ Store/ReceptionModule.cs
 obj/Debug/net10.0/
  .NETCoreApp,Version=v10.0.AssemblyAttributes.cs
  HMSApi.AssemblyInfo.cs
