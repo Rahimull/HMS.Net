@@ -1,5 +1,5 @@
-using HMSApi.Mudoles.Reception.DTOs;
+using HMSApi.Modules.Reception.DTOs;
 
-namespace HMSApi.Mudoles.Reception.Services;
+namespace HMSApi.Modules.Reception.Services;
 
 public interface IDepartmentService : IBaseService<DepartmentDto, CreateDepartmentDto, UpdateDepartmentDto>{}

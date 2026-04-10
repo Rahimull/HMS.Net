@@ -2,10 +2,10 @@
 
 
 using HMSApi.Data;
-using HMSApi.Mudoles.Reception.Entities;
+using HMSApi.Modules.Reception.Entities;
 using HMSApi.Repositories;
 
-namespace HMSApi.Mudoles.Reception.Repositories;
+namespace HMSApi.Modules.Reception.Repositories;
 
 
 public class PatientRepository : BaseRepository<Patient>, IPatientRepository

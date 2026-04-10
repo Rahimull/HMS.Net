@@ -13,8 +13,8 @@ public class PharmacySalesdetails : BaseEntity
 
 
     // Foreign Keys
-    public int PharmacySaleId { get; set; } = null!;
-    public int MedicineId { get; set; } = null!;
+    public int PharmacySaleId { get; set; }
+    public int MedicineId { get; set; }
 
     // Navigation properties
     public PharmacySales PharmacySale { get; set; } = null!;

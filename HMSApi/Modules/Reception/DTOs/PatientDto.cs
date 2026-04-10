@@ -1,6 +1,6 @@
-using System.ComponentModel.DataAnnotations;
+
 using HMSApi.Common.Enums;
-namespace HMSApi.Mudoles.Reception.DTOs;
+namespace HMSApi.Modules.Reception.DTOs;
 
 
 // public class PatientDto

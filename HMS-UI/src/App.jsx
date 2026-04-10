@@ -5,7 +5,7 @@ import Layout from "./components/layout/Layout";
 import DepartmentPage from "./pages/DepartmentPage";
 import AppointmentPage from "./pages/AppointmentPage";
 import MedicalRecordPage from "./pages/MedicalRecordPage";
-import ReceptionDoctorPage from "./pages/RecepationDoctorPage";
+import DoctorPage from "./Modules/Doctor/Pages/DoctorPage";
 
 function App() {
 
@@ -17,7 +17,7 @@ function App() {
       <Route path="/department" element={<DepartmentPage />} />
       <Route path="/appointment" element={<AppointmentPage />} />
       <Route path="/medicalRecord" element={<MedicalRecordPage />} />
-      <Route path="/receptionDoctor" element={<ReceptionDoctorPage />} />
+      <Route path="/doctors" element={<DoctorPage />} />
     </Routes>
   )
 

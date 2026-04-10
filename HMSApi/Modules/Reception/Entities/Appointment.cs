@@ -2,8 +2,9 @@ using System.ComponentModel.DataAnnotations;
 using HMSApi.Common.Enums;
 using HMSApi.Models;
 using HMSApi.Modules.Doctors.Entities;
-using HMSApi.Modules.Reception.Entities;
 using Microsoft.EntityFrameworkCore;
+
+namespace HMSApi.Modules.Reception.Entities;
 
 [Index(nameof(AppointmentDate), nameof(DoctorId))]
 public class Appointment : BaseEntity

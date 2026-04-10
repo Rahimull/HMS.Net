@@ -23,7 +23,7 @@ public class Invoice : BaseEntity
     public OPDVisits? OPDVisit { get; set; }
 
     public int? AdmissionId { get; set; }
-    public Admissions? Admission { get; set; }
+    public Admission? Admission { get; set; }
 
     public int? EmergencyId { get; set; }
     public Emergency? Emergency { get; set; }

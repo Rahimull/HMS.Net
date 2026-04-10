@@ -86,7 +86,7 @@ public class HMSDBC : IdentityDbContext<AppUser, IdentityRole<int>, int>
 
 
     // Reprots Modules
-    public DbSet<Reports> Reports => Set<Reports>();
+    public DbSet<Report> Reports => Set<Report>();
 
     // Store Modules
     public DbSet<Items> Items => Set<Items>();

@@ -20,6 +20,6 @@ public class LabOrderDetails : BaseEntity
     public int LabTestId { get; set; }
 
     // navigation properties
-    public LabOrders LabOrder { get; set; } = null!;
+    public LabOrder LabOrder { get; set; } = null!;
     public LabTests LabTest { get; set; } = null!;
 }

@@ -1,8 +1,9 @@
 
 
-using HMSApi.Mudoles.Reception.Entities;
 
-namespace HMSApi.Mudoles.Reception.Repositories;
+using HMSApi.Modules.Reception.Entities;
+
+namespace HMSApi.Modules.Reception.Repositories;
 
 public interface IAppointmentRepository : IBaseRepository<Appointment>
 {}

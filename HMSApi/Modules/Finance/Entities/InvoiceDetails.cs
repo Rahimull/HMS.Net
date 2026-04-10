@@ -20,5 +20,5 @@ public class InvoiceDetails : BaseEntity
     public int InvoiceId { get; set; }
 
     // navigation properties
-    public Invoices Invoice { get; set; } = null!;
+    public Invoice Invoice { get; set; } = null!;
 }

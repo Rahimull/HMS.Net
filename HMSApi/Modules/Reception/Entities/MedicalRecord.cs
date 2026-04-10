@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using HMSApi.Models;
 using Microsoft.EntityFrameworkCore;
+namespace HMSApi.Modules.Reception.Entities;
 
 [Index(nameof(RecordNumber), IsUnique = true)]
 [Index(nameof(PatientId), IsUnique = true)]

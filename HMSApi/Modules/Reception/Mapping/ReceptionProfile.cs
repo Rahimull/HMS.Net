@@ -2,10 +2,10 @@
 
 
 using AutoMapper;
-using HMSApi.Mudoles.Reception.DTOs;
-using HMSApi.Mudoles.Reception.Entities;
+using HMSApi.Modules.Reception.Entities;
+using HMSApi.Modules.Reception.DTOs;
 
-namespace HMSApi.Mudoles.Reception.ReceptionMapping;
+namespace HMSApi.Modules.Reception.ReceptionMapping;
 public class ReceptionProfile : Profile
 {
     public ReceptionProfile()
@@ -25,10 +25,6 @@ public class ReceptionProfile : Profile
         CreateMap<UpdateAppointmentDto, Appointment>();
         CreateMap<Appointment, AppointmentDto>();
 
-        // ReceptionDoctor Mappings
-        CreateMap<CreateReceptionDoctorDto, ReceptionDoctor>();
-        CreateMap<UpdateReceptionDoctorDto, ReceptionDoctor>();
-        CreateMap<ReceptionDoctor, ReceptionDoctorDto>();
 
         // MedicalRecord Mappings
         CreateMap<CreateMedicalRecordDto, MedicalRecord>();

@@ -11,6 +11,8 @@ using HMSApi.Modules.Pharmacy.Entities;
 using HMSApi.Modules.Radiology.Entities;
 using Microsoft.EntityFrameworkCore;
 
+namespace HMSApi.Modules.Reception.Entities;
+
 [Index(nameof(Phone), IsUnique = true)]
 public class Patient : BaseEntity
 {

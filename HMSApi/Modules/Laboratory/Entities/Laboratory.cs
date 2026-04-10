@@ -10,5 +10,5 @@ public class Laboratory : BaseEntity
     public string? ContactInfo { get; set; }
 
     // navigation properties
-    public List<LabOrders> LabOrders { get; set; } = new List<LabOrders>();
+    public List<LabOrder> LabOrders { get; set; } = new List<LabOrder>();
 }

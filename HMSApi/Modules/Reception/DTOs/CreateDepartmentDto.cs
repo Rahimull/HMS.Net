@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-namespace HMSApi.Mudoles.Reception.DTOs;
+namespace HMSApi.Modules.Reception.DTOs;
 
 
 public class CreateDepartmentDto

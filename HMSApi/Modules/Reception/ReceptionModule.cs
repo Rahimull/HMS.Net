@@ -1,10 +1,10 @@
 
 
-using HMSApi.Mudoles.Reception.Repositories;
-using HMSApi.Mudoles.Reception.ReceptionMapping;
-using HMSApi.Mudoles.Reception.Services;
+using HMSApi.Modules.Reception.Repositories;
+using HMSApi.Modules.Reception.ReceptionMapping;
+using HMSApi.Modules.Reception.Services;
 
-namespace HMSApi.Mudoles.Reception;
+namespace HMSApi.Modules.Reception;
 
 public static class ReceptionModule
 {
@@ -20,7 +20,7 @@ public static class ReceptionModule
         services.AddScoped<IMedicalRecordRepository, MedicalRecordRepository>();
         services.AddScoped<IAppointmentRepository, AppointmentRepository>();
         services.AddScoped<IDepartmentRepository, DepartmentRepository>();
-        services.AddScoped<IReceptionDoctorRepository, ReceptionDoctorRepository>();
+        
 
         // ===============================
         // Services
@@ -29,7 +29,7 @@ public static class ReceptionModule
         services.AddScoped<IMedicalRecordService, MedicalRecordService>();
         services.AddScoped<IAppointmentService, AppointmentService>();
         services.AddScoped<IDepartmentService, DepartmentService>();
-        services.AddScoped<IReceptionDoctorService, ReceptionDoctorService>();
+        
 
 
 

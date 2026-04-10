@@ -1,7 +1,8 @@
 using HMSApi.Data;
 using HMSApi.Middleware;
 using HMSApi.Models;
-using HMSApi.Mudoles.Reception;
+using HMSApi.Modules.Reception;
+using HMSApi.Mudoles.Doctors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,6 +27,7 @@ builder.Services
     .AddDefaultTokenProviders();
 
 builder.Services.AddReceptionModule();
+builder.Services.AddDoctorModule();
 
 builder.Services.AddControllers();
 

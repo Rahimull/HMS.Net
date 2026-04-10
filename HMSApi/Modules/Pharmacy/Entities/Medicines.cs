@@ -1,5 +1,4 @@
 using HMSApi.Models;
-using HMSApi.modoules.Pharmacy.Entities;
 using HMSApi.Modules.Doctors.Entities;
 
 namespace HMSApi.Modules.Pharmacy.Entities;

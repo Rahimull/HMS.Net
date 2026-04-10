@@ -1,7 +1,7 @@
 using HMSApi.Models;
 using HMSApi.Modules.IPD.Entities;
 using HMSApi.Modules.Reception.Entities;
-using HMSApi.Mudoles.Reception.Entities;
+
 
 namespace HMSApi.Modules.Nursing.Entities;
 
@@ -22,5 +22,5 @@ public class PatientCare : BaseEntity
     // navigation properties
     public Patient Patient { get; set; } = null!;
     public Nurses Nurse { get; set; } = null!;
-    public Admissions Admission { get; set; } = null!;
+    public Admission Admission { get; set; } = null!;
 }

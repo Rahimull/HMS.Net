@@ -1,9 +1,9 @@
 using HMSApi.Controllers;
-using HMSApi.Mudoles.Reception.DTOs;
-using HMSApi.Mudoles.Reception.Services;
+using HMSApi.Modules.Reception.DTOs;
+using HMSApi.Modules.Reception.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HMSApi.Mudoles.Reception.Controllers;
+namespace HMSApi.Modules.Reception.Controllers;
 
 
 [ApiController]

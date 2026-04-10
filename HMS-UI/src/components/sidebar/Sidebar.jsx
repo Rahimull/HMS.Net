@@ -2,13 +2,12 @@ import { NavLink } from "react-router-dom";
 
 const Sidebar = () => {
   const menuItems = [
-    { name: "Layout", link: "/" },
-    { name: "Dashboard", link: "/Dashboard" },
+    { name: "Dashboard", link: "/" },
     { name: "Patient", link: "/patient" },
     { name: "Department", link: "/Department" },
     { name: "Appointment", link: "/Appointment" },
     { name: "MedicalRecord", link: "/MedicalRecord" },
-    { name: "ReceptionDoctor", link: "/ReceptionDoctor" },
+    { name: "Doctors", link: "/Doctors" },
     
   ];
 

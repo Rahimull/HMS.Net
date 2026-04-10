@@ -87,22 +87,78 @@ Data/
 Migrations/
  20260405035721_InitialCreate_ReceptionModule_with_AppUser.cs
  20260405035721_InitialCreate_ReceptionModule_with_AppUser.Designer.cs
+ 20260409163310_FixRelations.cs
+ 20260409163310_FixRelations.Designer.cs
  HMSDBCModelSnapshot.cs
 Models/
  AppUser.cs
  BaseEntity.cs
-Modules/Doctors/Entities/
- Consulatations.cs
- Diagnosis.cs
- Doctor.cs
- PrescriptionDetails.cs
- Prescriptions.cs
- Schedules.cs
+Modules/Doctors/Controllers/
+ ConsultationController.cs
+ DiagnosisController.cs
+ DoctorController.cs
+ PrescriptionController.cs
+ PrescriptionDetailsController.cs
+ ScheduleController.cs
+Modules/Doctors/
+ DoctorModules.cs
+ DTOs/
+  ConsultationDto.cs
+  CreateConsultationDto.cs
+  CreateDiagnosisDto.cs
+  CreateDoctorDto.cs
+  CreatePrescriptionDetailsDto.cs
+  CreatePrescriptionDto.cs
+  CreateSheduleDto.cs
+  DiagnosisDto.cs
+  DoctorDto.cs
+  PrescriptionDetailsDto.cs
+  PrescriptionDto.cs
+  ScheduleDto.cs
+  UpdateConsultationDto.cs
+  UpdateDiagnosisDto.cs
+  UpdateDoctorDto.cs
+  UpdatePrescriptionDetailsDto.cs
+  UpdatePrescriptionDto.cs
+  UpdateScheduleDto.cs
+ Entities/
+  Consultations.cs
+  Diagnosis.cs
+  Doctor.cs
+  PrescriptionDetails.cs
+  Prescriptions.cs
+  Schedules.cs
+ Mapping/DoctorProfile.cs
+ Repositories/
+  ConsultationRepository.cs
+  DiagnosisRepository.cs
+  DoctorRepository.cs
+  IConsultationRepository.cs
+  IDiagnosisRepository.cs
+  IDoctorRepository.cs
+  IPrescriptionRepository.cs
+  IPrescriptionsDetailsRepository.cs
+  ISchedulesRepository.cs
+  PrescriptionDetailsRepository.cs
+  PrescriptionRepository.cs
+  SchedulesRepository.cs
+ Services/
+  ConsultationsService.cs
+  DiagnosisService.cs
+  DoctorService.cs
+  IConsultationService.cs
+  IDiagnosisService.cs
+  IDoctorService.cs
+  IPrescriptionDetailesService.cs
+  IPrescriptionService.cs
+  IScheduleService.cs
+  PrescriptionDetailsService.cs
+  PrescriptionService.cs
+  ScheduleServices.cs
+Modules/Emergency/Entities/
+ Emergency.cs
+ EmergencyTreatments.cs
 Modules/
- Doctors/ReceptionModule.cs
- Emergency/Entities/
-  Emergency.cs
-  EmergencyTreatments.cs
  Emergency/ReceptionModule.cs
  Finance/Entities/
   InvoiceDetails.cs
@@ -152,23 +208,19 @@ Modules/
   DepartmentController.cs
   MedicalRecordController.cs
   PatientController.cs
-  ReceptionDoctorController.cs
  Reception/DTOs/
   AppointmentDto.cs
   CreateAppointmentDto.cs
   CreateDepartmentDto.cs
   CreateMedicalRecordDto.cs
   CreatePatientDto.cs
-  CreateReceptionDoctorDto.cs
   DepartmentDto.cs
   MedicalRecordDto.cs
   PatientDto.cs
-  ReceptionDoctorDto.cs
   UpdateAppointmentDto.cs
   UpdateDepartmentDto.cs
   UpdateMedicalRecordDto.cs
   UpdatePatientDto.cs
-  UpdateRecepationDoctorDto.cs
  Reception/Entities/
   Appointment.cs
   Department.cs
@@ -185,10 +237,8 @@ Modules/
    IDepartmentRepository.cs
    IMedicalRecordRepository.cs
    IPatientRepository.cs
-   IReceptionDoctorRepository.cs
    MedicalRecordRepository.cs
    PatientRepository.cs
-   ReceptionDoctorRepository.cs
   Services/
    AppointmentService.cs
    DepartmentService.cs
@@ -196,12 +246,10 @@ Modules/
    IDepartmentService.cs
    IMedicalRecordService.cs
    IPatientService.cs
-   IReceptionDoctorService.cs
    MedicalRecordService.cs
    PatientService.cs
-   ReceptionDoctorService.cs
  Reports/
-  Entities/Reports.cs
+  Entities/Report.cs
   ReceptionModule.cs
  Store/Entities/
   Items.cs
@@ -614,5 +662,6 @@ C:/Program Files/dotnet/sdk/10.0.102/Sdks/Microsoft.NET.Sdk/analyzers/
  Microsoft.CodeAnalysis.NetAnalyzers.dll
 
 [analyzerConfigFiles]
+../.editorconfig
 C:/Program Files/dotnet/sdk/10.0.102/Sdks/Microsoft.NET.Sdk/analyzers/build/config/analysislevel_10_default.globalconfig
 obj/Debug/net10.0/HMSApi.GeneratedMSBuildEditorConfig.editorconfig

@@ -1,5 +1,5 @@
 
-namespace HMSApi.Mudoles.Reception.DTOs;
+namespace HMSApi.Modules.Reception.DTOs;
 
 public record UpdateMedicalRecordDto(
     string RecordNumber
