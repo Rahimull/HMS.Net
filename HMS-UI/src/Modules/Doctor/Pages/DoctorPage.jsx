@@ -1,6 +1,6 @@
 import { useState,useEffect } from "react";
 import DoctorApi from "../../../api/DoctorsModules/DoctorApi"
-import PatientApi from "../../../api/PatientApi";
+import DepartmentApi from "../../../api/DepartmentApi";
 import useCrud from "../../../hooks/useCurd";
 import DataTable from "../../../components/common/DataTable";
 import Layout from "../../../components/layout/Layout";
@@ -12,36 +12,32 @@ const DoctorPage = () => {
     useCrud(DoctorApi);
 
   const [editing, setEditing] = useState(null);
-  const [patients, setPatients] = useState([]);
-  const [receptionDoctor, setReceptionDoctor] = useState([]);
+  const [department, setDepartment] = useState([]);
 
   useEffect(() => {
-    PatientApi.getAll().then((res) => {
-      console.log("Patients Api: ",res.data.data);
-      setPatients(res.data.data);
+    DepartmentApi.getAll().then((res) => {
+      setDepartment(res.data.data);
     });
   }, []);
  
 
  
-  const patientOptions = patients.map((d) => ({
+  const DepartmentOptions = department.map((d) => ({
     value: d.id,
-    label: `${d.firstName} ${d.lastName}`,
-  }));
-  const receptionDoctorOptions = receptionDoctor.map((d) => ({
-    value: d.id,
-    label: d.fullName,
+    label: `${d.name}`,
   }));
 
   // Submit (create / update)
   const handleSubmit = (formData) => {
     const payload = {
-      DoctorDate: formData.DoctorDate,
-      DoctorTime: formData.DoctorTime,
-      patientId: formData.patientId, // ✅ enum باید عدد باشد
-      notes: formData.notes, // ✅ DateOnly
-      receptionDoctorId: formData.receptionDoctorId,
-      departmentId: formData.departmentId,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      specialization: formData.specialization, 
+      email: formData.email, 
+      isActive: Boolean(formData.isActive),
+      fee: Number(formData.fee),
+      phoneNumber: formData.phoneNumber,
+      departmentId: Number(formData.departmentId),
     };
 
     if (editing) {
@@ -55,53 +51,53 @@ const DoctorPage = () => {
   // From Fields
   const DoctorFields = [
     {
-      name: "patientId",
-      label: "Patient",
-      type: "select",
-      options: patientOptions,
+      name: "firstName",
+      label: "First Name",
+      type: "Text",
       required: true,
     },
     {
-      name: "receptionDoctorId",
-      label: "Doctor",
-      type: "select",
-      options: receptionDoctorOptions,
+      name: "lastName",
+      label: "Last Name",
+      type: "text",
       required: true,
     },
     {
-      name: "DoctorDate",
-      label: "Doctor Date",
-      type: "date",
+      name: "specialization",
+      label: "Specialization",
+      type: "text",
       required: true,
     },
     {
-      name: "DoctorTime",
-      label: "Doctor Time",
-      type: "time",
+      name: "email",
+      label: "Email Address",
+      type: "email",
       required: true,
     },
-    { name: "notes", label: "Notes", type: "textarea" },
     {
-      name: "gender",
-      label: "Gender",
-      type: "select",
-      options: [
-        { value: 1, label: "Male" },
-        { value: 2, label: "Female" },
-      ],
-      required: true,
+      name: "fee",
+      label: "Fee",
+      type: "number",
     },
+    { name: "isActive", label: "Is Active", type: "checkbox" },
+    { name: "phoneNumber", label: "Phone Number", type: "text" },
+    { name: "departmentId", label: "Department Name", type: "select", 
+        options:DepartmentOptions
+    },
+    
   ];
 
   // Table Columns
   const DoctorColumns = [
     { key: "id", label: "ID" },
-    { key: "DoctorDate", label: "Doctor Date" },
-    { key: "DoctorTime", label: "Doctor Time" },
-    { key: "notes", label: "Notes" },
-    { key: "patientId", label: "Pateint Name" },
-    { key: "receptionDoctorId", label: "Doctor Name" },
-    { key: "departmentId", label: "Department" },
+    { key: "firstName", label: "First Name" },
+    { key: "lastName", label: "Last Name" },
+    { key: "specialization", label: "Specialization" },
+    { key: "email", label: "Email" },
+    { key: "isActive", label: "Is Active" },
+    { key: "fee", label: "Fee" },
+    { key: "phoneNumber", label: "Phone Number" },
+    { key: "departmentName", label: "Department" },
   ];
 
   return (

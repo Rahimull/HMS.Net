@@ -4,6 +4,7 @@ using HMSApi.Modules.Doctors.Entities;
 
 
 namespace HMSApi.Mudoles.Doctors.DoctorMapping;
+
 public class DoctorProfile : Profile
 {
     public DoctorProfile()
@@ -11,7 +12,9 @@ public class DoctorProfile : Profile
         // Consultation Mappings
         CreateMap<CreateConsultationDto, Consultation>();
         CreateMap<UpdateConsultationDto, Consultation>();
-        CreateMap<Consultation, ConsultationDto>();
+        CreateMap<Consultation, ConsultationDto>()
+            .ForMember(dest => dest.PatientName, opt => opt.MapFrom(src => src.Patient!.FirstName))
+            .ForMember(dest => dest.DoctorName, opt => opt.MapFrom(src => src.Doctor!.FirstName));
 
         // Diagnosis Mappings
         CreateMap<CreateDiagnosisDto, Diagnosis>();
@@ -21,7 +24,9 @@ public class DoctorProfile : Profile
         // Doctor Mappings
         CreateMap<CreateDoctorDto, Doctor>();
         CreateMap<UpdateDoctorDto, Doctor>();
-        CreateMap<Doctor, DoctorDto>();
+        CreateMap<Doctor, DoctorDto>()
+            .ForMember(dest => dest.DepartmentName,
+                opt => opt.MapFrom(src => src.Department != null ? src.Department.Name : ""));
 
 
         // PrescriptionDetails Mappings

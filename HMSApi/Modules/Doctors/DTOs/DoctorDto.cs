@@ -3,7 +3,7 @@ namespace HMSApi.Modules.Doctors.DTOs;
 
 public record DoctorDto(
    int Id,
-   string FIrstName,
+   string FirstName,
    string LastName,
    string Specialization,
    string Email,

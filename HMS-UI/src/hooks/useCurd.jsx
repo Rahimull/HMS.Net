@@ -31,7 +31,7 @@ const useCrud = (service) => {
       await fetchData();
     } catch (err) {
       console.error(err);
-      setError("Create failed");
+      setError("Create failed", err);
     } finally {
       setLoading(false);
     }

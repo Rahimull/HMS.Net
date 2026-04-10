@@ -1,16 +1,11 @@
-namespace HMSApi.Modules.Doctors.DTOs;
-
-public record UpdateConsultationDto(
-    DateTime VisitDate,
-    string DhiefComplaint,
-    string? Notes,
-    string Examination,
-    int DoctorId,
-    string DoctorName,
-    int PatientId,
-    string PatientName  
-);
-
-
-
-
+public class UpdateConsultationDto
+{
+    public DateTime VisitDate { get; set; }
+    public string ChiefComplaint { get; set; } = null!;
+    public string? Notes { get; set; }
+    public string Examination { get; set; }= null!;
+    public int DoctorId { get; set; }
+    public string? DoctorName { get; set; }
+    public int PatientId { get; set; }
+    public string? PatientName { get; set; }
+}

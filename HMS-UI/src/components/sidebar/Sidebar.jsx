@@ -8,6 +8,8 @@ const Sidebar = () => {
     { name: "Appointment", link: "/Appointment" },
     { name: "MedicalRecord", link: "/MedicalRecord" },
     { name: "Doctors", link: "/Doctors" },
+    { name: "Consultations", link: "/Consultations" },
+    { name: "Diagnosis", link: "/Diagnosis" },
     
   ];
 

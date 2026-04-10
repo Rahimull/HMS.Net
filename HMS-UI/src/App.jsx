@@ -6,6 +6,8 @@ import DepartmentPage from "./pages/DepartmentPage";
 import AppointmentPage from "./pages/AppointmentPage";
 import MedicalRecordPage from "./pages/MedicalRecordPage";
 import DoctorPage from "./Modules/Doctor/Pages/DoctorPage";
+import ConsultationPage from "./Modules/Doctor/Pages/Consultation";
+import DiagnosisPage from "./Modules/Doctor/Pages/Diagnosis";
 
 function App() {
 
@@ -18,6 +20,8 @@ function App() {
       <Route path="/appointment" element={<AppointmentPage />} />
       <Route path="/medicalRecord" element={<MedicalRecordPage />} />
       <Route path="/doctors" element={<DoctorPage />} />
+      <Route path="/consultations" element={<ConsultationPage />} />
+      <Route path="/diagnosis" element={<DiagnosisPage />} />
     </Routes>
   )
 
