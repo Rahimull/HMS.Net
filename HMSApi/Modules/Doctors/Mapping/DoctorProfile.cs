@@ -42,6 +42,8 @@ public class DoctorProfile : Profile
         // Schedule Mappings
         CreateMap<CreateScheduleDto, Schedules>();
         CreateMap<UpdateScheduleDto, Schedules>();
-        CreateMap<Schedules, ScheduleDto>();
+        CreateMap<Schedules, ScheduleDto>()
+            .ForCtorParam("DoctorName", opt => opt.MapFrom(src => src.Doctor.FirstName + " " + src.Doctor.LastName));
+
     }
 }

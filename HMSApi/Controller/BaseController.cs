@@ -1,7 +1,8 @@
-
-
 using HMSApi.ApiResponse;
+using HMSApi.Models;
+using HMSApi.Services;
 using Microsoft.AspNetCore.Mvc;
+
 namespace HMSApi.Controllers;
 
 [ApiController]
@@ -13,18 +14,19 @@ where TCreateDto : class
 where TUpdateDto : class
 {
     protected readonly TService _service;
+
     protected BaseController(TService service)
     {
         _service = service;
     }
 
+    // 🔥 PAGED LIST (MAIN ENDPOINT)
     [HttpGet]
-    public virtual async Task<IActionResult> GetAll()
+    public virtual async Task<IActionResult> GetPaged([FromQuery] QueryParams query)
     {
-        var result = await _service.GetAllAsync();
-        // return Ok(result);
-        
-        return Ok(new ApiResponse<IEnumerable<TDto>>
+        var result = await _service.GetPagedAsync(query);
+
+        return Ok(new ApiResponse<PagedResult<TDto>>
         {
             Success = true,
             Message = $"{typeof(TDto).Name} fetched successfully",
@@ -32,61 +34,68 @@ where TUpdateDto : class
         });
     }
 
+    // GET BY ID
     [HttpGet("{id:int}")]
     public virtual async Task<IActionResult> GetById(int id)
     {
         var result = await _service.GetByIdAsync(id);
-        if (result == null) return NotFound();
-        // return Ok(result);
+        if (result == null)
+        {
+            return NotFound(new ApiResponse<string>
+            {
+                Success = false,
+                Message = "Not found"
+            });
+        }
 
         return Ok(new ApiResponse<TDto>
         {
             Success = true,
-            Message = $"{typeof(TDto).Name} fetched successfully",
+            Message = "Fetched successfully",
             Data = result
         });
     }
 
+    // CREATE
     [HttpPost]
     public virtual async Task<IActionResult> Create([FromBody] TCreateDto dto)
     {
-
         var result = await _service.AddAsync(dto);
-        // return CreatedAtAction(nameof(GetAll), null);
 
-        return Ok(new ApiResponse<TDto>
-        {
-            Success = true,
-            Message = $"{typeof(TDto).Name} Create successfulldy",
-            Data = result
-        });
-
+        return CreatedAtAction(
+            nameof(GetById),
+            new { id = result },
+            new ApiResponse<TDto>
+            {
+                Success = true,
+                Message = "Created successfully",
+                Data = result
+            });
     }
 
+    // UPDATE
     [HttpPut("{id:int}")]
     public virtual async Task<IActionResult> Update(int id, [FromBody] TUpdateDto dto)
     {
         await _service.UpdateAsync(id, dto);
-        return NoContent();
 
+        return Ok(new ApiResponse<string>
+        {
+            Success = true,
+            Message = "Updated successfully"
+        });
     }
 
+    // DELETE (SOFT)
     [HttpDelete("{id:int}")]
-    public virtual async Task<IActionResult> SoftDelete(int id)
+    public virtual async Task<IActionResult> Delete(int id)
     {
         await _service.SoftDeleteAsync(id);
-        return NoContent();
 
+        return Ok(new ApiResponse<string>
+        {
+            Success = true,
+            Message = "Deleted successfully"
+        });
     }
-
-    [HttpGet("{id:int}/exists")]
-    public virtual async Task<IActionResult> Exists(int id)
-    {
-        var exists = await _service.ExistsAsync(id);
-        return Ok(exists);
-
-    }
-
-
-
 }

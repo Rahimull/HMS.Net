@@ -93,6 +93,14 @@ Migrations/
 Models/
  AppUser.cs
  BaseEntity.cs
+ BaseSpecification.cs
+ ISpecification.cs
+ PagedResult.cs
+ PaginationParams.cs
+ QueryParams.cs
+ SearchParams.cs
+ SortingParams.cs
+ SpecificationEvaluator.cs
 Modules/Doctors/Controllers/
  ConsultationController.cs
  DiagnosisController.cs
@@ -273,6 +281,10 @@ Repositories/
 Services/
  BaseService.cs
  IBaseService.cs
+Specifications/
+ BaseSpecification.cs
+ ISpecification.cs
+ SpecificationEvaluator.cs
 
 [metadataReferences]
 <NUGET>/

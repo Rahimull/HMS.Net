@@ -2,6 +2,7 @@ using AutoMapper;
 using HMSApi.Modules.Doctors.DTOs;
 using HMSApi.Modules.Doctors.Entities;
 using HMSApi.Modules.Doctors.Repositories;
+using HMSApi.Services;
 
 namespace HMSApi.Modules.Doctors.Services;
 

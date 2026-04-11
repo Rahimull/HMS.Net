@@ -10,6 +10,9 @@ const Sidebar = () => {
     { name: "Doctors", link: "/Doctors" },
     { name: "Consultations", link: "/Consultations" },
     { name: "Diagnosis", link: "/Diagnosis" },
+    { name: "Prescription", link: "/Prescription" },
+    { name: "PrescriptionDetails", link: "/PrescriptionDetails" },
+    { name: "Schedule", link: "/Schedule" },
     
   ];
 

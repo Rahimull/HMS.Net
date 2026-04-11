@@ -5,7 +5,7 @@ public record ScheduleDto(
     int Id,
     DateOnly ScheduleDate,
     DayOfWeek DayOfWeek,
-    TimeOnly StartDate,
+    TimeOnly StartTime,
     TimeOnly EndTime,
     int MaxPatients,
     int DoctorId,

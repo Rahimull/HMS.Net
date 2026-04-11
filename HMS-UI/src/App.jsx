@@ -6,8 +6,11 @@ import DepartmentPage from "./pages/DepartmentPage";
 import AppointmentPage from "./pages/AppointmentPage";
 import MedicalRecordPage from "./pages/MedicalRecordPage";
 import DoctorPage from "./Modules/Doctor/Pages/DoctorPage";
-import ConsultationPage from "./Modules/Doctor/Pages/Consultation";
-import DiagnosisPage from "./Modules/Doctor/Pages/Diagnosis";
+import ConsultationPage from "./Modules/Doctor/Pages/ConsultationPage";
+import DiagnosisPage from "./Modules/Doctor/Pages/DiagnosisPage";
+import PrescriptionPage from "./Modules/Doctor/Pages/PerscriptionPage"
+import PrescriptionDetailsPage from "./Modules/Doctor/Pages/PrescriptionDetailsPage"
+import SchedulesPage from "./Modules/Doctor/Pages/SchedulesPage"
 
 function App() {
 
@@ -22,6 +25,9 @@ function App() {
       <Route path="/doctors" element={<DoctorPage />} />
       <Route path="/consultations" element={<ConsultationPage />} />
       <Route path="/diagnosis" element={<DiagnosisPage />} />
+      <Route path="/prescription" element={<PrescriptionPage />} />
+      <Route path="/prescriprtionDetails" element={<PrescriptionDetailsPage />} />
+      <Route path="/schedule" element={<SchedulesPage />} />
     </Routes>
   )
 
