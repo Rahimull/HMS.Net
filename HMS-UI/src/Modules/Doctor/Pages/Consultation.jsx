@@ -1,50 +1,46 @@
 import { useState, useEffect } from "react";
 import ConsultationApi from "../services/ConsultationApi";
-import DepartmentApi from "../../../api/DepartmentApi";
+import patientApi from "../../../api/patientApi";
 import useCrud from "../../../hooks/useCurd";
 import DataTable from "../../../components/common/DataTable";
 import Layout from "../../../components/layout/Layout";
 import ReusableForm from "../../../components/form/ResusableForm";
 import Loader from "../../../components/common/Loader";
+import doctorApi from "../../../api/DoctorsModules/DoctorApi"
 
 const ConsultationPage = () => {
   const { data, loading, error, createItem, updateItem, deleteItem } =
     useCrud(ConsultationApi);
 
   const [editing, setEditing] = useState(null);
-  const [department, setDepartment] = useState([]);
+  const [patient, setPatient] = useState([]);
+  const [doctor, setDoctor] = useState([]);
 
   useEffect(() => {
-    DepartmentApi.getAll().then((res) => {
-      setDepartment(res.data.data);
-    });
-  }, []);
+    const fetchData = async () => {
+      try {
+        const patientRes = await patientApi.getAll();
+        const doctorRes = await doctorApi.getAll();
 
-  const DepartmentOptions = department.map((d) => ({
-    value: d.id,
-    label: `${d.name}`,
-  }));
-
-  // Submit (create / update)
-  const handleSubmit = (formData) => {
-    const payload = {
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      specialization: formData.specialization,
-      email: formData.email,
-      isActive: Boolean(formData.isActive),
-      fee: Number(formData.fee),
-      phoneNumber: formData.phoneNumber,
-      departmentId: Number(formData.departmentId),
+        setPatient(patientRes.data.data);
+        setDoctor(doctorRes.data.data);
+      } catch (error) {
+        console.log("API Error:", error);
+      }
     };
 
-    if (editing) {
-      updateItem(editing.id, payload);
-      setEditing(null);
-    } else {
-      createItem(payload);
-    }
-  };
+    fetchData();
+  }, []);
+
+  const patientOptions = patient.map((d) => ({
+    value: d.id,
+    label: `${d.firstName} -- ${d.lastName}`,
+  }));
+
+  const doctorOptions = doctor.map((d) => ({
+    value: d.id,
+    label: `${d.firstName} -- ${d.lastName}`,
+  }));
 
   // {
   //   "visitDate": "2026-04-10T16:52:46.291Z",
@@ -55,11 +51,35 @@ const ConsultationPage = () => {
   //   "patientId": 3
   // }
 
+  // Submit (create / update)
+  const handleSubmit = (formData) => {
+    const payload = {
+      visitDate: formData.visitDate,
+      chiefComplaint: formData.chiefComplaint,
+      notes: formData.notes,
+      examination: formData.examination,
+      doctorId: Number(formData.doctorId),
+      patientId: Number(formData.patientId),
+    };
+
+    if (editing) {
+      updateItem(editing.id, payload);
+      setEditing(null);
+    } else {
+      createItem(payload);
+    }
+  };
+
   // From Fields
   const ConsultationFields = [
-    {name: "visitDate", label: "Visit Date", type: "datetime", required: true },
     {
-      name: "chiefComplain",
+      name: "visitDate",
+      label: "Visit Date",
+      type: "date",
+      required: true,
+    },
+    {
+      name: "chiefComplaint",
       label: "Chief Complaint",
       type: "text",
       required: true,
@@ -68,15 +88,14 @@ const ConsultationPage = () => {
       name: "patientId",
       label: "Patient",
       type: "select",
-      options: []
+      options: patientOptions,
     },
-    {name: "examination", label: "Examination", type: "Text",required: true },
+    { name: "examination", label: "Examination", type: "Text", required: true },
     {
       name: "doctorId",
       label: "Doctor",
       type: "select",
-      options: []
-
+      options: doctorOptions,
     },
     { name: "notes", label: "Notes", type: "textarea" },
   ];

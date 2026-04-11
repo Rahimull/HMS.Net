@@ -22,17 +22,18 @@ const DiagnosisPage = () => {
 
   const consultationOptions = consultation.map((d) => ({
     value: d.id,
-    label: `${d.ChiefComplaint}`
+    label: `${d.visitDate}`
   }));
 
   // Submit (create / update)
   const handleSubmit = (formData) => {
     const payload = {
       diagnosisName: formData.diagnosisName,
-      diagnosisName: formData.diagnosisName,
+      diagnosisDetails: formData.diagnosisDetails,
       diagnosisDate: formData.diagnosisDate,
       consultationId: Number(formData.consultationId),
     };
+    console.log(payload)
 
     if (editing) {
       updateItem(editing.id, payload);

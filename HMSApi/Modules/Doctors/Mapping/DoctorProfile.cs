@@ -13,8 +13,8 @@ public class DoctorProfile : Profile
         CreateMap<CreateConsultationDto, Consultation>();
         CreateMap<UpdateConsultationDto, Consultation>();
         CreateMap<Consultation, ConsultationDto>()
-            .ForMember(dest => dest.PatientName, opt => opt.MapFrom(src => src.Patient!.FirstName))
-            .ForMember(dest => dest.DoctorName, opt => opt.MapFrom(src => src.Doctor!.FirstName));
+            .ForMember(dest => dest.PatientName, opt => opt.MapFrom(src => src.Patient.FirstName))
+            .ForMember(dest => dest.DoctorName, opt => opt.MapFrom(src => src.Doctor != null ? src.Doctor.FirstName : ""));
 
         // Diagnosis Mappings
         CreateMap<CreateDiagnosisDto, Diagnosis>();
