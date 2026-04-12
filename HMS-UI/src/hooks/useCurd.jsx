@@ -1,83 +1,61 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-const useCrud = (service) => {
+const useCrud = (service, pageSize = 10) => {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Get All
-  const fetchData = async () => {
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize,
+  });
+
+  const [sorting, setSorting] = useState({
+    sortBy: null,
+    sortDir: "asc",
+  });
+
+  const [search, setSearch] = useState("");
+
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await service.getAll();
-      console.log("API Response:", res);
-
-      // فقط آرایه اصلی
-      setData(res.data.data);
       setError(null);
+
+      const res = await service.getPaged({
+        pagination,
+        sorting,
+        search: { term: search },
+      });
+
+      const result = res.data.data;
+
+      setData(result.data || []);
+      setTotalCount(result.totalCount || 0);
     } catch (err) {
-      console.error("API Error:", err);
+      console.error(err);
       setError("Failed to fetch data");
     } finally {
       setLoading(false);
     }
-  };
-
-  // Create
-  const createItem = async (item) => {
-    try {
-      setLoading(true);
-      await service.create(item);
-      await fetchData();
-    } catch (err) {
-      console.error(err);
-      setError("Create failed", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Update
-  const updateItem = async (id, item) => {
-    try {
-      setLoading(true);
-      await service.update(id, item);
-      await fetchData();
-    } catch (err) {
-      console.error(err);
-      setError("Update failed");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Delete
-  const deleteItem = async (id) => {
-    if (window.confirm("Are you Sure...?")) {
-      try {
-        setLoading(true);
-        await service.delete(id);
-        await fetchData();
-      } catch (err) {
-        console.error(err);
-        setError("Delete failed");
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
+  }, [service, pagination, sorting, search]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   return {
     data,
+    totalCount,
+    pagination,
+    setPagination,
+    sorting,
+    setSorting,
+    search,
+    setSearch,
     loading,
     error,
-    createItem,
-    updateItem,
-    deleteItem,
   };
 };
 

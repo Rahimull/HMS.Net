@@ -3,6 +3,17 @@ import Api from "./Api";
 const endpoint = "/appointment";
 
 const AppointmentApi = {
+
+    // Paged - Get with QueryString
+    getPaged: (pagination) =>
+        Api.get(endpoint,{
+            params:{
+                pageIndex: pagination.pageIndex,
+                pageSize: pagination.pageSize
+            }
+        }),
+
+    // CRUD
     getAll: () => Api.get(endpoint),
     getById: (id) => Api.get(`${endpoint}/${id}`),
     create: (data) => Api.post(endpoint, data),

@@ -1,51 +1,3 @@
-// const DataTable = ({ columns, data, onEdit, onDelete }) => {
-//   return (
-//     <div className="bg-white p-4 rounded shadow mt-6">
-//       <h2 className="text-lg font-semibold mb-4">Recent Patients</h2>
-//       <table className="w-full text-left">
-//         <thead>
-//           <tr className="border-b">
-//             {columns.map((col) => (
-//               <th key={col.key} className="p-2">
-//                 {col.label}
-//               </th>
-//             ))}
-//             <th className="p-2">Actions</th>
-//           </tr>
-//         </thead>
-
-//         <tbody>
-//           {data.map((row) => (
-//             <tr className="border-b hover:bg-gray-100" key={row.id}>
-//               {columns.map((col) => (
-//                 <td key={col.key} className="p-2">
-//                   {row[col.key]}
-//                 </td>
-//               ))}
-//               <td className="p-2 text-green-600">
-//                 <button
-//                   onClick={() => onEdit(row)}
-//                   className="font-semibold mr-2 cursor-pointer hover:text-green-700"
-//                 >
-//                   Edit
-//                 </button>
-//                 <button
-//                   onClick={() => onDelete(row.id)}
-//                   className="font-semibold text-red-500 cursor-pointer hover:text-red-950"
-//                 >
-//                   Delete
-//                 </button>
-//               </td>
-//             </tr>
-//           ))}
-//         </tbody>
-//       </table>
-//     </div>
-//   );
-// };
-
-// export default DataTable;
-
 import {
   flexRender,
   getCoreRowModel,
@@ -57,7 +9,9 @@ const DataTable = ({
   data,
   pagination,
   totalCount,
+  sorting,
   onPaginationChange,
+  onSortingChange,
   onEdit,
   onDelete,
   loading,
@@ -73,28 +27,34 @@ const DataTable = ({
     columns,
     state: {
       pagination: { pageIndex, pageSize },
+      sorting,
     },
     pageCount,
     manualPagination: true,
+    manualSorting: true,
     onPaginationChange,
+    onSortingChange,
     getCoreRowModel: getCoreRowModel(),
   });
 
   return (
     <div className="bg-white p-4 rounded shadow mt-6">
-      <h2 className="text-lg font-semibold mb-4">Departments</h2>
-
-      {/* TABLE */}
       <table className="w-full text-left border-collapse">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id} className="border-b">
               {headerGroup.headers.map((header) => (
-                <th key={header.id} className="p-2">
+                <th
+                  key={header.id}
+                  className="p-2 cursor-pointer select-none"
+                  onClick={header.column.getToggleSortingHandler()}
+                >
                   {flexRender(
                     header.column.columnDef.header,
                     header.getContext()
                   )}
+                  {header.column.getIsSorted() === "asc" && " ▲"}
+                  {header.column.getIsSorted() === "desc" && " ▼"}
                 </th>
               ))}
               <th className="p-2">Actions</th>
@@ -105,28 +65,19 @@ const DataTable = ({
         <tbody>
           {loading ? (
             <tr>
-              <td
-                colSpan={columns.length + 1}
-                className="p-4 text-center"
-              >
+              <td colSpan={columns.length + 1} className="p-4 text-center">
                 Loading...
               </td>
             </tr>
           ) : table.getRowModel().rows.length === 0 ? (
             <tr>
-              <td
-                colSpan={columns.length + 1}
-                className="p-4 text-center"
-              >
+              <td colSpan={columns.length + 1} className="p-4 text-center">
                 No data found
               </td>
             </tr>
           ) : (
             table.getRowModel().rows.map((row) => (
-              <tr
-                key={row.id}
-                className="border-b hover:bg-gray-100"
-              >
+              <tr key={row.id} className="border-b hover:bg-gray-100">
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="p-2">
                     {flexRender(
@@ -169,7 +120,6 @@ const DataTable = ({
           >
             Prev
           </button>
-
           <button
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
@@ -184,6 +134,3 @@ const DataTable = ({
 };
 
 export default DataTable;
-
-
-

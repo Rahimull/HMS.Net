@@ -58,7 +58,7 @@ const AppointmentPage = () => {
     }
   };
 
-  // From Fields
+ /* ---------- FORM ---------- */
   const AppointmentFields = [
     {
       name: "patientId",
@@ -101,13 +101,13 @@ const AppointmentPage = () => {
 
   // Table Columns
   const AppointmentColumns = [
-    { key: "id", label: "ID" },
-    { key: "appointmentDate", label: "Appointment Date" },
-    { key: "appointmentTime", label: "Appointment Time" },
-    { key: "notes", label: "Notes" },
-    { key: "patientId", label: "Pateint Name" },
-    { key: "receptionDoctorId", label: "Doctor Name" },
-    { key: "departmentId", label: "Department" },
+    { accessorKey: "id", header: "ID" },
+    { accessorKey: "appointmentDate", header: "Appointment Date" },
+    { accessorKey: "appointmentTime", header: "Appointment Time" },
+    { accessorKey: "notes", header: "Notes" },
+    { accessorKey: "patientId", header: "Pateint Name" },
+    { accessorKey: "receptionDoctorId", header: "Doctor Name" },
+    { accessorKey: "departmentId", header: "Department" },
   ];
 
   return (
