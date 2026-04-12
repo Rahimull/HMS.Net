@@ -21,8 +21,8 @@ where TUpdateDto : class
     }
 
     // 🔥 PAGED LIST (MAIN ENDPOINT)
-    [HttpGet]
-    public virtual async Task<IActionResult> GetPaged([FromQuery] QueryParams query)
+    [HttpPost("paged")]
+    public virtual async Task<IActionResult> GetPaged([FromBody] QueryParams query)
     {
         var result = await _service.GetPagedAsync(query);
 
@@ -57,21 +57,20 @@ where TUpdateDto : class
     }
 
     // CREATE
+
     [HttpPost]
     public virtual async Task<IActionResult> Create([FromBody] TCreateDto dto)
     {
         var result = await _service.AddAsync(dto);
 
-        return CreatedAtAction(
-            nameof(GetById),
-            new { id = result },
-            new ApiResponse<TDto>
-            {
-                Success = true,
-                Message = "Created successfully",
-                Data = result
-            });
+        return Ok(new ApiResponse<TDto>
+        {
+            Success = true,
+            Message = "Created successfully",
+            Data = result
+        });
     }
+
 
     // UPDATE
     [HttpPut("{id:int}")]

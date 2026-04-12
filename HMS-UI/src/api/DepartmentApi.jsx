@@ -4,7 +4,7 @@ const endpoint = "/department";
 
 const DepartmentApi = {
   getPaged: (queryParams) =>
-    Api.get(endpoint, {
+    Api.post(`${endpoint}/paged`, {
       params: queryParams,
     }),
 

@@ -1,4 +1,5 @@
 using AutoMapper;
+using HMSApi.Models;
 using HMSApi.Modules.Doctors.DTOs;
 using HMSApi.Modules.Doctors.Entities;
 using HMSApi.Modules.Doctors.Repositories;
@@ -12,5 +13,10 @@ public class DiagnosisService : BaseService<Diagnosis, DiagnosisDto, CreateDiagn
     public DiagnosisService(IDiagnosisRepository repo, IMapper mapper) : base(repo, mapper)
     {
         
+    }
+
+    protected override ISpecification<Diagnosis> BuildSpecification(QueryParams query)
+    {
+        throw new NotImplementedException();
     }
 }

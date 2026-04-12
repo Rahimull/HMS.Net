@@ -3,6 +3,8 @@ using HMSApi.Modules.Reception.Entities;
 using HMSApi.Modules.Reception.DTOs;
 using HMSApi.Modules.Reception.Repositories;
 using HMSApi.Services;
+using HMSApi.Models;
+using HMSApi.Specifications;
 namespace HMSApi.Modules.Reception.Services;
 
 
@@ -12,4 +14,15 @@ public class DepartmentService : BaseService<Department, DepartmentDto, CreateDe
     {
         
     }
+
+
+    
+
+  // 🔥 VERY IMPORTANT
+    protected override ISpecification<Department> BuildSpecification(QueryParams query)
+    {
+        return new DepartmentSpecification(query);
+    }
+
+
 }

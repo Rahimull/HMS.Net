@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 namespace HMSApi.Models;
+
 public static class SpecificationEvaluator
 {
     public static IQueryable<T> GetQuery<T>(
@@ -33,6 +34,15 @@ public static class SpecificationEvaluator
         if (spec.Take.HasValue)
             query = query.Take(spec.Take.Value);
 
+
+        Console.WriteLine(
+               $"APPLIED PAGING => Skip: {spec.Skip}, Take: {spec.Take}"
+           );
+
+
         return query;
     }
+
+
+
 }

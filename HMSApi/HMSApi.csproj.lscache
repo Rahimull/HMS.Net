@@ -96,6 +96,7 @@ Models/
  BaseSpecification.cs
  ISpecification.cs
  PagedResult.cs
+ PagedSpecification.cs
  PaginationParams.cs
  QueryParams.cs
  SearchParams.cs
@@ -256,6 +257,9 @@ Modules/
    IPatientService.cs
    MedicalRecordService.cs
    PatientService.cs
+  Specification/
+   DepartmentSpecification.cs
+   PatientSpecification.cs
  Reports/
   Entities/Report.cs
   ReceptionModule.cs

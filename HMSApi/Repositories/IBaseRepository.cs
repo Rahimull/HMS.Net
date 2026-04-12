@@ -1,6 +1,7 @@
 
 
 
+using System.Linq.Expressions;
 using HMSApi.Models;
 namespace HMSApi.Repositories;
 public interface IBaseRepository<TEntity> where TEntity : BaseEntity
@@ -22,5 +23,5 @@ public interface IBaseRepository<TEntity> where TEntity : BaseEntity
 
     // Specifiation Support
     Task<List<TEntity>> ListAsync(ISpecification<TEntity> spec);
-    Task<int> CountAsync(ISpecification<TEntity> spec);
+    Task<int> CountAsync(Expression<Func<TEntity, bool>>? creiteria);
 }

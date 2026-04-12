@@ -1,4 +1,5 @@
 using AutoMapper;
+using HMSApi.Models;
 using HMSApi.Modules.Reception.DTOs;
 using HMSApi.Modules.Reception.Entities;
 using HMSApi.Modules.Reception.Repositories;
@@ -11,5 +12,10 @@ public class AppointmentService : BaseService<Appointment, AppointmentDto, Creat
     public AppointmentService(IAppointmentRepository repo, IMapper mapper) : base(repo, mapper)
     {
         
+    }
+
+    protected override ISpecification<Appointment> BuildSpecification(QueryParams query)
+    {
+        throw new NotImplementedException();
     }
 }

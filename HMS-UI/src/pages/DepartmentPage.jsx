@@ -1,33 +1,25 @@
-const DepartmentPage = () => {
-  const {
-    data,
-    totalCount,
-    pagination,
-    setPagination,
-    setSorting,
-    search,
-    setSearch,
-    loading,
-  } = useCrud(DepartmentApi);
 
-  return (
-    <Layout>
-      <input
-        className="border p-2 mb-4 w-full"
-        placeholder="Search..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
+import BaseCrudPage from "./Template/BaseCrudPage";
+import DepartmentApi from "../api/DepartmentApi";
 
-      <DataTable
-        columns={departmentColumns}
-        data={data}
-        pagination={pagination}
-        totalCount={totalCount}
-        onPaginationChange={setPagination}
-        onSortingChange={setSorting}
-        loading={loading}
-      />
-    </Layout>
-  );
-};
+const DepartmentPage = () => (
+  <BaseCrudPage
+    title="Departments"
+    service={DepartmentApi}
+    fields={[
+      { name: "name", label: "Department Name", type: "text", required: true },
+      { name: "description", label: "Description", type: "textarea" },
+    ]}
+    columns={[
+      { accessorKey: "id", header: "ID", enableSorting: true },
+      { accessorKey: "name", header: "Department Name", enableSorting: true },
+      { accessorKey: "description", header: "Description" },
+    ]}
+    mapFormToPayload={(form) => ({
+      name: form.name,
+      description: form.description,
+    })}
+  />
+);
+
+export default DepartmentPage;

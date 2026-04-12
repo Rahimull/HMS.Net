@@ -1,4 +1,5 @@
 using AutoMapper;
+using HMSApi.Models;
 using HMSApi.Modules.Doctors.DTOs;
 using HMSApi.Modules.Doctors.Entities;
 using HMSApi.Modules.Doctors.Repositories;
@@ -11,5 +12,10 @@ public class DoctorService : BaseService<Doctor, DoctorDto, CreateDoctorDto, Upd
     public DoctorService(IDoctorRepository repo, IMapper mapper) : base(repo, mapper)
     {
         
+    }
+
+    protected override ISpecification<Doctor> BuildSpecification(QueryParams query)
+    {
+        throw new NotImplementedException();
     }
 }

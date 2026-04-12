@@ -1,3 +1,4 @@
+using System.Text.Json;
 using HMSApi.Data;
 using HMSApi.Middleware;
 using HMSApi.Models;
@@ -31,6 +32,7 @@ builder.Services.AddDoctorModule();
 
 builder.Services.AddControllers();
 
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReact",
@@ -38,6 +40,12 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod()
               .AllowAnyHeader());
 });
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(o =>
+    {
+        o.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    });
 
 
 

@@ -3,58 +3,78 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { useState, useMemo } from "react";
 
 const DataTable = ({
   columns,
   data,
   pagination,
   totalCount,
-  sorting,
   onPaginationChange,
   onSortingChange,
   onEdit,
   onDelete,
   loading,
 }) => {
-  // ✅ SAFE VALUES
-  const pageSize = pagination?.pageSize || 10;
-  const pageIndex = pagination?.pageIndex || 0;
-  const safeTotal = Number.isFinite(totalCount) ? totalCount : 0;
-  const pageCount = Math.max(1, Math.ceil(safeTotal / pageSize));
+  const pageSize = pagination.pageSize;
+  const pageIndex = pagination.pageIndex;
+
+  // ✅ تعداد صفحات واقعی از سرور
+  const pageCount = Math.max(1, Math.ceil(totalCount / pageSize));
+  const maxPageIndex = pageCount - 1;
+
+  const [tableSorting, setTableSorting] = useState([]);
 
   const table = useReactTable({
     data,
     columns,
     state: {
-      pagination: { pageIndex, pageSize },
-      sorting,
+      sorting: tableSorting,
+      pagination, // فقط برای sync با header
     },
-    pageCount,
     manualPagination: true,
     manualSorting: true,
-    onPaginationChange,
-    onSortingChange,
+    pageCount,
+
+    onPaginationChange, // کنترل در BaseCrudPage
+
+    onSortingChange: (updater) => {
+      const next =
+        typeof updater === "function"
+          ? updater(tableSorting)
+          : updater;
+
+      setTableSorting(next);
+
+      const sort = next[0];
+      onSortingChange(
+        sort
+          ? {
+              sortBy: sort.id,
+              sortDir: sort.desc ? "desc" : "asc",
+            }
+          : null
+      );
+    },
+
     getCoreRowModel: getCoreRowModel(),
   });
 
   return (
     <div className="bg-white p-4 rounded shadow mt-6">
-      <table className="w-full text-left border-collapse">
+      <table className="w-full border-collapse">
         <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id} className="border-b">
-              {headerGroup.headers.map((header) => (
+          {table.getHeaderGroups().map((hg) => (
+            <tr key={hg.id}>
+              {hg.headers.map((h) => (
                 <th
-                  key={header.id}
+                  key={h.id}
                   className="p-2 cursor-pointer select-none"
-                  onClick={header.column.getToggleSortingHandler()}
+                  onClick={h.column.getToggleSortingHandler()}
                 >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
-                  {header.column.getIsSorted() === "asc" && " ▲"}
-                  {header.column.getIsSorted() === "desc" && " ▼"}
+                  {flexRender(h.column.columnDef.header, h.getContext())}
+                  {h.column.getIsSorted() === "asc" && " ▲"}
+                  {h.column.getIsSorted() === "desc" && " ▼"}
                 </th>
               ))}
               <th className="p-2">Actions</th>
@@ -69,33 +89,37 @@ const DataTable = ({
                 Loading...
               </td>
             </tr>
-          ) : table.getRowModel().rows.length === 0 ? (
+          ) : data.length === 0 ? (
             <tr>
               <td colSpan={columns.length + 1} className="p-4 text-center">
                 No data found
               </td>
             </tr>
           ) : (
-            table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="border-b hover:bg-gray-100">
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="p-2">
-                    {flexRender(
-                      cell.column.columnDef.cell,
-                      cell.getContext()
-                    )}
-                  </td>
-                ))}
+            data.map((row) => (
+              <tr key={row.id} className="border-b">
+                {table
+                  .getRowModel()
+                  .rows.find((r) => r.original.id === row.id)
+                  ?.getVisibleCells()
+                  .map((cell) => (
+                    <td key={cell.id} className="p-2">
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </td>
+                  ))}
                 <td className="p-2">
                   <button
-                    onClick={() => onEdit(row.original)}
-                    className="mr-2 text-green-600 hover:text-green-800 font-semibold"
+                    onClick={() => onEdit(row)}
+                    className="mr-2 text-green-600"
                   >
                     Edit
                   </button>
                   <button
-                    onClick={() => onDelete(row.original.id)}
-                    className="text-red-500 hover:text-red-800 font-semibold"
+                    onClick={() => onDelete(row.id)}
+                    className="text-red-500"
                   >
                     Delete
                   </button>
@@ -106,24 +130,35 @@ const DataTable = ({
         </tbody>
       </table>
 
-      {/* PAGINATION */}
+      {/* Pagination */}
       <div className="flex justify-between items-center mt-4">
-        <span className="text-sm">
+        <span>
           Page {pageIndex + 1} of {pageCount}
         </span>
 
         <div className="space-x-2">
           <button
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-            className="px-3 py-1 border rounded disabled:opacity-50"
+            disabled={pageIndex <= 0}
+            onClick={() =>
+              onPaginationChange((p) => ({
+                ...p,
+                pageIndex: Math.max(0, p.pageIndex - 1),
+              }))
+            }
+            className="px-3 py-1 border rounded"
           >
             Prev
           </button>
+
           <button
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-            className="px-3 py-1 border rounded disabled:opacity-50"
+            disabled={pageIndex >= maxPageIndex}
+            onClick={() =>
+              onPaginationChange((p) => ({
+                ...p,
+                pageIndex: Math.min(maxPageIndex, p.pageIndex + 1),
+              }))
+            }
+            className="px-3 py-1 border rounded"
           >
             Next
           </button>

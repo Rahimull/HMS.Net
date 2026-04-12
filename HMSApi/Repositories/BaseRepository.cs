@@ -3,6 +3,7 @@ using HMSApi.Data;
 using HMSApi.Models;
 using Microsoft.EntityFrameworkCore;
 namespace HMSApi.Repositories;
+
 public class BaseRepository<TEntity> : IBaseRepository<TEntity>
     where TEntity : BaseEntity
 {
@@ -33,9 +34,13 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity>
         return await query.ToListAsync();
     }
 
-    public async Task<int> CountAsync(ISpecification<TEntity> spec)
+    public async Task<int> CountAsync(Expression<Func<TEntity, bool>>? criteria)
     {
-        var query = SpecificationEvaluator.GetQuery(_dbSet, spec);
+        // var query = SpecificationEvaluator.GetQuery(_dbSet, spec);
+        // return await query.CountAsync();
+        var query  = _dbSet.AsNoTracking();
+        if (criteria !=null)
+            query = query.Where(criteria);
         return await query.CountAsync();
     }
 
