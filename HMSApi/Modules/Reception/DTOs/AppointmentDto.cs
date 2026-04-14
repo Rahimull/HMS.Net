@@ -9,7 +9,7 @@ public record AppointmentDto(
 
     int PatientId,
 
-    int ReceptionDoctorId,
+    int DoctorId,
 
     int DepartmentId 
   

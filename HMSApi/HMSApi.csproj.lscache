@@ -258,7 +258,9 @@ Modules/
    MedicalRecordService.cs
    PatientService.cs
   Specification/
+   AppointmentSpecification.cs
    DepartmentSpecification.cs
+   MedicalRecordSpecification.cs
    PatientSpecification.cs
  Reports/
   Entities/Report.cs

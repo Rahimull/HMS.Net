@@ -8,10 +8,10 @@ namespace HMSApi.Modules.Reception.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AppointmentController: BaseController<IAppointmentService, AppointmentDto, CreateAppointmentDto, UpdateAppointmentDto>
+public class AppointmentController : BaseController<IAppointmentService, AppointmentDto, CreateAppointmentDto, UpdateAppointmentDto>
 {
     public AppointmentController(IAppointmentService service) : base(service)
     {
-        
+
     }
 }

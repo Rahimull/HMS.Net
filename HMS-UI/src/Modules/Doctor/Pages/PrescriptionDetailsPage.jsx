@@ -6,7 +6,7 @@ import DataTable from "../../../components/common/DataTable";
 import Layout from "../../../components/layout/Layout";
 import ReusableForm from "../../../components/form/ResusableForm";
 import Loader from "../../../components/common/Loader";
-import doctorApi from "../../../api/DoctorsModules/DoctorApi"
+import doctorApi from "../../../api/Doctor/DoctorApi"
 
 const PrescriptionDetailsPage = () => {
   const { data, loading, error, createItem, updateItem, deleteItem } =

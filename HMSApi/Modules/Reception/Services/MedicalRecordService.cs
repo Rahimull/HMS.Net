@@ -5,6 +5,7 @@ using HMSApi.Modules.Reception.Entities;
 using HMSApi.Modules.Reception.Repositories;
 using HMSApi.Services;
 namespace HMSApi.Modules.Reception.Services;
+using HMSApi.Specifications;
 
 
 public class MedicalRecordService : BaseService<MedicalRecord, MedicalRecordDto, CreateMedicalRecordDto, UpdateMedicalRecordDto>, IMedicalRecordService
@@ -16,6 +17,6 @@ public class MedicalRecordService : BaseService<MedicalRecord, MedicalRecordDto,
 
     protected override ISpecification<MedicalRecord> BuildSpecification(QueryParams query)
     {
-        throw new NotImplementedException();
+        return new MedicalRecordSpecification(query);
     }
 }

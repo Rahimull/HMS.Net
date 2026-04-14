@@ -1,5 +1,5 @@
 import { useState,useEffect } from "react";
-import DoctorApi from "../../../api/DoctorsModules/DoctorApi"
+import DoctorApi from "../../../api/Doctor/DoctorApi"
 import DepartmentApi from "../../../api/DepartmentApi";
 import useCrud from "../../../hooks/useCurd";
 import DataTable from "../../../components/common/DataTable";

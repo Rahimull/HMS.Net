@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import ConsultationApi from "../services/ConsultationApi";
-import patientApi from "../../../api/patientApi";
 import useCrud from "../../../hooks/useCurd";
 import DataTable from "../../../components/common/DataTable";
 import Layout from "../../../components/layout/Layout";
 import ReusableForm from "../../../components/form/ResusableForm";
 import Loader from "../../../components/common/Loader";
-import doctorApi from "../../../api/DoctorsModules/DoctorApi"
+import doctorApi from "../../../api/Doctor/DoctorApi"
 
 const ConsultationPage = () => {
   const { data, loading, error, createItem, updateItem, deleteItem } =
