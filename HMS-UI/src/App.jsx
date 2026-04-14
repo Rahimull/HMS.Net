@@ -6,7 +6,7 @@ import DepartmentPage from "./pages/DepartmentPage";
 import AppointmentPage from "../src/Modules/Reception/Pages/AppointmentPage";
 import MedicalRecordPage from "../src/Modules/Reception/Pages/MedicalRecordPage";
 import DoctorPage from "./Modules/Doctor/Pages/DoctorPage";
-import ConsultationPage from "./Modules/Doctor/Pages/ConsultationPage";
+import ConsultationPage from "../src/Modules/Doctor/Pages/ConsultationPage";
 import DiagnosisPage from "./Modules/Doctor/Pages/DiagnosisPage";
 import PrescriptionPage from "./Modules/Doctor/Pages/PerscriptionPage"
 import PrescriptionDetailsPage from "./Modules/Doctor/Pages/PrescriptionDetailsPage"

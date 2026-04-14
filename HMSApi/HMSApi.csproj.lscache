@@ -164,6 +164,13 @@ Modules/Doctors/
   PrescriptionDetailsService.cs
   PrescriptionService.cs
   ScheduleServices.cs
+ Specification/
+  ConsultationsSpecification.cs
+  DoctorSpecification.cs
+  PatientSpecification.cs
+  PrescriptionDetailsSpecification.cs
+  PrescriptionSpecification.cs
+  ScheduleSpecifiecation.cs
 Modules/Emergency/Entities/
  Emergency.cs
  EmergencyTreatments.cs
