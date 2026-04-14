@@ -4,6 +4,7 @@ using HMSApi.Modules.Doctors.DTOs;
 using HMSApi.Modules.Doctors.Entities;
 using HMSApi.Modules.Doctors.Repositories;
 using HMSApi.Services;
+using HMSApi.Specifications;
 namespace HMSApi.Modules.Doctors.Services;
 
 
@@ -16,6 +17,6 @@ public class DoctorService : BaseService<Doctor, DoctorDto, CreateDoctorDto, Upd
 
     protected override ISpecification<Doctor> BuildSpecification(QueryParams query)
     {
-        throw new NotImplementedException();
+        return new DoctorSpecification(query);
     }
 }

@@ -4,6 +4,7 @@ using HMSApi.Modules.Doctors.DTOs;
 using HMSApi.Modules.Doctors.Entities;
 using HMSApi.Modules.Doctors.Repositories;
 using HMSApi.Services;
+using HMSApi.Specifications;
 
 namespace HMSApi.Modules.Doctors.Services;
 
@@ -17,6 +18,6 @@ public class DiagnosisService : BaseService<Diagnosis, DiagnosisDto, CreateDiagn
 
     protected override ISpecification<Diagnosis> BuildSpecification(QueryParams query)
     {
-        throw new NotImplementedException();
+        return new DiagnosisSpecification(query);
     }
 }

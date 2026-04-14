@@ -7,10 +7,10 @@ import AppointmentPage from "../src/Modules/Reception/Pages/AppointmentPage";
 import MedicalRecordPage from "../src/Modules/Reception/Pages/MedicalRecordPage";
 import DoctorPage from "./Modules/Doctor/Pages/DoctorPage";
 import ConsultationPage from "../src/Modules/Doctor/Pages/ConsultationPage";
-import DiagnosisPage from "./Modules/Doctor/Pages/DiagnosisPage";
-import PrescriptionPage from "./Modules/Doctor/Pages/PerscriptionPage"
-import PrescriptionDetailsPage from "./Modules/Doctor/Pages/PrescriptionDetailsPage"
-import SchedulesPage from "./Modules/Doctor/Pages/SchedulesPage"
+import DiagnosisPage from "../src/Modules/Doctor/Pages/DiagnosisPage";
+import PrescriptionPage from "../src/Modules/Doctor/Pages/PrescriptionPage"
+import PrescriptionDetailsPage from "../src/Modules/Doctor/Pages/PrescriptionDetailePage"
+import SchedulesPage from "../src/Modules/Doctor/Pages/SchedulePage"
 
 function App() {
 
@@ -26,7 +26,7 @@ function App() {
       <Route path="/consultations" element={<ConsultationPage />} />
       <Route path="/diagnosis" element={<DiagnosisPage />} />
       <Route path="/prescription" element={<PrescriptionPage />} />
-      <Route path="/prescriprtionDetails" element={<PrescriptionDetailsPage />} />
+      <Route path="/prescriptionDetails" element={<PrescriptionDetailsPage />} />
       <Route path="/schedule" element={<SchedulesPage />} />
     </Routes>
   )

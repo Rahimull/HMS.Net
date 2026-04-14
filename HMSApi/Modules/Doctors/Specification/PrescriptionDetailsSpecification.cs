@@ -1,11 +1,12 @@
 using HMSApi.Models;
+using HMSApi.Modules.Doctors.Entities;
 using HMSApi.Modules.Reception.Entities;
 
 namespace HMSApi.Specifications;
 
-public class MedicalRecordSpecification : BaseSpecification<MedicalRecord>
+public class PrescriptionDetailsSpecification : BaseSpecification<PrescriptionDetails>
 {
-    public MedicalRecordSpecification(QueryParams query)
+    public PrescriptionDetailsSpecification(QueryParams query)
     {
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
@@ -13,9 +14,9 @@ public class MedicalRecordSpecification : BaseSpecification<MedicalRecord>
         if (!string.IsNullOrWhiteSpace(term))
         {
             AddCriteria(d =>
-                (d.RecordNumber ?? "").Contains(term)
+                (d.MedicationName ?? "").Contains(term)
             // ||
-            // (d.MedicalRecordStatus ?? "").Contains(term)
+            // (d.PrescriptionDetailsStatus ?? "").Contains(term)
             // d.Name.Contains(term) ||
             // d.Description.Contains(term)
             );
@@ -28,9 +29,9 @@ public class MedicalRecordSpecification : BaseSpecification<MedicalRecord>
             {
                 case "RecordNumber":
                     if (query.Sorting.IsDescending)
-                        ApplyOrderByDescending(d => (d.RecordNumber ?? " "));
+                        ApplyOrderByDescending(d => (d.MedicationName ?? " "));
                     else
-                        ApplyOrderBy(d => (d.RecordNumber ?? ""));
+                        ApplyOrderBy(d => (d.MedicationName ?? ""));
                     break;
 
                 case "id":

@@ -166,8 +166,8 @@ Modules/Doctors/
   ScheduleServices.cs
  Specification/
   ConsultationsSpecification.cs
+  DiagnosisSpecification.cs
   DoctorSpecification.cs
-  PatientSpecification.cs
   PrescriptionDetailsSpecification.cs
   PrescriptionSpecification.cs
   ScheduleSpecifiecation.cs

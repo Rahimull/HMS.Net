@@ -1,11 +1,12 @@
 using HMSApi.Models;
+using HMSApi.Modules.Doctors.Entities;
 using HMSApi.Modules.Reception.Entities;
 
 namespace HMSApi.Specifications;
 
-public class AppointmentSpecification : BaseSpecification<Appointment>
+public class DoctorSpecification : BaseSpecification<Doctor>
 {
-    public AppointmentSpecification(QueryParams query)
+    public DoctorSpecification(QueryParams query)
     {
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
@@ -13,9 +14,9 @@ public class AppointmentSpecification : BaseSpecification<Appointment>
         if (!string.IsNullOrWhiteSpace(term))
         {
             AddCriteria(d =>
-                (d.Notes ?? "").Contains(term)
+                (d.FirstName ?? "").Contains(term)
             // ||
-            // (d.AppointmentStatus ?? "").Contains(term)
+            // (d.DoctorStatus ?? "").Contains(term)
             // d.Name.Contains(term) ||
             // d.Description.Contains(term)
             );
@@ -28,9 +29,9 @@ public class AppointmentSpecification : BaseSpecification<Appointment>
             {
                 case "notes":
                     if (query.Sorting.IsDescending)
-                        ApplyOrderByDescending(d => (d.Notes ?? " "));
+                        ApplyOrderByDescending(d => (d.FirstName ?? " "));
                     else
-                        ApplyOrderBy(d => (d.Notes ?? ""));
+                        ApplyOrderBy(d => (d.FirstName ?? ""));
                     break;
 
                 case "id":
