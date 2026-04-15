@@ -1,7 +1,7 @@
 namespace HMSApi.Modules.Pharmacy.DTOs;
 
 
-public record CreateMedicineStock(
+public record CreateMedicineStockDto(
        string BatchNumber,
        int Quantity,
        DateOnly ExpiryDate,

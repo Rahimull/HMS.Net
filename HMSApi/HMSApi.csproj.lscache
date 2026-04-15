@@ -208,6 +208,11 @@ Modules/
   OPDPrescriptions.cs
   OPDVisits.cs
  OPD/ReceptionModule.cs
+ Pharmacy/Controllers/
+  MedicineController.cs
+  MedicineStockController.cs
+  PharmacySaleController.cs
+  PharmacySaleDetailsController.cs
  Pharmacy/DTOs/
   CreateMedicineDto.cs
   CreateMedicineStockDto.cs
@@ -226,7 +231,31 @@ Modules/
   MedicineStock.cs
   PharmacySaleDetails.cs
   PharmacySales.cs
- Pharmacy/ReceptionModule.cs
+ Pharmacy/
+  ReceptionModule.cs
+  Repositories/
+   IMedicinesRepository.cs
+   IMedicineStockRepository.cs
+   IPharmacySaleDetailsRepository.cs
+   IPharmacySaleRepository.cs
+   MedicinesRepository.cs
+   MedicineStockRepository.cs
+   PharmacySaleDetailsRepository.cs
+   PharmacySaleRepository.cs
+  Services/
+   IMedicineService.cs
+   IMedicineStockService.cs
+   IPharmacySaleDetailsService.cs
+   IPharmacySaleService.cs
+   MedicineService.cs
+   MedicineStockService.cs
+   PharmacySaleDetailsService.cs
+   PharmacySaleService.cs
+  Specification/
+   MedicineSpecification.cs
+   MedicineStockSpecification.cs
+   PharmacySaleDetailsSpecification.cs
+   PharmacySaleSpecification.cs
  Radiology/Entities/
   ImagingOrderDetails.cs
   ImagingOrders.cs

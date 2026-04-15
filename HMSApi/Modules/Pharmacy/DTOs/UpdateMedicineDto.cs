@@ -1,7 +1,7 @@
 namespace HMSApi.Modules.Pharmacy.DTOs;
 
 
-public record UpdateMedicines(
+public record UpdateMedicineDto(
        string Name,
        string? GenericName,
        string Unit,

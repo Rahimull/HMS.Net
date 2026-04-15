@@ -1,7 +1,7 @@
 namespace HMSApi.Modules.Pharmacy.DTOs;
 
 
-public record CreateMedicine(
+public record CreateMedicineDto(
        string Name,
        string? GenericName,
        string Unit,
