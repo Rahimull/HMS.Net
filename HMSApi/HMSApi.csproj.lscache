@@ -208,6 +208,19 @@ Modules/
   OPDPrescriptions.cs
   OPDVisits.cs
  OPD/ReceptionModule.cs
+ Pharmacy/DTOs/
+  CreateMedicineDto.cs
+  CreateMedicineStockDto.cs
+  CreatePharmacySaleDetailsDto.cs
+  CreatePharmacySaleDto.cs
+  MedicineDto.cs
+  MedicineStockDto.cs
+  PahrmacySaleDto.cs
+  PharmacySaleDetailsDto.cs
+  UpdateMedicineDto.cs
+  UpdateMedicineStockDto.cs
+  UpdatePharmacySaleDetailsDto.cs
+  UpdatePharmacySaleDto.cs
  Pharmacy/Entities/
   Medicines.cs
   MedicineStock.cs
