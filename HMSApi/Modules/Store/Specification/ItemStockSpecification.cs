@@ -1,11 +1,11 @@
 using HMSApi.Models;
-using HMSApi.Modules.Finance.Entities;
+using HMSApi.Modules.Store.Entities;
 
 namespace HMSApi.Specifications;
 
-public class InvoiceSpecification : BaseSpecification<Invoice>
+public class ItemStockSpecification : BaseSpecification<ItemStock>
 {
-    public InvoiceSpecification(QueryParams query)
+    public ItemStockSpecification(QueryParams query)
     {
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
@@ -13,7 +13,7 @@ public class InvoiceSpecification : BaseSpecification<Invoice>
         if (!string.IsNullOrWhiteSpace(term))
         {
             AddCriteria(d =>
-                (d.Description ?? "").Contains(term)
+                (d.BatchNumber ?? "").Contains(term)
             );
         }
 
@@ -24,9 +24,9 @@ public class InvoiceSpecification : BaseSpecification<Invoice>
             {
                 case "name":
                     if (query.Sorting.IsDescending)
-                        ApplyOrderByDescending(d => d.Amount);
+                        ApplyOrderByDescending(d => d.CreatedAt);
                     else
-                        ApplyOrderBy(d => d.Amount);
+                        ApplyOrderBy(d => d.CreatedAt);
                     break;
 
                 case "id":

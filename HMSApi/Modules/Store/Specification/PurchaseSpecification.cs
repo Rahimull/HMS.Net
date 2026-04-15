@@ -1,11 +1,11 @@
 using HMSApi.Models;
-using HMSApi.Modules.Finance.Entities;
+using HMSApi.Modules.Store.Entities;
 
 namespace HMSApi.Specifications;
 
-public class PaymentSpecification : BaseSpecification<Payment>
+public class PurchaseSpecification : BaseSpecification<Purchases>
 {
-    public PaymentSpecification(QueryParams query)
+    public PurchaseSpecification(QueryParams query)
     {
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
@@ -24,9 +24,9 @@ public class PaymentSpecification : BaseSpecification<Payment>
             {
                 case "name":
                     if (query.Sorting.IsDescending)
-                        ApplyOrderByDescending(d => d.Amount);
+                        ApplyOrderByDescending(d => d.CreatedAt);
                     else
-                        ApplyOrderBy(d => d.Amount);
+                        ApplyOrderBy(d => d.CreatedAt);
                     break;
 
                 case "id":

@@ -1,7 +1,7 @@
 namespace HMSApi.Modules.Store.DTOs;
 
 
-public record CPurchaseDetailsDto(
+public record PurchaseDetailsDto(
         int Id,
        int Quantity,
        decimal UnitPrice,
