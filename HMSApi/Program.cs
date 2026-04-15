@@ -7,6 +7,7 @@ using HMSApi.Mudoles.Doctors;
 using HMSApi.Mudoles.Finance;
 using HMSApi.Mudoles.HR;
 using HMSApi.Mudoles.Pharmacy;
+using HMSApi.Mudoles.Store;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,6 +36,7 @@ builder.Services.AddDoctorModule();
 builder.Services.AddPharmacyModule();
 builder.Services.AddHRModule();
 builder.Services.AddFinanceModule();
+builder.Services.AddStoreModule();
 
 builder.Services.AddControllers();
 
