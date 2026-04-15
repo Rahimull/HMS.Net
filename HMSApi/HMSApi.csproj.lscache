@@ -232,7 +232,8 @@ Modules/
   PharmacySaleDetails.cs
   PharmacySales.cs
  Pharmacy/
-  ReceptionModule.cs
+  Mapping/PharmacyProfile.cs
+  PharmacyModules.cs
   Repositories/
    IMedicinesRepository.cs
    IMedicineStockRepository.cs
