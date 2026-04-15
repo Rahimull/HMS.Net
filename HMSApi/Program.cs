@@ -4,6 +4,7 @@ using HMSApi.Middleware;
 using HMSApi.Models;
 using HMSApi.Modules.Reception;
 using HMSApi.Mudoles.Doctors;
+using HMSApi.Mudoles.Finance;
 using HMSApi.Mudoles.HR;
 using HMSApi.Mudoles.Pharmacy;
 using Microsoft.AspNetCore.Identity;
@@ -33,6 +34,7 @@ builder.Services.AddReceptionModule();
 builder.Services.AddDoctorModule();
 builder.Services.AddPharmacyModule();
 builder.Services.AddHRModule();
+builder.Services.AddFinanceModule();
 
 builder.Services.AddControllers();
 

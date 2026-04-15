@@ -176,11 +176,45 @@ Modules/Emergency/Entities/
  EmergencyTreatments.cs
 Modules/
  Emergency/ReceptionModule.cs
+ Finance/Controllers/
+  InvocieDetailsController.cs
+  InvoiceController.cs
+  PaymentController.cs
+ Finance/DTOs/
+  CreateInvoiceDetailsDto.cs
+  CreateInvoiceDto.cs
+  CreatePaymentDto.cs
+  InvocieDetailsDto.cs
+  InvocieDto.cs
+  PaymentDto.cs
+  UpdateInvoiceDetailsDto.cs
+  UpdateInvoiceDto.cs
+  UpdatePaymentDto.cs
  Finance/Entities/
   InvoiceDetails.cs
   Invoices.cs
   Payment.cs
- Finance/ReceptionModule.cs
+ Finance/
+  FinanceModule.cs
+  Mapping/FinanceProfile.cs
+  Repositories/
+   IInvocieDetailsRepository.cs
+   IInvoiceRepository.cs
+   InvoiceDetailsRepository.cs
+   InvoiceRepository.cs
+   IPaymentRepository.cs
+   PaymentRepository.cs
+  Services/
+   IInvocieDetailsService.cs
+   IInvoiceService.cs
+   InvoiceDetailsService.cs
+   InvoiceService.cs
+   IPaymentService.cs
+   PaymentService.cs
+  Specification/
+   InvoiceDetailsSpecification.cs
+   InvoiceSpecification.cs
+   PaymentSpecification.cs
  HR/Controllers/
   EmployeeController.cs
   PayrollController.cs
