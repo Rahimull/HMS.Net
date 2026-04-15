@@ -383,13 +383,57 @@ Modules/
  Reports/
   Entities/Report.cs
   ReceptionModule.cs
+ Store/Controllers/
+  InvocieDetailsController.cs
+  InvoiceController.cs
+  PaymentController.cs
+ Store/DTOs/
+  CreateIemDto.cs
+  CreateItemStockDto.cs
+  CreatePurchasesDetailsDto.cs
+  CreatePurchasesDto.cs
+  CreateSuplierDto.cs
+  ItemDto.cs
+  ItemStockDto.cs
+  PurchasesDetailsDto.cs
+  PurchasesDto.cs
+  SuplierDto.cs
+  UpdateItemDto.cs
+  UpdateItemStockDto.cs
+  UpdatePurchasesDetailsDto.cs
+  UpdatePurchasesDto.cs
+  UpdateSuplierDto.cs
  Store/Entities/
   Items.cs
   ItemStock.cs
   PurchaseDetails.cs
   Purchases.cs
-  ُSuplier.cs
- Store/ReceptionModule.cs
+  Suplier.cs
+ Store/
+  FinanceModule.cs
+  Mapping/FinanceProfile.cs
+  Repositories/
+   IItemRepository.cs
+   IItemStockRepository.cs
+   IPurchaseDetailsRepository.cs
+   IPurchaseRepository.cs
+   ISuplierRepository.cs
+   ItemRepository.cs
+   ItemStockRepository.cs
+   PurchaseDetailsRepository.cs
+   PurchaseRepository.cs
+   SuplierRepository.cs
+  Services/
+   IInvocieDetailsService.cs
+   IInvoiceService.cs
+   InvoiceDetailsService.cs
+   InvoiceService.cs
+   IPaymentService.cs
+   PaymentService.cs
+  Specification/
+   InvoiceDetailsSpecification.cs
+   InvoiceSpecification.cs
+   PaymentSpecification.cs
  SupportServices/Entities/
   SupportStaff.cs
   SupportTasks.cs
