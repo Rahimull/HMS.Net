@@ -1,7 +1,7 @@
 
-import Api from "./Api";
+import Api from "../Api";
 
-const endpoint = "/patient";
+const endpoint = "/Patient";
 
 const PatientApi = {
   getPaged: (queryParams) =>

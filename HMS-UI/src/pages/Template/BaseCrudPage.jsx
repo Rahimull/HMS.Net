@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Layout from "../../components/layout/Layout";
 import Loader from "../../components/common/Loader";
 import DataTable from "../../components/common/DataTable";
 import ReusableForm from "../../components/form/ResusableForm";
@@ -11,6 +10,7 @@ const BaseCrudPage = ({
   fields,
   columns,
   mapFormToPayload,
+  mapEntityToForm = (x) => x, // ✅ برای حل مشکل پر نشدن بعضی فیلدها در Edit (اختیاری ولی مفید)
 }) => {
   const [editing, setEditing] = useState(null);
 
@@ -32,6 +32,7 @@ const BaseCrudPage = ({
 
   const handleSubmit = async (formData) => {
     const payload = mapFormToPayload(formData);
+
     if (editing) {
       await updateItem(editing.id, payload);
       setEditing(null);
@@ -41,18 +42,16 @@ const BaseCrudPage = ({
   };
 
   const handlePaginationChange = (updater) => {
-    setPagination((prev) =>
-      typeof updater === "function" ? updater(prev) : updater
-    );
+    setPagination((prev) => (typeof updater === "function" ? updater(prev) : updater));
   };
 
   return (
-    <Layout>
-      <h2 className="text-xl font-bold mb-4">{title}</h2>
+    <div className="space-y-4">
+      <h2 className="text-xl font-bold">{title}</h2>
 
       {/* Search */}
       <input
-        className="border p-2 mb-4 w-full rounded"
+        className="border p-2 w-full rounded"
         placeholder={`Search ${title}...`}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
@@ -61,15 +60,15 @@ const BaseCrudPage = ({
       {/* Form */}
       <ReusableForm
         fields={fields}
-        initialValues={editing}
+        initialValues={editing ? mapEntityToForm(editing) : null}
         onSubmit={handleSubmit}
         submitText={editing ? "Update" : "Add"}
       />
 
-      {error && <p className="text-red-500 mt-4">{error}</p>}
+      {error && <p className="text-red-500">{error}</p>}
 
       {/* Page size */}
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center">
         <div>
           <label className="mr-2 font-medium">Rows per page:</label>
           <select
@@ -90,6 +89,7 @@ const BaseCrudPage = ({
         </div>
       </div>
 
+      {/* Table */}
       {loading ? (
         <Loader text={`Fetching ${title}...`} />
       ) : (
@@ -99,15 +99,13 @@ const BaseCrudPage = ({
           pagination={pagination}
           totalCount={totalCount}
           onPaginationChange={handlePaginationChange}
-          onSortingChange={(sort) =>
-            setSorting(sort ?? { sortBy: null, sortDir: "asc" })
-          }
+          onSortingChange={(sort) => setSorting(sort ?? { sortBy: null, sortDir: "asc" })}
           onEdit={setEditing}
           onDelete={deleteItem}
           loading={loading}
         />
       )}
-    </Layout>
+    </div>
   );
 };
 

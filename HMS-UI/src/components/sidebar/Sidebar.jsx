@@ -49,11 +49,12 @@ const Sidebar = () => {
         items: [{ name: "Dashboard", link: "/", icon: LayoutDashboard }],
       },
       {
+        complate: 1,
         key: "reception",
         title: "Reception",
         items: [
           { name: "Patient", link: "/patient", icon: Users },
-          { name: "Department", link: "/department", icon: Building2 },
+          { name: `OK--->  Department` , link: "/department", icon: Building2 },
           { name: "Appointment", link: "/appointment", icon: CalendarClock },
           { name: "Medical Record", link: "/medicalrecord", icon: FileText },
         ],
@@ -92,18 +93,18 @@ const Sidebar = () => {
         key: "store",
         title: "Store",
         items: [
-          { name: "Items", link: "/store/items", icon: Package },
+          { name: "OK---> Items", link: "/store/items", icon: Package },
           { name: "Item Stocks", link: "/store/item-stocks", icon: Boxes },
           { name: "Purchases", link: "/store/purchases", icon: ShoppingCart },
           { name: "Purchase Details", link: "/store/purchase-details", icon: Layers },
-          { name: "Suppliers", link: "/store/suppliers", icon: Truck },
+          { name: "OK---> Suppliers", link: "/store/suppliers", icon: Truck },
         ],
       },
       {
         key: "pharmacy",
         title: "Pharmacy",
         items: [
-          { name: "Medicines", link: "/pharmacy/medicines", icon: FlaskConical },
+          { name: "OK--->  Medicines", link: "/pharmacy/medicines", icon: FlaskConical },
           { name: "Medicine Stocks", link: "/pharmacy/medicine-stocks", icon: Boxes },
           { name: "Sales", link: "/pharmacy/sales", icon: BadgeDollarSign },
           { name: "Sale Details", link: "/pharmacy/sale-details", icon: FileText },
@@ -269,7 +270,7 @@ const Sidebar = () => {
               >
                 <div className="overflow-hidden space-y-1">
                   {group.items.map((item) => (
-                    <NavItem key={item.link} item={item} />
+                    <NavItem  key={item.link} item={item} />
                   ))}
                 </div>
               </div>

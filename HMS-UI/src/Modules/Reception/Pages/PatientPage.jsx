@@ -1,41 +1,31 @@
-import BaseCrudPage from "./Template/BaseCrudPage";
-import {PatientApi} from "../api";
 
+import BaseCrudPage from "../../../pages/Template/BaseCrudPage";
+import PatientApi from "../../../api/reception/PatientApi";
 const PatientPage = () => (
-  <BaseCrudPage
-    title="Patients"
-    service={PatientApi}
+  
 
+  <BaseCrudPage
+    title="Patient"
+    service={PatientApi}
     fields={[
       { name: "firstName", label: "First Name", type: "text", required: true },
-      { name: "lastName", label: "Last Name", type: "text", required: true },
-      {
-        name: "gender",
-        label: "Gender",
-        type: "select",
-        required: true,
-        options: [
-          { label: "Male", value: 1 },
-          { label: "Female", value: 2 },
-        ],
-      },
-      { name: "dob", label: "Date of Birth", type: "date" },
-      { name: "phone", label: "Phone Number", type: "text" },
-      { name: "address", label: "Address", type: "text" },
-      { name: "nationalId", label: "National ID", type: "text" },
+      { name: "lastName", label: "Last Name", type: "text" },
+      { name: "gender", label: "Gender", type: "select"  },
+      { name: "dob", label: "Date Of Birth", type: "date" },
+      { name: "phone", label: "Phone", type: "text"},
+      { name: "address", label: "Addres", type: "textarea"},
+      { name: "nationalId", label: "National ID", type: "text"},
     ]}
-
     columns={[
       { accessorKey: "id", header: "ID", enableSorting: true },
       { accessorKey: "firstName", header: "First Name", enableSorting: true },
-      { accessorKey: "lastName", header: "Last Name", enableSorting: true },
+      { accessorKey: "lastName", header: "Last Name" },
       { accessorKey: "gender", header: "Gender" },
       { accessorKey: "dob", header: "DOB" },
       { accessorKey: "phone", header: "Phone" },
       { accessorKey: "address", header: "Address" },
       { accessorKey: "nationalId", header: "National ID" },
     ]}
-
     mapFormToPayload={(form) => ({
       firstName: form.firstName,
       lastName: form.lastName,

@@ -8,26 +8,20 @@ const SuplierPage = () => (
     title="Suplier"
     service={SuplierApi}
     fields={[
-      { name: "patientId", label: "Patients", type: "select", required: true },
-      { name: "doctorId", label: "Doctors", type: "select" },
-      { name: "SuplierDate", label: "Suplier Date", type: "date" },
-      { name: "SuplierTime", label: "Suplier Time", type: "time" },
-      { name: "notes", label: "select Gender", type: "textarea"},
+      { name: "name", label: "Name", type: "text", required: true },
+      { name: "contactInfo", label: "Contact Information", type: "text", required:true},
+      { name: "address", label: "Address", type: "textarea" },
     ]}
     columns={[
       { accessorKey: "id", header: "ID", enableSorting: true },
-      { accessorKey: "patientId", header: "Patient", enableSorting: true },
-      { accessorKey: "doctorId", header: "Doctors" },
-      { accessorKey: "SuplierDate", header: "Date" },
-      { accessorKey: "SuplierTime", header: "Time" },
-      { accessorKey: "notes", header: "Notes" },
+      { accessorKey: "name", header: "Name", enableSorting: true },
+      { accessorKey: "contactInfo", header: "Contact Info" },
+      { accessorKey: "address", header: "Address" },
     ]}
     mapFormToPayload={(form) => ({
-      patientId: form.patientId,
-      doctorId: form.doctorId,
-      SuplierDate: form.SuplierDate,
-      SuplierTime: form.SuplierTime,
-      notes: form.notes,
+      name: form.name,
+      contactInfo: form.contactInfo,
+      address: form.address,
     })}
   />
 );

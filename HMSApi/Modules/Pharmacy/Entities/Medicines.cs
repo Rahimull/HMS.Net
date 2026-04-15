@@ -13,8 +13,8 @@ public class Medicines : BaseEntity
     public decimal Price { get; set; }
     public int StockQuantity { get; set; }
 
-// Navigation Properties
-public ICollection<PrescriptionDetails> PrescriptionDetails {get; set;} = new List<PrescriptionDetails>();
-public ICollection<MedicineStock> MedicineStocks {get; set;} = new List<MedicineStock>();
+    // Navigation Properties
+    public ICollection<PrescriptionDetails> PrescriptionDetails { get; set; } = new List<PrescriptionDetails>();
+    public ICollection<MedicineStock> MedicineStocks { get; set; } = new List<MedicineStock>();
 
 }

@@ -1,6 +1,7 @@
 import Layout from "../components/layout/Layout";
 import Card from "../components/common/Card";
 import ReusableForm from "../components/form/ResusableForm";
+import BaseCrudPage from "./Template/BaseCrudPage";
 
 
 
@@ -27,20 +28,11 @@ const Dashbord = () =>{
     // می‌توان اینجا API POST زد
   };
     return (
-        <Layout>
-            <h1>Dashbord</h1>
-            <Card />
-          <Table />
-          <ReusableForm
-            fields={patientFields}
-            onSubmit={handlePatientSubmit}
-            submitText="Register Patient"
-          />
-        </Layout>
+      <h1>Dashbord</h1>
 
         
         
-    )
+    );
 }
 
 export default Dashbord;

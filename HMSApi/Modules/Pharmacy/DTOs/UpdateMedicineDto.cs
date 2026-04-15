@@ -7,5 +7,5 @@ public record UpdateMedicineDto(
        string Unit,
        string? Description,
        decimal Price,
-       int StrockQuantity
+       int StockQuantity
 );

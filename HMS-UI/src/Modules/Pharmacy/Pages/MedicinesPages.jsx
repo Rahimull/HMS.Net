@@ -8,26 +8,29 @@ const MedicinesPage = () => (
     title="Medicines"
     service={MedicinesApi}
     fields={[
-      { name: "patientId", label: "Patients", type: "select", required: true },
-      { name: "doctorId", label: "Doctors", type: "select" },
-      { name: "MedicinesDate", label: "Medicines Date", type: "date" },
-      { name: "MedicinesTime", label: "Medicines Time", type: "time" },
-      { name: "notes", label: "select Gender", type: "textarea"},
+      { name: "name", label: "Name", type: "text", required: true },
+      { name: "genericName", label: "Generic Name", type: "text" },
+      { name: "unit", label: "Uint", type: "text", requiredd:true },
+      { name: "price", label: "Price", type: "number" },
+      { name: "stockQuantity", label: "Stock Quantity", type: "number"},
+      { name: "description", label: "Description", type: "textarea"},
     ]}
     columns={[
       { accessorKey: "id", header: "ID", enableSorting: true },
-      { accessorKey: "patientId", header: "Patient", enableSorting: true },
-      { accessorKey: "doctorId", header: "Doctors" },
-      { accessorKey: "MedicinesDate", header: "Date" },
-      { accessorKey: "MedicinesTime", header: "Time" },
-      { accessorKey: "notes", header: "Notes" },
+      { accessorKey: "name", header: "Name", enableSorting: true },
+      { accessorKey: "genericName", header: "GenericName" },
+      { accessorKey: "unit", header: "Unit" },
+      { accessorKey: "price", header: "Price" },
+      { accessorKey: "description", header: "Description" },
+      { accessorKey: "stockQuantity", header: "Stock Quantity" },
     ]}
     mapFormToPayload={(form) => ({
-      patientId: form.patientId,
-      doctorId: form.doctorId,
-      MedicinesDate: form.MedicinesDate,
-      MedicinesTime: form.MedicinesTime,
-      notes: form.notes,
+      name: form.name,
+      genericName: form.genericName,
+      unit: form.unit,
+      price: form.price,
+      description: form.description,
+      stockQuantity: form.stockQuantity,
     })}
   />
 );

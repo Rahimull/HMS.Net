@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 
 import Dashbord from "@/pages/Dashbord";
-import PatientPage from "@/pages/PatientPage";
+import PatientPage from "@/Modules/Reception/Pages/PatientPage";
 import DepartmentPage from "@/pages/DepartmentPage";
 
 import AppointmentPage from "@/Modules/Reception/Pages/AppointmentPage";

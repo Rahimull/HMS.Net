@@ -7,5 +7,5 @@ public record CreateMedicineDto(
        string Unit,
        string? Description,
        decimal Price,
-       int StrockQuantity
+       int StockQuantity
 );
