@@ -181,11 +181,45 @@ Modules/
   Invoices.cs
   Payment.cs
  Finance/ReceptionModule.cs
+ HR/Controllers/
+  EmployeeController.cs
+  PayrollController.cs
+  ShiftController.cs
+ HR/DTOs/
+  CreateEmployeeDto.cs
+  CreatePayrollDto.cs
+  CreateShiftDto.cs
+  EmployeeDto.cs
+  PayrollDto.cs
+  ShiftDto.cs
+  UpdateEmployeeDto.cs
+  UpdatePayrollDto.cs
+  UpdateShiftDto.cs
  HR/Entities/
   Employees.cs
   Payrolls.cs
   Shift.cs
- HR/ReceptionModule.cs
+ HR/
+  HRModule.cs
+  Mapping/HRProfile.cs
+  Repositories/
+   EmployeeRepository.cs
+   IEmployeeRepository.cs
+   IPayrollRepository.cs
+   IShiftRepository.cs
+   PayrollRepository.cs
+   ShiftRepository.cs
+  Services/
+   EmployeeService.cs
+   IEmployeeService.cs
+   IPayrollService.cs
+   IShiftService.cs
+   PayrollService.cs
+   ShiftService.cs
+  Specification/
+   EmployeeSpecification.cs
+   PayrollSaleSpecification.cs
+   ShiftSpecification.cs
  IPD/Entities/
   Admission.cs
   Beds.cs

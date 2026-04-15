@@ -8,7 +8,7 @@ namespace HMSApi.Mudoles.Pharmacy;
 
 public static class DoctorModule
 {
-    public static IServiceCollection AddDoctorModule(
+    public static IServiceCollection AddPharmacyModule(
      this IServiceCollection services
     )
     {
