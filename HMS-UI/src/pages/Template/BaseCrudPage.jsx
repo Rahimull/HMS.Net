@@ -32,7 +32,7 @@ const BaseCrudPage = ({
 
   const handleSubmit = async (formData) => {
     const payload = mapFormToPayload(formData);
-
+    console.log(payload)
     if (editing) {
       await updateItem(editing.id, payload);
       setEditing(null);

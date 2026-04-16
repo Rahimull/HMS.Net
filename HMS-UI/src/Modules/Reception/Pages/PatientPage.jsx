@@ -10,10 +10,13 @@ const PatientPage = () => (
     fields={[
       { name: "firstName", label: "First Name", type: "text", required: true },
       { name: "lastName", label: "Last Name", type: "text" },
-      { name: "gender", label: "Gender", type: "select"  },
+      { name: "gender", label: "Gender", type: "select", options: [
+        {label:"Male", value:1},
+        {label: "Female", value: 2}
+      ]  },
       { name: "dob", label: "Date Of Birth", type: "date" },
       { name: "phone", label: "Phone", type: "text"},
-      { name: "address", label: "Addres", type: "textarea"},
+      { name: "address", label: "Address", type: "textarea"},
       { name: "nationalId", label: "National ID", type: "text"},
     ]}
     columns={[

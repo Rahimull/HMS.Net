@@ -53,7 +53,7 @@ const Sidebar = () => {
         key: "reception",
         title: "Reception",
         items: [
-          { name: "Patient", link: "/patient", icon: Users },
+          { name: "OK--->  Patient", link: "/patient", icon: Users },
           { name: `OK--->  Department` , link: "/department", icon: Building2 },
           { name: "Appointment", link: "/appointment", icon: CalendarClock },
           { name: "Medical Record", link: "/medicalrecord", icon: FileText },

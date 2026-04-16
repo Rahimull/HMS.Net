@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HMSApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1b94e96954dde6533a5636e81904f5ad18edda62")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6ddeece81d4424830a7dc303589ec32ba87266ce")]
 [assembly: System.Reflection.AssemblyProductAttribute("HMSApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HMSApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
