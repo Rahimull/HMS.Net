@@ -55,8 +55,8 @@ const Sidebar = () => {
         items: [
           { name: "OK--->  Patient", link: "/patient", icon: Users },
           { name: `OK--->  Department` , link: "/department", icon: Building2 },
-          { name: "Appointment", link: "/appointment", icon: CalendarClock },
-          { name: "Medical Record", link: "/medicalrecord", icon: FileText },
+          { name: "OK---> Appointment", link: "/appointment", icon: CalendarClock },
+          { name: "OK---> Medical Record", link: "/medicalrecord", icon: FileText },
         ],
       },
       {

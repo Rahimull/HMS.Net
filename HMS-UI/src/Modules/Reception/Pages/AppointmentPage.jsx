@@ -50,9 +50,9 @@ const AppointmentPage = () => {
     ]}
     columns={[
       { accessorKey: "id", header: "ID", enableSorting: true },
-      { accessorKey: "patientId", header: "Patient", enableSorting: true },
-      { accessorKey: "doctorId", header: "Doctors" },
-      { accessorKey: "departmentId", header: "Department" },
+      { accessorKey: "patientName", header: "Patient name"},
+      { accessorKey: "doctorName", header: "Doctors" },
+      { accessorKey: "departmentName", header: "Department" },
       { accessorKey: "appointmentDate", header: "Date" },
       { accessorKey: "appointmentTime", header: "Time" },
       { accessorKey: "notes", header: "Notes" },

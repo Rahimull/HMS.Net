@@ -7,8 +7,6 @@ public record UpdateAppointmentDto(
     string? Notes,
 
     int PatientId,
-    string PateintName,
-
     int DoctorId,
 
     int DepartmentId

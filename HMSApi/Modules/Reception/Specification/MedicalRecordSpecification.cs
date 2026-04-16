@@ -7,6 +7,10 @@ public class MedicalRecordSpecification : BaseSpecification<MedicalRecord>
 {
     public MedicalRecordSpecification(QueryParams query)
     {
+        /* ---------- Include Patient ---------- */
+        AddInclude(a=> a.Patient);
+
+
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
 

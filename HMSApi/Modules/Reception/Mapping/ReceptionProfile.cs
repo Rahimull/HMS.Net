@@ -23,14 +23,18 @@ public class ReceptionProfile : Profile
         // Appointment Mappings
         CreateMap<CreateAppointmentDto, Appointment>();
         CreateMap<UpdateAppointmentDto, Appointment>();
-        CreateMap<Appointment, AppointmentDto>();
+        CreateMap<Appointment, AppointmentDto>()
+            .ForCtorParam("PatientName", opt => opt.MapFrom(src => src.Patient.FirstName +" "+ src.Patient.LastName))
+            .ForCtorParam("DoctorName", opt => opt.MapFrom(src => src.Doctor.FirstName +" "+ src.Doctor.LastName))
+            .ForCtorParam("DepartmentName", opt => opt.MapFrom(src => src.Department.Name));
+
 
 
         // MedicalRecord Mappings
         CreateMap<CreateMedicalRecordDto, MedicalRecord>();
         CreateMap<UpdateMedicalRecordDto, MedicalRecord>();
-        CreateMap<MedicalRecord, MedicalRecordDto>();
-
-        
+        CreateMap<MedicalRecord, MedicalRecordDto>()
+            .ForCtorParam("PatientName", opt=> opt.MapFrom(src => src.Patient.FirstName +" "+ src.Patient.LastName));
+              
     }
 }

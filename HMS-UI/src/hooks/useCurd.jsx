@@ -79,6 +79,9 @@ const useCrud = (service, pageSize = 10) => {
       setPagination((p) => ({ ...p, pageIndex: 0 }));
     } catch (err) {
       console.error(err);
+      console.log("STATUS:", err.response?.status);
+      console.log("RESPONSE DATA:", err.response?.data);
+      console.log("HEADERS:", err.response?.headers);
       setError(err?.response?.data?.message || "Create failed");
     } finally {
       setLoading(false);
@@ -95,6 +98,11 @@ const useCrud = (service, pageSize = 10) => {
       setPagination((p) => ({ ...p, pageIndex: 0 }));
     } catch (err) {
       console.error(err);
+
+      console.log("STATUS:", err.response?.status);
+      console.log("RESPONSE DATA:", err.response?.data);
+      console.log("HEADERS:", err.response?.headers);
+
       setError(err?.response?.data?.message || "Update failed");
     } finally {
       setLoading(false);

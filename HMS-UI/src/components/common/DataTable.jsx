@@ -97,7 +97,7 @@ const DataTable = ({
             </tr>
           ) : (
             data.map((row) => (
-              <tr key={row.id} className="border-b">
+              <tr key={row.id} className="border-b text-center hover:bg-blue-50">
                 {table
                   .getRowModel()
                   .rows.find((r) => r.original.id === row.id)

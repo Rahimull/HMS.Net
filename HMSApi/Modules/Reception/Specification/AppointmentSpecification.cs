@@ -7,6 +7,13 @@ public class AppointmentSpecification : BaseSpecification<Appointment>
 {
     public AppointmentSpecification(QueryParams query)
     {
+
+        /*-----------inclod Patient Doctor, and Department --------------*/
+        AddInclude(a => a.Patient);
+        AddInclude(a => a.Doctor);
+        AddInclude(a => a.Department);
+
+
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
 
@@ -14,10 +21,6 @@ public class AppointmentSpecification : BaseSpecification<Appointment>
         {
             AddCriteria(d =>
                 (d.Notes ?? "").Contains(term)
-            // ||
-            // (d.AppointmentStatus ?? "").Contains(term)
-            // d.Name.Contains(term) ||
-            // d.Description.Contains(term)
             );
         }
 

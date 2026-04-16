@@ -7,10 +7,7 @@ public record CreateAppointmentDto(
     string? Notes,
 
     int PatientId,
-    string PateintName,
-
     int DoctorId,
-
     int DepartmentId
 );
 
