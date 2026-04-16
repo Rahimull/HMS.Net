@@ -63,7 +63,7 @@ const Sidebar = () => {
         key: "doctors",
         title: "Doctors",
         items: [
-          { name: "Doctors", link: "/doctors", icon: Stethoscope },
+          { name: "OK---> Doctors", link: "/doctors", icon: Stethoscope },
           { name: "Consultations", link: "/consultations", icon: ClipboardList },
           { name: "Diagnosis", link: "/diagnosis", icon: ListChecks },
           { name: "Prescription", link: "/prescription", icon: Pill },

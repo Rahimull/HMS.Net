@@ -7,18 +7,17 @@ const MedicalRecordPage = () => {
   const [patients, setPatients] = useState([]);
 
   useEffect(() => {
-    PatientApi.getPaged({ page: 1, pageSize: 1000 }).then((res) =>
-      setPatients(res.data.data.data),
+    PatientApi.getPaged({ page: 1, pageSize: 1000 }).then(
+      (res) => setPatients(res.data.data.data),
+      console.log(patients),
     );
   }, []);
 
-  // select Patient 
-  const patientOption = patients.map(p => (
-    {
+  // select Patient
+  const patientOption = patients.map((p) => ({
     label: `${p.firstName} ${p.lastName}`,
-    value: p.id
-  }
-  ));
+    value: p.id,
+  }));
 
   return (
     <BaseCrudPage
@@ -36,8 +35,8 @@ const MedicalRecordPage = () => {
       ]}
       columns={[
         { accessorKey: "id", header: "ID", enableSorting: true },
-        { accessorKey: "patientId", header: "Patient Id"},
-        { accessorKey: "patientName", header: "Patient Full Name"},
+        { accessorKey: "patientId", header: "Patient Id" },
+        { accessorKey: "patientName", header: "Patient Full Name" },
         { accessorKey: "recordNumber", header: "Record Number" },
       ]}
       mapFormToPayload={(form) => ({
