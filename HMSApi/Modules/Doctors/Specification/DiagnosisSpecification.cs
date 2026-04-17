@@ -8,6 +8,9 @@ public class DiagnosisSpecification : BaseSpecification<Diagnosis>
 {
     public DiagnosisSpecification(QueryParams query)
     {
+
+        AddInclude(c => c.Consultation);
+        
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
 

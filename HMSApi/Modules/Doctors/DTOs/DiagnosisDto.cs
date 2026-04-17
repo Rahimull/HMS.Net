@@ -6,7 +6,8 @@ public record DiagnosisDto(
     string DiagnosisName,
     string DiagnosisDetails,
     DateTime DiagnosisDate,
-    int ConsultationId
+    int ConsultationId,
+    string? ConsultationName
 );
 
 

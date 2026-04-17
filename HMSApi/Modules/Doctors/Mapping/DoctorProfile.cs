@@ -19,7 +19,8 @@ public class DoctorProfile : Profile
         // Diagnosis Mappings
         CreateMap<CreateDiagnosisDto, Diagnosis>();
         CreateMap<UpdateDiagnosisDto, Diagnosis>();
-        CreateMap<Diagnosis, DiagnosisDto>();
+        CreateMap<Diagnosis, DiagnosisDto>()
+            .ForCtorParam("ConsultationName", opt => opt.MapFrom(src => src.Consultation.ChiefComplaint + " " + src.Consultation.ChiefComplaint));
 
         // Doctor Mappings
         CreateMap<CreateDoctorDto, Doctor>();

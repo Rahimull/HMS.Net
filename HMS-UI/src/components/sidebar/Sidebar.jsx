@@ -66,8 +66,8 @@ const Sidebar = () => {
         items: [
           { name: "Appointment test Ui", link: "/appointmentsUi", icon: CalendarClock },
           { name: "OK---> Doctors", link: "/doctors", icon: Stethoscope },
-          { name: "Consultations", link: "/consultations", icon: ClipboardList },
-          { name: "Diagnosis", link: "/diagnosis", icon: ListChecks },
+          { name: "OK---> Consultations", link: "/consultations", icon: ClipboardList },
+          { name: "OK---> Diagnosis", link: "/diagnosis", icon: ListChecks },
           { name: "Prescription", link: "/prescription", icon: Pill },
           { name: "Prescription Details", link: "/prescriptiondetails", icon: Layers },
           { name: "Schedule", link: "/schedule", icon: CalendarDays },
