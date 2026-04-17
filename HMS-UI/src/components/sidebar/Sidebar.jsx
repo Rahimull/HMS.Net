@@ -53,11 +53,10 @@ const Sidebar = () => {
         key: "reception",
         title: "Reception",
         items: [
-          { name: "OK--->  Patident", link: "/patient", icon: Users },
           { name: "Patident Appointment", link: "/patientAppointmentUi", icon: Users },
+          { name: "OK--->  Patident", link: "/patient", icon: Users },
           { name: `OK--->  Department` , link: "/department", icon: Building2 },
           { name: "OK---> Appointment", link: "/appointment", icon: CalendarClock },
-          { name: "Appointment test Ui", link: "/appointmentsUi", icon: CalendarClock },
           { name: "OK---> Medical Record", link: "/medicalrecord", icon: FileText },
         ],
       },
@@ -65,6 +64,7 @@ const Sidebar = () => {
         key: "doctors",
         title: "Doctors",
         items: [
+          { name: "Appointment test Ui", link: "/appointmentsUi", icon: CalendarClock },
           { name: "OK---> Doctors", link: "/doctors", icon: Stethoscope },
           { name: "Consultations", link: "/consultations", icon: ClipboardList },
           { name: "Diagnosis", link: "/diagnosis", icon: ListChecks },

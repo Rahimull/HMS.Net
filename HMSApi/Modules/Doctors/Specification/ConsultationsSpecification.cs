@@ -6,8 +6,16 @@ namespace HMSApi.Specifications;
 
 public class ConsultationSpecification : BaseSpecification<Consultation>
 {
+
+
     public ConsultationSpecification(QueryParams query)
     {
+
+        /* ---------- Add navigation ---------- */
+        AddInclude(p=> p.Patient);
+        AddInclude(d=> d.Doctor);
+
+
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
 
