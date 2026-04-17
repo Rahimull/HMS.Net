@@ -59,3 +59,7 @@ const PrescriptionDetailePage = () => (
 );
 
 export default PrescriptionDetailePage;
+
+
+
+

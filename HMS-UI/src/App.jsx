@@ -3,6 +3,7 @@ import Layout from "@/components/layout/Layout";
 
 import Dashbord from "@/pages/Dashbord";
 import PatientPage from "@/Modules/Reception/Pages/PatientPage";
+import PatientAppointmentUi from "@/Modules/Reception/Pages/PatientAppointmentUi";
 import DepartmentPage from "@/pages/DepartmentPage";
 
 import AppointmentPage from "@/Modules/Reception/Pages/AppointmentPage";
@@ -20,6 +21,8 @@ import { InvoiceDetailsPage, InvoicePage, PaymentPage } from "@/Modules/Finance/
 import { ItemPage, ItemStockPage, PuchasePage, SuplierPage, PuchaseDetailsPage } from "@/Modules/Store/Pages";
 import { MedicinesPage, MedicineStockPage, PharmacySalePage, PharmacySaleDetailsPage } from "@/Modules/Pharmacy/Pages";
 
+import AppointmentsUi from "./Modules/Reception/Pages/AppointmentsUI";
+
 export default function App() {
   return (
     <Routes>
@@ -33,8 +36,13 @@ export default function App() {
 
         {/* Reception */}
         <Route path="patient" element={<PatientPage />} />
+        <Route path="patientAppointmentUi" element={<PatientAppointmentUi />} />
         <Route path="department" element={<DepartmentPage />} />
+
+
+        <Route path="appointmentsUi" element={<AppointmentsUi />} />
         <Route path="appointment" element={<AppointmentPage />} />
+        
         <Route path="medicalrecord" element={<MedicalRecordPage />} />
 
         {/* Doctors */}
