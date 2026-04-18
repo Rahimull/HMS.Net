@@ -7,6 +7,10 @@ public class PharmacySaleDetailsSpecification : BaseSpecification<PharmacySalesd
 {
     public PharmacySaleDetailsSpecification(QueryParams query)
     {
+        /* ---------- include Medicine and Prasmacy sale ---------- */
+        AddInclude(m => m.Medicine);
+        AddInclude(p => p.PharmacySale);
+
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
 

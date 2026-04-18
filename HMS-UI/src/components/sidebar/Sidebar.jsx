@@ -95,6 +95,7 @@ const Sidebar = () => {
         key: "store",
         title: "Store",
         items: [
+          { name: "StorePageUi", link: "/store/StorePageUi", icon: Package },
           { name: "OK---> Items", link: "/store/items", icon: Package },
           { name: "OK---> Item Stocks", link: "/store/item-stocks", icon: Boxes },
           { name: "OK---> Purchases", link: "/store/purchases", icon: ShoppingCart },
@@ -107,10 +108,11 @@ const Sidebar = () => {
         
         title: "Pharmacy",
         items: [
+          { name: "PharmacyPageUi", link: "/pharmacy/PharmacyPageUi", icon: FlaskConical },
           { name: "OK--->  Medicines", link: "/pharmacy/medicines", icon: FlaskConical },
           { name: "OK--->  Medicine Stocks", link: "/pharmacy/medicine-stocks", icon: Boxes },
-          { name: "Sales", link: "/pharmacy/sales", icon: BadgeDollarSign },
-          { name: "Sale Details", link: "/pharmacy/sale-details", icon: FileText },
+          { name: "OK---> Sales", link: "/pharmacy/sales", icon: BadgeDollarSign },
+          { name: "OK---> Sale Details", link: "/pharmacy/sale-details", icon: FileText },
         ],
       },
     ],

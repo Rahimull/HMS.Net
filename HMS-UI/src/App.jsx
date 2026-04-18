@@ -22,6 +22,8 @@ import { ItemPage, ItemStockPage, PuchasePage, SuplierPage, PuchaseDetailsPage }
 import { MedicinesPage, MedicineStockPage, PharmacySalePage, PharmacySaleDetailsPage } from "@/Modules/Pharmacy/Pages";
 
 import AppointmentsUi from "./Modules/Reception/Pages/AppointmentsUI";
+import PharmacyPageUi from "./Modules/Pharmacy/Pages/PharmacyPageUi";
+import StorePageUi from "./Modules/Store/Pages/StorePageUi";
 
 export default function App() {
   return (
@@ -64,6 +66,7 @@ export default function App() {
         <Route path="finance/payments" element={<PaymentPage />} />
 
         {/* Store */}
+        <Route path="store/StorePageUi" element={<StorePageUi />} />
         <Route path="store/items" element={<ItemPage />} />
         <Route path="store/item-stocks" element={<ItemStockPage />} />
         <Route path="store/purchases" element={<PuchasePage />} />
@@ -71,6 +74,7 @@ export default function App() {
         <Route path="store/suppliers" element={<SuplierPage />} />
 
         {/* Pharmacy */}
+        <Route path="pharmacy/PharmacyPageUi" element={<PharmacyPageUi />} />
         <Route path="pharmacy/medicines" element={<MedicinesPage />} />
         <Route path="pharmacy/medicine-stocks" element={<MedicineStockPage />} />
         <Route path="pharmacy/sales" element={<PharmacySalePage />} />
