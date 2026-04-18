@@ -1,35 +1,52 @@
-
 import BaseCrudPage from "../../../pages/Template/BaseCrudPage";
 import PayrollApi from "../../../api/hr/PayrollApi";
-const PayrollPage = () => (
-  
+import { useEffect, useState } from "react";
+import EmployeeApi from "@/api/hr/EmployeeApi";
+const PayrollPage = () => {
+  const [employees, setEmployees] = useState([]);
+  useEffect(()=>{
+    EmployeeApi.getPaged({page:1, pageSize:2000})
+      .then(res => setEmployees(res.data.data.data));
+  },[])
 
-  <BaseCrudPage
-    title="Payroll"
-    service={PayrollApi}
-    fields={[
-      { name: "patientId", label: "Patients", type: "select", required: true },
-      { name: "doctorId", label: "Doctors", type: "select" },
-      { name: "PayrollDate", label: "Payroll Date", type: "date" },
-      { name: "PayrollTime", label: "Payroll Time", type: "time" },
-      { name: "notes", label: "select Gender", type: "textarea"},
-    ]}
-    columns={[
-      { accessorKey: "id", header: "ID", enableSorting: true },
-      { accessorKey: "patientId", header: "Patient", enableSorting: true },
-      { accessorKey: "doctorId", header: "Doctors" },
-      { accessorKey: "PayrollDate", header: "Date" },
-      { accessorKey: "PayrollTime", header: "Time" },
-      { accessorKey: "notes", header: "Notes" },
-    ]}
-    mapFormToPayload={(form) => ({
-      patientId: form.patientId,
-      doctorId: form.doctorId,
-      PayrollDate: form.PayrollDate,
-      PayrollTime: form.PayrollTime,
-      notes: form.notes,
-    })}
-  />
-);
+  const employeeOptions = employees.map(e=>({
+    label:e.name,
+    value: e.id
+  }));
+  return (
+    <BaseCrudPage
+      title="Payroll"
+      service={PayrollApi}
+      fields={[
+        { name: "employeeId", label: "Employee", type: "select", options: employeeOptions },
+        { name: "payrollDate", label: "Payroll Date", type: "Datetime-local" },
+        { name: "baseSalary", label: "Base Salary", type: "number" },
+        { name: "allowances", label: "Allowances", type: "number" },
+        { name: "deductions", label: "Deductions", type: "number" },
+        { name: "netSalary", label: "Net Salary", type: "number" },
+        { name: "notes", label: "Notes", type: "textarea" },
+      ]}
+      columns={[
+        { accessorKey: "id", header: "ID", enableSorting: true },
+        { accessorKey: "employeeId", header: "Employees", enableSorting: true },
+        { accessorKey: "payrollDate", header: "Payroll Date" },
+        { accessorKey: "baseSalary", header: "Base Salary" },
+        { accessorKey: "allowances", header: "Allowances" },
+        { accessorKey: "deductions", header: "Deductions" },
+        { accessorKey: "netSalary", header: "Net Salaray" },
+        { accessorKey: "notes", header: "Notes" },
+      ]}
+      mapFormToPayload={(form) => ({
+        employeeId: Number(form.employeeId),
+        payrollDate: form.payrollDate,
+        baseSalary: (form.baseSalary),
+        allowances: Number(form.allowances),
+        deductions: Number(form.deductions),
+        netSalary: Number(form.netSalary),
+        notes: form.notes,
+      })}
+    />
+  );
+};
 
 export default PayrollPage;

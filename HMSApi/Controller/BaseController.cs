@@ -61,6 +61,7 @@ where TUpdateDto : class
     [HttpPost]
     public virtual async Task<IActionResult> Create([FromBody] TCreateDto dto)
     {
+        System.Console.WriteLine(dto);
         var result = await _service.AddAsync(dto);
 
         return Ok(new ApiResponse<TDto>

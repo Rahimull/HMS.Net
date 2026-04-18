@@ -89,6 +89,10 @@ Migrations/
  20260405035721_InitialCreate_ReceptionModule_with_AppUser.Designer.cs
  20260409163310_FixRelations.cs
  20260409163310_FixRelations.Designer.cs
+ 20260418155925_FixShiftRealtions.cs
+ 20260418155925_FixShiftRealtions.Designer.cs
+ 20260418163106_FixPayrollRelations.cs
+ 20260418163106_FixPayrollRelations.Designer.cs
  HMSDBCModelSnapshot.cs
 Models/
  AppUser.cs

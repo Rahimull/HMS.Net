@@ -17,5 +17,5 @@ public class Payrolls : BaseEntity
     public int EmployeeId { get; set; }
 
     // Navigation Property
-    public Employees Employees { get; set; } = null!;
+    public Employees Employee { get; set; } = null!;
 }

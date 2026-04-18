@@ -8,7 +8,7 @@ public class PayrollSpecification : BaseSpecification<Payrolls>
     public PayrollSpecification(QueryParams query)
     {
         /* ---------- SEARCH ---------- */
-        AddInclude(e => e.Employees);
+        AddInclude(e => e.Employee);
 
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
@@ -27,9 +27,9 @@ public class PayrollSpecification : BaseSpecification<Payrolls>
             {
                 case "name":
                     if (query.Sorting.IsDescending)
-                        ApplyOrderByDescending(d => d.Employees);
+                        ApplyOrderByDescending(d => d.Employee);
                     else
-                        ApplyOrderBy(d => d.Employees);
+                        ApplyOrderBy(d => d.Employee);
                     break;
 
                 case "id":

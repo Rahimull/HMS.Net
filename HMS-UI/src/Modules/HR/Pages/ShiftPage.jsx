@@ -21,23 +21,23 @@ const ShiftPage = () => {
       service={ShiftApi}
       fields={[
         { name: "employeeId", label: "Employee", type: "select", options: departmentOption},
-        { name: "ShiftDate", label: "Shift Date", type: "date" },
+        { name: "shiftDate", label: "Shift Date", type: "date" },
         { name: "startTime", label: "Start Time", type: "time" },
-        { name: "endTiem", label: "End Time", type: "select", required: true },
+        { name: "endTime", label: "End Time", type: "time" },
         { name: "notes", label: "Notes", type: "textarea" },
       ]}
       columns={[
         { accessorKey: "id", header: "ID", enableSorting: true },
         { accessorKey: "employeeName", header: "Doctors" },
-        { accessorKey: "ShiftDate", header: "Date" },
+        { accessorKey: "shiftDate", header: "Date" },
         { accessorKey: "startTime", header: "Start Time" },
-        { accessorKey: "endTiem", header: "End Time", enableSorting: true },
+        { accessorKey: "endTime", header: "End Time", enableSorting: true },
         { accessorKey: "notes", header: "Notes" },
       ]}
       mapFormToPayload={(form) => ({
-        endTiem: form.endTiem,
+        endTime: form.endTime,
         employeeId: Number(form.employeeId),
-        ShiftDate: form.ShiftDate,
+        shiftDate: form.shiftDate,
         startTime: form.startTime,
         notes: form.notes,
       })}

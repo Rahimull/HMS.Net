@@ -16,10 +16,10 @@ public class HRProfile : Profile
             .ForCtorParam("DepartmentName", opt => opt.MapFrom(src => src.Department.Name));
 
         // Employees Mappings
-        CreateMap<PayrollDto, Payrolls>();
+        CreateMap<CreatePayrollDto, Payrolls>();
         CreateMap<UpdatePayrollDto, Payrolls>();
         CreateMap<Payrolls, PayrollDto>()
-            .ForCtorParam("EmployeeName", opt => opt.MapFrom(src => src.Employees.Name));
+            .ForCtorParam("EmployeeName", opt => opt.MapFrom(src => src.Employee.Name));
 
         
 
@@ -27,7 +27,7 @@ public class HRProfile : Profile
         CreateMap<CreateShiftDto, Shift>();
         CreateMap<UpdateShiftDto, Shift>();
         CreateMap<Shift, ShiftDto>()
-            .ForCtorParam("EmployeeName", opt => opt.MapFrom(src => src.Employees.Name));
+            .ForCtorParam("EmployeeName", opt => opt.MapFrom(src => src.Employee.Name));
 
     }
 }

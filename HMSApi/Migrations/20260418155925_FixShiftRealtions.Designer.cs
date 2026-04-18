@@ -3,6 +3,7 @@ using System;
 using HMSApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HMSApi.Migrations
 {
     [DbContext(typeof(HMSDBC))]
-    partial class HMSDBCModelSnapshot : ModelSnapshot
+    [Migration("20260418155925_FixShiftRealtions")]
+    partial class FixShiftRealtions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.5");
@@ -629,6 +632,9 @@ namespace HMSApi.Migrations
                     b.Property<int>("EmployeeId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("EmployeesId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
@@ -643,7 +649,7 @@ namespace HMSApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployeeId");
+                    b.HasIndex("EmployeesId");
 
                     b.ToTable("Payrolls");
                 });
@@ -2415,13 +2421,13 @@ namespace HMSApi.Migrations
 
             modelBuilder.Entity("HMSApi.Modules.HR.Entities.Payrolls", b =>
                 {
-                    b.HasOne("HMSApi.Modules.HR.Entities.Employees", "Employee")
+                    b.HasOne("HMSApi.Modules.HR.Entities.Employees", "Employees")
                         .WithMany("Payrolls")
-                        .HasForeignKey("EmployeeId")
+                        .HasForeignKey("EmployeesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Employee");
+                    b.Navigation("Employees");
                 });
 
             modelBuilder.Entity("HMSApi.Modules.HR.Entities.Shift", b =>

@@ -15,7 +15,7 @@ public class Shift : BaseEntity
     public int EmployeeId { get; set; }
 
     // Navigation Property
-    public Employees Employees { get; set; } = null!;
+    public Employees Employee { get; set; } = null!;
 
     public ICollection<SupportStaff> SupportStaff { get; set; } = new List<SupportStaff>();
 }

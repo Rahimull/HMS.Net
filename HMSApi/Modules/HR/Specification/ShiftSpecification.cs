@@ -8,7 +8,7 @@ public class ShiftSpecification : BaseSpecification<Shift>
     public ShiftSpecification(QueryParams query)
     {
         /* ---------- Include Employee ---------- */
-        AddInclude(e => e.Employees.Name);
+        AddInclude(e => e.Employee);
         
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
@@ -16,7 +16,7 @@ public class ShiftSpecification : BaseSpecification<Shift>
         if (!string.IsNullOrWhiteSpace(term))
         {
             AddCriteria(d =>
-                (d.Employees.Name ?? "").Contains(term)
+                (d.Employee.Name ?? "").Contains(term)
             );
         }
 
@@ -27,9 +27,9 @@ public class ShiftSpecification : BaseSpecification<Shift>
             {
                 case "name":
                     if (query.Sorting.IsDescending)
-                        ApplyOrderByDescending(d => d.Employees.Name);
+                        ApplyOrderByDescending(d => d.Employee.Name);
                     else
-                        ApplyOrderBy(d => d.Employees.Name);
+                        ApplyOrderBy(d => d.Employee.Name);
                     break;
 
                 case "id":

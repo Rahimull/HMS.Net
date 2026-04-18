@@ -77,9 +77,9 @@ const Sidebar = () => {
         key: "hr",
         title: "HR",
         items: [
-          { name: "Employees", link: "/hr/employees", icon: Briefcase },
-          { name: "Payroll", link: "/hr/payroll", icon: Wallet },
-          { name: "Shifts", link: "/hr/shifts", icon: CalendarDays },
+          { name: "OK---> Employees", link: "/hr/employees", icon: Briefcase },
+          { name: "OK---> Payroll", link: "/hr/payroll", icon: Wallet },
+          { name: "OK---> Shifts", link: "/hr/shifts", icon: CalendarDays },
         ],
       },
       {
