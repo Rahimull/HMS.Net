@@ -1,35 +1,56 @@
-
 import BaseCrudPage from "../../../pages/Template/BaseCrudPage";
-import MedicineStockApi from "../../../api/pharmacy/MedicineStockApi";
-const MedicineStockPage = () => (
-  
+import MedicineStockApi from "@/api/pharmacy/MedicineStockApi";
+import { useEffect, useState } from "react";
+import MedicinesApi from "@/api/pharmacy/MedicinesApi";
+const MedicineStockPage = () => {
+  const [medicines, setMedicines] = useState([]);
+  useEffect(()=>{
+    MedicinesApi.getPaged({page:1, pageSize:2000})
+      .then(res=> setMedicines(res.data.data.data));
+  },[])
 
-  <BaseCrudPage
-    title="MedicineStock"
-    service={MedicineStockApi}
-    fields={[
-      { name: "patientId", label: "Patients", type: "select", required: true },
-      { name: "doctorId", label: "Doctors", type: "select" },
-      { name: "MedicineStockDate", label: "MedicineStock Date", type: "date" },
-      { name: "MedicineStockTime", label: "MedicineStock Time", type: "time" },
-      { name: "notes", label: "select Gender", type: "textarea"},
-    ]}
-    columns={[
-      { accessorKey: "id", header: "ID", enableSorting: true },
-      { accessorKey: "patientId", header: "Patient", enableSorting: true },
-      { accessorKey: "doctorId", header: "Doctors" },
-      { accessorKey: "MedicineStockDate", header: "Date" },
-      { accessorKey: "MedicineStockTime", header: "Time" },
-      { accessorKey: "notes", header: "Notes" },
-    ]}
-    mapFormToPayload={(form) => ({
-      patientId: form.patientId,
-      doctorId: form.doctorId,
-      MedicineStockDate: form.MedicineStockDate,
-      MedicineStockTime: form.MedicineStockTime,
-      notes: form.notes,
-    })}
-  />
-);
+  const medicineOptions = medicines.map(m=>({
+    label: m.name,
+    value: m.id
+  }));
+
+  return (
+    <BaseCrudPage
+      title="Medicine Stock"
+      service={MedicineStockApi}
+      fields={[
+        {
+          name: "batchNumber",
+          label: "Batch Number",
+          type: "text",
+          required: true,
+        },
+        { name: "quantity", label: "Qunatity", type: "number" },
+        { name: "expiryDate", label: "Expiry Date", type: "date" },
+        { name: "location", label: "Location", type: "text" },
+        { name: "medicineId", label: "Medicine", type: "select", options: medicineOptions },
+      ]}
+      columns={[
+        { accessorKey: "id", header: "ID", enableSorting: true },
+        {
+          accessorKey: "batchNumber",
+          header: "Batch Number",
+          enableSorting: true,
+        },
+        { accessorKey: "quantity", header: "Quantity" },
+        { accessorKey: "expiryDate", header: "Expiry Date" },
+        { accessorKey: "location", header: "location" },
+        { accessorKey: "medicineId", header: "MedicineId" },
+      ]}
+      mapFormToPayload={(form) => ({
+        batchNumber: form.batchNumber,
+        quantity: form.quantity,
+        expiryDate: form.expiryDate,
+        location: form.location,
+        medicineId: form.medicineId,
+      })}
+    />
+  );
+};
 
 export default MedicineStockPage;

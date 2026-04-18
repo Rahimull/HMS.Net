@@ -8,6 +8,9 @@ public class MedicineStockSpecification : BaseSpecification<MedicineStock>
     public MedicineStockSpecification(QueryParams query)
     {
         /* ---------- SEARCH ---------- */
+        AddInclude(m => m.Medicine);
+        
+        /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
 
         if (!string.IsNullOrWhiteSpace(term))

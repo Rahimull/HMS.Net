@@ -108,7 +108,7 @@ const Sidebar = () => {
         title: "Pharmacy",
         items: [
           { name: "OK--->  Medicines", link: "/pharmacy/medicines", icon: FlaskConical },
-          { name: "Medicine Stocks", link: "/pharmacy/medicine-stocks", icon: Boxes },
+          { name: "OK--->  Medicine Stocks", link: "/pharmacy/medicine-stocks", icon: Boxes },
           { name: "Sales", link: "/pharmacy/sales", icon: BadgeDollarSign },
           { name: "Sale Details", link: "/pharmacy/sale-details", icon: FileText },
         ],

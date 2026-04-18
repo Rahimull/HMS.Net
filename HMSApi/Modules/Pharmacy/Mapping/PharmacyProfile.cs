@@ -17,7 +17,8 @@ public class PharmacyProfile : Profile
         // MedicineStock Mappings
         CreateMap<CreateMedicineStockDto, MedicineStock>();
         CreateMap<UpdateMedicineStockDto, MedicineStock>();
-        CreateMap<MedicineStock, MedicineStockDto>();
+        CreateMap<MedicineStock, MedicineStockDto>()
+            .ForCtorParam("MedicineName", opt=> opt.MapFrom(src => src.Medicine.Name));
 
         // PharmacySale Mappings
         CreateMap<CreatePharmacySaleDto, PharmacySales>();
