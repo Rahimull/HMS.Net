@@ -10,8 +10,8 @@ public record PrescriptionDetailsDto(
   DateTime EndDate,
   int PrescriptionId,
   int MedicineId,
-  string MedicineName
-
+  string? MedicineName,
+  string? PrescriptionName
 );
 
 

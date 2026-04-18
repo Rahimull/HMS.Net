@@ -68,9 +68,9 @@ const Sidebar = () => {
           { name: "OK---> Doctors", link: "/doctors", icon: Stethoscope },
           { name: "OK---> Consultations", link: "/consultations", icon: ClipboardList },
           { name: "OK---> Diagnosis", link: "/diagnosis", icon: ListChecks },
-          { name: "Prescription", link: "/prescription", icon: Pill },
-          { name: "Prescription Details", link: "/prescriptiondetails", icon: Layers },
-          { name: "Schedule", link: "/schedule", icon: CalendarDays },
+          { name: "OK---> Prescription", link: "/prescription", icon: Pill },
+          { name: "OK---> Prescription Details", link: "/prescriptiondetails", icon: Layers },
+          { name: "OK---> Schedule", link: "/schedule", icon: CalendarDays },
         ],
       },
       {
@@ -96,14 +96,15 @@ const Sidebar = () => {
         title: "Store",
         items: [
           { name: "OK---> Items", link: "/store/items", icon: Package },
-          { name: "Item Stocks", link: "/store/item-stocks", icon: Boxes },
-          { name: "Purchases", link: "/store/purchases", icon: ShoppingCart },
+          { name: "OK---> Item Stocks", link: "/store/item-stocks", icon: Boxes },
+          { name: "OK---> Purchases", link: "/store/purchases", icon: ShoppingCart },
           { name: "Purchase Details", link: "/store/purchase-details", icon: Layers },
           { name: "OK---> Suppliers", link: "/store/suppliers", icon: Truck },
         ],
       },
       {
         key: "pharmacy",
+        
         title: "Pharmacy",
         items: [
           { name: "OK--->  Medicines", link: "/pharmacy/medicines", icon: FlaskConical },

@@ -8,6 +8,11 @@ public class PrescriptionSpecification : BaseSpecification<Prescriptions>
 {
     public PrescriptionSpecification(QueryParams query)
     {
+         /* ---------- SEARCH ---------- */
+         AddInclude(c => c.Consultation);
+         AddInclude(p => p.Patient);
+         AddInclude(d => d.Doctor);
+
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
 

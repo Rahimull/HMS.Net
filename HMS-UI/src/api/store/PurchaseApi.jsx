@@ -1,6 +1,6 @@
 import Api from "../Api";
 
-const endpoint = "/Purchase";
+const endpoint = "/Purchases";
 
 const PurchaseApi = {
   getPaged: (queryParams) =>

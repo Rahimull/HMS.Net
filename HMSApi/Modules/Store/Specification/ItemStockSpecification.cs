@@ -7,6 +7,10 @@ public class ItemStockSpecification : BaseSpecification<ItemStock>
 {
     public ItemStockSpecification(QueryParams query)
     {
+        /* ---------- Includ Item ---------- */
+        AddInclude(i => i.Item);
+
+
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
 

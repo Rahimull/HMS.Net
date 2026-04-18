@@ -6,7 +6,7 @@ public record ItemStockDto(
    int Quantity,
    string Location,
   string? BatchNumber,
-  DateTime LastUpdated,
   DateOnly ExpiryDate,
-   int ItemId
+   int ItemId,
+   string? ItemName
 );

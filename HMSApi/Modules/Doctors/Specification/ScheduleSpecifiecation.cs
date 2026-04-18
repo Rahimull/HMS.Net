@@ -8,6 +8,10 @@ public class ScheduleSpecification : BaseSpecification<Schedules>
 {
     public ScheduleSpecification(QueryParams query)
     {
+        /* ---------- Include Doctor ---------- */
+        AddInclude(d=>d.Doctor);
+
+
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
 

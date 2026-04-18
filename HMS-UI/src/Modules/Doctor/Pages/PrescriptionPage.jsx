@@ -1,61 +1,78 @@
 import BaseCrudPage from "../../../pages/Template/BaseCrudPage";
-import PrescriptinApi from "../../../api/doctor/PrescriptionApi";
+import ConsultationApi from "@/api/doctor/ConsultationApi";
+import { DoctorApi, PatientApi } from "@/api";
+import { useState,useEffect } from "react";
+import PrescriptionApi from "@/api/doctor/PrescriptionApi";
 
-const PrescriptionPage = () => (
-  <BaseCrudPage
-    title="Prescriptions"
-    service={PrescriptinApi}
-    fields={[
-      {
-        name: "visitDate",
-        label: "Visit Date",
-        type: "date",
-        required: true,
-      },
-      {
-        name: "chiefComplaint",
-        label: "Chief Complaint",
-        type: "text",
-        required: true,
-      },
-      {
-        name: "patientId",
-        label: "Patient",
-        type: "select",
-        options: [],
-      },
-      {
-        name: "examination",
-        label: "Examination",
-        type: "Text",
-        required: true,
-      },
-      {
-        name: "doctorId",
-        label: "Doctor",
-        type: "select",
-        options: [],
-      },
-      { name: "notes", label: "Notes", type: "textarea" },
-    ]}
-    columns={[
-      { accessorKey: "id", header: "ID" },
-      { accessorKey: "visitDate", header: "Visit Date" },
-    { accessorKey: "chiefComplaint", header: "Chief Complaint" },
-    { accessorKey: "notes", header: "Notes" },
-    { accessorKey: "examination", header: "Examination" },
-    { accessorKey: "doctorId", header: "Doctor Name" },
-    { accessorKey: "patientId", header: "Patient Name" },
-    ]}
-    mapFormToPayload={(form) => ({
-      visitDate: formData.visitDate,
-      chiefComplaint: formData.chiefComplaint,
-      notes: formData.notes,
-      examination: formData.examination,
-      doctorId: Number(formData.doctorId),
-      patientId: Number(formData.patientId),
-    })}
-  />
-);
+const consultationPage = () => {
+  const [doctors, setDoctors] = useState([]);
+  const [consultations, setconsultations] = useState([]);
+  const [patients, setPatients] = useState([]);
 
-export default PrescriptionPage;
+  useEffect(() => {
+    ConsultationApi.getPaged({ page: 1, pageSize: 1000 }).then((res) => setconsultations(res.data.data.data)
+    );
+    DoctorApi.getPaged({ page: 1, pageSize: 1000 }).then((res) =>
+      setDoctors(res.data.data.data),
+    );
+    PatientApi.getPaged({ page: 1, pageSize: 1000 }).then((res) =>
+      setPatients(res.data.data.data),
+    );
+  }, []);
+
+  const consultationOptions = consultations.map((p) => ({
+    label: p.chiefComplaint,
+    value: p.id,
+  }
+));
+  const doctorOptions = doctors.map((p) => ({
+    label: `${p.firstName} - ${p.lastName}`,
+    value: p.id,
+  }));
+  const patientOpations = patients.map((p) => ({
+    label: `${p.firstName} - ${p.lastName}`,
+    value: p.id,
+  }));
+
+  console.log("Consultaion: ",consultationOptions)
+
+  return (
+    <BaseCrudPage
+      title="Prescriptions"
+      service={PrescriptionApi}
+      fields={[
+        {
+          name: "consultationId",
+          label: "Consulations",
+          type: "select",
+          options: consultationOptions
+        },
+        {
+          name: "patientId",
+          label: "Patient",
+          type: "select",
+          options: patientOpations,
+        },
+        {
+          name: "doctorId",
+          label: "Doctor",
+          type: "select",
+          options: doctorOptions,
+        },
+      ]}
+      columns={[
+        { accessorKey: "id", header: "ID" },
+        { accessorKey: "consultationName", header: "Consultation" },
+        { accessorKey: "doctorName", header: "Doctor Name" },
+        { accessorKey: "patientName", header: "Patient Name" },
+      ]}
+      mapFormToPayload={(formData) => ({
+        consultationId: formData.consultationId,
+        doctorId: Number(formData.doctorId),
+        patientId: Number(formData.patientId),
+      })}
+    />
+  );
+};
+
+export default consultationPage;

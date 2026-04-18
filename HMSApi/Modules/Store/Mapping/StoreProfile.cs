@@ -9,17 +9,18 @@ public class StoreProfile : Profile
 {
     public StoreProfile()
     {
-         
+
 
         // Item Mappings
         CreateMap<CreateItemDto, Items>();
         CreateMap<UpdateItemDto, Items>();
         CreateMap<Items, ItemDto>();
 
-           // ItemStock Mappings
+        // ItemStock Mappings
         CreateMap<CreateItemStockDto, ItemStock>();
         CreateMap<UpdateItemStockDto, ItemStock>();
-        CreateMap<ItemStock, ItemStockDto>();
+        CreateMap<ItemStock, ItemStockDto>()
+            .ForCtorParam("ItemName", opt => opt.MapFrom(src => src.Item.Name));
 
         // PurchaseDetails Mappings
         CreateMap<CreatePurchaseDetailsDto, PurchaseDetail>();
@@ -29,15 +30,17 @@ public class StoreProfile : Profile
         // Purchases Mappings
         CreateMap<CreatePurchasesDto, Purchases>();
         CreateMap<UpdatePurchasesDto, Purchases>();
-        CreateMap<Purchases, PurchasesDto>();
+        CreateMap<Purchases, PurchasesDto>()
+            .ForCtorParam("ItemName", opt => opt.MapFrom(src => src.Item.Name))
+            .ForCtorParam("SupplierName", opt => opt.MapFrom(src => src.Supplier.Name));
 
         // Suplier Mappings
         CreateMap<CreateSuplierDto, Suppliers>();
         CreateMap<UpdateSuplierDto, Suppliers>();
         CreateMap<Suppliers, SuplierDto>();
 
-      
-     
+
+
 
     }
 }

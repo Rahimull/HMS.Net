@@ -8,9 +8,7 @@ public record UpdatePrescriptionDetailsDto(
   DateTime StartDate,
   DateTime EndDate,
   int PrescriptionId,
-  int MedicineId,
-  string MedicineName
-
+  int MedicineId
 );
 
 

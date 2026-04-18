@@ -8,10 +8,8 @@ public record CreatePrescriptionDetailsDto(
   DateTime StartDate,
   DateTime EndDate,
   int PrescriptionId,
-  int MedicineId,
-  string MedicineName
-
-);
+  int MedicineId
+  );
 
 
 

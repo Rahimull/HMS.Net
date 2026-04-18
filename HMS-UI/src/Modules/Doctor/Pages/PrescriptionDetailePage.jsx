@@ -1,65 +1,93 @@
 import BaseCrudPage from "../../../pages/Template/BaseCrudPage";
-import PrescriptionDetailApi from "../../../api/doctor/PrescriptionDetailsApi";
+import PrescriptionDetailsApi from "@/api/doctor/PrescriptionDetailsApi";
+import { useEffect, useState } from "react";
+import PrescriptionApi from "@/api/doctor/PrescriptionApi";
+import MedicinesApi from "@/api/pharmacy/MedicinesApi";
 
-const PrescriptionDetailePage = () => (
-  <BaseCrudPage
-    title="Prescription Details"
-    service={PrescriptionDetailApi}
-    fields={[
-      {
-        name: "visitDate",
-        label: "Visit Date",
-        type: "date",
-        required: true,
-      },
-      {
-        name: "chiefComplaint",
-        label: "Chief Complaint",
-        type: "text",
-        required: true,
-      },
-      {
-        name: "patientId",
-        label: "Patient",
-        type: "select",
-        options: [],
-      },
-      {
-        name: "examination",
-        label: "Examination",
-        type: "Text",
-        required: true,
-      },
-      {
-        name: "doctorId",
-        label: "Doctor",
-        type: "select",
-        options: [],
-      },
-      { name: "notes", label: "Notes", type: "textarea" },
-    ]}
-    columns={[
-      { accessorKey: "id", header: "ID" },
-      { accessorKey: "visitDate", header: "Visit Date" },
-      { accessorKey: "chiefComplaint", header: "Chief Complaint" },
-      { accessorKey: "notes", header: "Notes" },
-      { accessorKey: "examination", header: "Examination" },
-      { accessorKey: "doctorId", header: "Doctor Name" },
-      { accessorKey: "patientId", header: "Patient Name" },
-    ]}
-    mapFormToPayload={(form) => ({
-      visitDate: formData.visitDate,
-      chiefComplaint: formData.chiefComplaint,
-      notes: formData.notes,
-      examination: formData.examination,
-      doctorId: Number(formData.doctorId),
-      patientId: Number(formData.patientId),
-    })}
-  />
-);
+const PrescriptionDetailePage = () => {
+  const [medicines, setMedicines] = useState([]);
+  const [prescriptions, setPrescriptions] = useState([]);
+
+  useEffect(() => {
+    PrescriptionApi.getPaged({ page: 1, pageSize: 1000 }).then((res) =>
+      setPrescriptions(res.data.data.data),
+    );
+    MedicinesApi.getPaged({ page: 1, pageSize: 1000 }).then((res) =>
+      setMedicines(res.data.data.data),
+    );
+  }, []);
+
+  const prescriptionOptions = prescriptions.map(p => ({
+    label : p.id,
+    value: p.id
+  }))
+  const medicineOptions = medicines.map(p => ({
+    label : p.name,
+    value: p.id
+  }))
+
+  return (
+    <BaseCrudPage
+      title="Prescription Details"
+      service={PrescriptionDetailsApi}
+      fields={[
+        {
+          name: "medicationName",
+          label: "Medication Name",
+          type: "text",
+          required: true,
+        },
+        {
+          name: "dosage",
+          label: "Dosage",
+          type: "text",
+          required: true,
+        },
+        {
+          name: "prescriptionId",
+          label: "Prescreption",
+          type: "select",
+          options: prescriptionOptions,
+        },
+        {
+          name: "medicineId",
+          label: "Medicine",
+          type: "select",
+          options: medicineOptions,
+        },
+        {
+          name: "startDate",
+          label: "Start Date",
+          type: "datetime-local",
+        },
+        {
+          name: "endDate",
+          label: "End Date",
+          type: "datetime-local",
+        },
+        { name: "frequency", label: "frequency", type: "text", require: true },
+      ]}
+      columns={[
+        { accessorKey: "id", header: "ID" },
+        { accessorKey: "medicationName", header: "Medication" },
+        { accessorKey: "dosage", header: "Dosage" },
+        { accessorKey: "frequency", header: "Frequency" },
+        { accessorKey: "startDate", header: "Start Date" },
+        { accessorKey: "endDate", header: "End Date" },
+        { accessorKey: "prescriptionId", header: "Prescription Name" },
+        { accessorKey: "medicineName", header: "Medicine" },
+      ]}
+      mapFormToPayload={(formData) => ({
+        medicationName: formData.medicationName,
+        dosage: formData.dosage,
+        frequency: formData.frequency,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        prescriptionId: Number(formData.prescriptionId),
+        medicineId: Number(formData.medicineId),
+      })}
+    />
+  );
+};
 
 export default PrescriptionDetailePage;
-
-
-
-

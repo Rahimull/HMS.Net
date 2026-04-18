@@ -8,5 +8,7 @@ public record PurchasesDto(
        DateTime PurchaseDate,
        string? Notes,
        int ItemId,
-       int SupplierId
+       int SupplierId,
+       string? ItemName,
+       string? SupplierName
 );

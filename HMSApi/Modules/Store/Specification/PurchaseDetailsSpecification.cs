@@ -8,6 +8,8 @@ public class PurchaseDetailSpecification : BaseSpecification<PurchaseDetail>
     public PurchaseDetailSpecification(QueryParams query)
     {
         /* ---------- SEARCH ---------- */
+       
+        /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
 
         if (!string.IsNullOrWhiteSpace(term))

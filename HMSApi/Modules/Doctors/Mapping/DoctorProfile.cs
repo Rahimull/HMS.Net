@@ -33,12 +33,19 @@ public class DoctorProfile : Profile
         // PrescriptionDetails Mappings
         CreateMap<CreatePrescriptionDetailsDto, PrescriptionDetails>();
         CreateMap<UpdatePrescriptionDetailsDto, PrescriptionDetails>();
-        CreateMap<PrescriptionDetails, PrescriptionDetailsDto>();
+        CreateMap<PrescriptionDetails, PrescriptionDetailsDto>()
+            .ForCtorParam("MedicineName", opt => opt.MapFrom(src => src.Medicine.Name))
+            .ForCtorParam("PrescriptionName", opt => opt.MapFrom(src => src.Prescription.Patient.FirstName +" "+ src.Prescription.Patient.LastName))
+        ;
 
         // Prescription Mappings
         CreateMap<CreatePrescriptionDto, Prescriptions>();
         CreateMap<UpdatePrescriptionDto, Prescriptions>();
-        CreateMap<Prescriptions, PrescriptionDto>();
+        CreateMap<Prescriptions, PrescriptionDto>()
+            .ForCtorParam("PatientName", opt => opt.MapFrom(src => src.Patient.FirstName +" "+ src.Patient.LastName))
+            .ForCtorParam("DoctorName", opt=> opt.MapFrom(src => src.Doctor.FirstName + " "+ src.Doctor.LastName))
+            .ForCtorParam("ConsultationName", opt=> opt.MapFrom(src => src.Consultation.ChiefComplaint));
+        
 
         // Schedule Mappings
         CreateMap<CreateScheduleDto, Schedules>();

@@ -1,35 +1,46 @@
 
 import BaseCrudPage from "../../../pages/Template/BaseCrudPage";
 import PurchaseDetailsApi from "../../../api/store/PurchaseDetailsApi";
-const PurchaseDetailsPage = () => (
-  
+import { useEffect } from "react";
+const PurchaseDetailsPage = () => {
+  const [items, setItems] = useStat([]);
+  const [purchase, setPurchase] = useStat([]);
 
-  <BaseCrudPage
+  useEffect()
+  return(
+    <BaseCrudPage
     title="PurchaseDetails"
     service={PurchaseDetailsApi}
     fields={[
-      { name: "patientId", label: "Patients", type: "select", required: true },
-      { name: "doctorId", label: "Doctors", type: "select" },
-      { name: "PurchaseDetailsDate", label: "PurchaseDetails Date", type: "date" },
-      { name: "PurchaseDetailsTime", label: "PurchaseDetails Time", type: "time" },
-      { name: "notes", label: "select Gender", type: "textarea"},
+      { name: "quantity", label: "Quantity", type: "number", required: true },
+      { name: "unitPrice", label: "Unit Price", type: "number" },
+      { name: "subTotal", label: "Sub Total Date", type: "number" },
+      { name: "batchNumber", label: "Batch Number Time", type: "text" },
+      { name: "expiryDate", label: "Expatir Date", type: "date"},
+      { name: "purchaseId", label: "Purchase", type: "select", options:[]},
+      { name: "itemId", label: "Item", type: "select": options:[]},
     ]}
     columns={[
       { accessorKey: "id", header: "ID", enableSorting: true },
-      { accessorKey: "patientId", header: "Patient", enableSorting: true },
-      { accessorKey: "doctorId", header: "Doctors" },
-      { accessorKey: "PurchaseDetailsDate", header: "Date" },
-      { accessorKey: "PurchaseDetailsTime", header: "Time" },
-      { accessorKey: "notes", header: "Notes" },
+      { accessorKey: "quantity", header: "Quantity", enableSorting: true },
+      { accessorKey: "unitPrice", header: "Unit Price" },
+      { accessorKey: "subTotal", header: "Sub Total" },
+      { accessorKey: "batchNumber", header: "Batch Number" },
+      { accessorKey: "expiryDate", header: "Expiry Date" },
+      { accessorKey: "purchaseId", header: "Purchase" },
+      { accessorKey: "itemId", header: "Item" },
     ]}
     mapFormToPayload={(form) => ({
-      patientId: form.patientId,
-      doctorId: form.doctorId,
-      PurchaseDetailsDate: form.PurchaseDetailsDate,
-      PurchaseDetailsTime: form.PurchaseDetailsTime,
-      notes: form.notes,
+      quantity: form.quantity,
+      unitPrice: form.unitPrice,
+      subTotal: form.subTotal,
+      batchNumber: form.batchNumber,
+      expiryDate: form.expiryDate,
+      purchaseId: form.purchaseId,
+      itemId: form.itemId,
     })}
   />
-);
+  );
+};
 
 export default PurchaseDetailsPage;
