@@ -1,12 +1,30 @@
 
 import BaseCrudPage from "../../../pages/Template/BaseCrudPage";
-import PurchaseDetailsApi from "../../../api/store/PurchaseDetailsApi";
-import { useEffect } from "react";
+import PurchaseDetailsApi from "@/api/store/PurchaseDetailsApi";
+import { useEffect, useState } from "react";
+import PurchaseApi from "@/api/store/PurchaseApi";
+import ItemApi from "@/api/store/ItemApi";
 const PurchaseDetailsPage = () => {
-  const [items, setItems] = useStat([]);
-  const [purchase, setPurchase] = useStat([]);
+  const [items, setItems] = useState([]);
+  const [purchase, setPurchase] = useState([]);
 
-  useEffect()
+  useEffect(()=>{
+    ItemApi.getPaged({page:1, pageSize:2000})
+      .then(res=> setItems(res.data.data.data));
+    PurchaseApi.getPaged({page:1, pageSize:2000})
+      .then(res=> setPurchase(res.data.data.data));
+  },[]);
+
+  const itemOption = items.map(i=>({
+    label: i.name,
+    value: i.id
+  }))
+  const purchaseOption = purchase.map(p=>({
+    label: p.id,
+    value: p.id
+  }))
+
+  console.log("Purchase ",purchaseOption)
   return(
     <BaseCrudPage
     title="PurchaseDetails"
@@ -17,8 +35,8 @@ const PurchaseDetailsPage = () => {
       { name: "subTotal", label: "Sub Total Date", type: "number" },
       { name: "batchNumber", label: "Batch Number Time", type: "text" },
       { name: "expiryDate", label: "Expatir Date", type: "date"},
-      { name: "purchaseId", label: "Purchase", type: "select", options:[]},
-      { name: "itemId", label: "Item", type: "select": options:[]},
+      { name: "purchaseId", label: "Purchase", type: "select", options: purchaseOption},
+      { name: "itemId", label: "Item", type: "select", options: itemOption},
     ]}
     columns={[
       { accessorKey: "id", header: "ID", enableSorting: true },
@@ -31,13 +49,12 @@ const PurchaseDetailsPage = () => {
       { accessorKey: "itemId", header: "Item" },
     ]}
     mapFormToPayload={(form) => ({
-      quantity: form.quantity,
-      unitPrice: form.unitPrice,
-      subTotal: form.subTotal,
-      batchNumber: form.batchNumber,
+      quantity: Number(form.quantity),
+      unitPrice: Number(form.unitPrice),
+      subTotal: Number(form.subTotal),
       expiryDate: form.expiryDate,
-      purchaseId: form.purchaseId,
-      itemId: form.itemId,
+      purchaseId: Number(form.purchaseId),
+      itemId: Number(form.itemId),
     })}
   />
   );

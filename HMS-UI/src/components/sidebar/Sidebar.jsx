@@ -98,7 +98,7 @@ const Sidebar = () => {
           { name: "OK---> Items", link: "/store/items", icon: Package },
           { name: "OK---> Item Stocks", link: "/store/item-stocks", icon: Boxes },
           { name: "OK---> Purchases", link: "/store/purchases", icon: ShoppingCart },
-          { name: "Purchase Details", link: "/store/purchase-details", icon: Layers },
+          { name: "OK---> Purchase Details", link: "/store/purchase-details", icon: Layers },
           { name: "OK---> Suppliers", link: "/store/suppliers", icon: Truck },
         ],
       },

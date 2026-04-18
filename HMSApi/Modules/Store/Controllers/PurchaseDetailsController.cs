@@ -1,28 +1,21 @@
-using AutoMapper;
-using HMSApi.Modules.Store.Entities;
+using HMSApi.Controllers;
 using HMSApi.Modules.Store.DTOs;
-using HMSApi.Modules.Store.Repositories;
-using HMSApi.Services;
-using HMSApi.Models;
-using HMSApi.Specifications;
-namespace HMSApi.Modules.Store.Services;
+using HMSApi.Modules.Store.Services;
+using Microsoft.AspNetCore.Mvc;
 
+namespace HMSApi.Modules.Store.Controllers;
 
-public class PurchaseDetailService : BaseService<PurchaseDetail, PurchaseDetailsDto, CreatePurchaseDetailsDto, UpdatePurchaseDetailsDto>, IPurchaseDetailsService
+[ApiController]
+[Route("api/[controller]")]
+public class PurchaseDetailsController
+    : BaseController<
+        IPurchaseDetailsService,
+        PurchaseDetailsDto,
+        CreatePurchaseDetailsDto,
+        UpdatePurchaseDetailsDto>
 {
-    public PurchaseDetailService(IPurchaseDetailsRepository repo, IMapper mapper) : base(repo, mapper)
+    public PurchaseDetailsController(IPurchaseDetailsService service)
+        : base(service)
     {
-        
     }
-
-
-    
-
-  // 🔥 VERY IMPORTANT
-    protected override ISpecification<PurchaseDetail> BuildSpecification(QueryParams query)
-    {
-        return new PurchaseDetailSpecification(query);
-    }
-
-
 }

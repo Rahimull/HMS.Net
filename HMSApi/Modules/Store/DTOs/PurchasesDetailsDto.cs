@@ -9,5 +9,7 @@ public record PurchaseDetailsDto(
        string? BatchNumber,
        DateOnly ExpiryDate,
        int PurchaseId,
-       int ItemId
+       int ItemId,
+       string? ItemName,
+       string? PurchaseName
 );

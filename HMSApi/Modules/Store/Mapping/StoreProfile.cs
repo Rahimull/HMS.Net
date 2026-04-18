@@ -25,7 +25,9 @@ public class StoreProfile : Profile
         // PurchaseDetails Mappings
         CreateMap<CreatePurchaseDetailsDto, PurchaseDetail>();
         CreateMap<UpdatePurchaseDetailsDto, PurchaseDetail>();
-        CreateMap<PurchaseDetail, PurchasesDto>();
+        CreateMap<PurchaseDetail, PurchaseDetailsDto>()
+            .ForCtorParam("ItemName", opt => opt.MapFrom(src => src.Item.Name))
+            .ForCtorParam("PurchaseName", opt => opt.MapFrom(src => src.Purchase.Notes));
 
         // Purchases Mappings
         CreateMap<CreatePurchasesDto, Purchases>();

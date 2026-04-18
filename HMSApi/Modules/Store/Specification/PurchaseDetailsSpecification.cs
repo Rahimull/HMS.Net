@@ -7,7 +7,9 @@ public class PurchaseDetailSpecification : BaseSpecification<PurchaseDetail>
 {
     public PurchaseDetailSpecification(QueryParams query)
     {
-        /* ---------- SEARCH ---------- */
+        /* ---------- Include Items and Purchase ---------- */
+        AddInclude(i => i.Item);
+        AddInclude(p => p.Purchase);
        
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
