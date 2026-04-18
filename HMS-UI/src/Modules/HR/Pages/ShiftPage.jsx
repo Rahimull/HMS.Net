@@ -1,35 +1,48 @@
-
 import BaseCrudPage from "../../../pages/Template/BaseCrudPage";
-import ShiftApi from "../../../api/hr/ShiftApi";
-const ShiftPage = () => (
-  
+import ShiftApi from "@/api/hr/ShiftApi";
+import { useEffect, useState } from "react";
+import EmployeeApi from "@/api/hr/EmployeeApi";
+const ShiftPage = () => {
+  const [employees, setEmployees] = useState([]);
+  useEffect(() => {
+    EmployeeApi.getPaged({ page: 1, pageSize: 1000 }).then((res) =>
+      setEmployees(res.data.data.data),
+    );
+  }, []);
 
-  <BaseCrudPage
-    title="Shift"
-    service={ShiftApi}
-    fields={[
-      { name: "patientId", label: "Patients", type: "select", required: true },
-      { name: "doctorId", label: "Doctors", type: "select" },
-      { name: "ShiftDate", label: "Shift Date", type: "date" },
-      { name: "ShiftTime", label: "Shift Time", type: "time" },
-      { name: "notes", label: "select Gender", type: "textarea"},
-    ]}
-    columns={[
-      { accessorKey: "id", header: "ID", enableSorting: true },
-      { accessorKey: "patientId", header: "Patient", enableSorting: true },
-      { accessorKey: "doctorId", header: "Doctors" },
-      { accessorKey: "ShiftDate", header: "Date" },
-      { accessorKey: "ShiftTime", header: "Time" },
-      { accessorKey: "notes", header: "Notes" },
-    ]}
-    mapFormToPayload={(form) => ({
-      patientId: form.patientId,
-      doctorId: form.doctorId,
-      ShiftDate: form.ShiftDate,
-      ShiftTime: form.ShiftTime,
-      notes: form.notes,
-    })}
-  />
-);
+  const departmentOption = employees.map((d) => ({
+    label: d.name,
+    value: d.id,
+  }));
+
+  return (
+    <BaseCrudPage
+      title="Shift"
+      service={ShiftApi}
+      fields={[
+        { name: "employeeId", label: "Employee", type: "select", options: departmentOption},
+        { name: "ShiftDate", label: "Shift Date", type: "date" },
+        { name: "startTime", label: "Start Time", type: "time" },
+        { name: "endTiem", label: "End Time", type: "select", required: true },
+        { name: "notes", label: "Notes", type: "textarea" },
+      ]}
+      columns={[
+        { accessorKey: "id", header: "ID", enableSorting: true },
+        { accessorKey: "employeeName", header: "Doctors" },
+        { accessorKey: "ShiftDate", header: "Date" },
+        { accessorKey: "startTime", header: "Start Time" },
+        { accessorKey: "endTiem", header: "End Time", enableSorting: true },
+        { accessorKey: "notes", header: "Notes" },
+      ]}
+      mapFormToPayload={(form) => ({
+        endTiem: form.endTiem,
+        employeeId: Number(form.employeeId),
+        ShiftDate: form.ShiftDate,
+        startTime: form.startTime,
+        notes: form.notes,
+      })}
+    />
+  );
+};
 
 export default ShiftPage;

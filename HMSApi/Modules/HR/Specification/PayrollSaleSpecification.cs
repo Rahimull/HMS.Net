@@ -8,6 +8,9 @@ public class PayrollSpecification : BaseSpecification<Payrolls>
     public PayrollSpecification(QueryParams query)
     {
         /* ---------- SEARCH ---------- */
+        AddInclude(e => e.Employees);
+
+        /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
 
         if (!string.IsNullOrWhiteSpace(term))

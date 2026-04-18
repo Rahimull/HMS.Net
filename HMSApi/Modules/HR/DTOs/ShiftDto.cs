@@ -8,5 +8,5 @@ public record ShiftDto(
        TimeOnly EndTime,
        string? Notes,
        int EmployeeId,
-       string EmployeeName
+       string? EmployeeName
 );

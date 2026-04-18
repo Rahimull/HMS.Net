@@ -7,6 +7,9 @@ public class ShiftSpecification : BaseSpecification<Shift>
 {
     public ShiftSpecification(QueryParams query)
     {
+        /* ---------- Include Employee ---------- */
+        AddInclude(e => e.Employees.Name);
+        
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
 

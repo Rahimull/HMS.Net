@@ -7,6 +7,9 @@ public class EmployeeSpecification : BaseSpecification<Employees>
 {
     public EmployeeSpecification(QueryParams query)
     {
+        /* ---------- Include Departemnt ---------- */
+        AddInclude(d => d.Department);
+        
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
 

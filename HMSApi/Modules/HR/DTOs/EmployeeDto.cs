@@ -13,5 +13,5 @@ public record EmployeeDto(
         DateOnly HireDate,
         EmployeeStatus Status,
         int DepartmentId,
-        string DepartmentName
+        string? DepartmentName
 );
