@@ -25,6 +25,10 @@ import AppointmentsUi from "./Modules/Reception/Pages/AppointmentsUI";
 import PharmacyPageUi from "./Modules/Pharmacy/Pages/PharmacyPageUi";
 import StorePageUi from "./Modules/Store/Pages/StorePageUi";
 
+// Store
+import PurchasesUi from "./Modules/Store/Pages/PurchasesUi";
+import StockManagement from "./Modules/Store/Pages/StockManagement";
+
 export default function App() {
   return (
     <Routes>
@@ -66,6 +70,8 @@ export default function App() {
         <Route path="finance/payments" element={<PaymentPage />} />
 
         {/* Store */}
+        <Route path="store/StockManagement" element={<StockManagement />} />
+        <Route path="store/PurchasesUi" element={<PurchasesUi />} />
         <Route path="store/StorePageUi" element={<StorePageUi />} />
         <Route path="store/items" element={<ItemPage />} />
         <Route path="store/item-stocks" element={<ItemStockPage />} />

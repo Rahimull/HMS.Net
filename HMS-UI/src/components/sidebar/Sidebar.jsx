@@ -95,6 +95,8 @@ const Sidebar = () => {
         key: "store",
         title: "Store",
         items: [
+          { name: "StockManagement", link: "/store/StockManagement", icon: Package },
+          { name: "PurchasesUi", link: "/store/PurchasesUi", icon: Package },
           { name: "StorePageUi", link: "/store/StorePageUi", icon: Package },
           { name: "OK---> Items", link: "/store/items", icon: Package },
           { name: "OK---> Item Stocks", link: "/store/item-stocks", icon: Boxes },

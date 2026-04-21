@@ -4161,6 +4161,7 @@
   "projectFileDependencyGroups": {
     "net10.0": [
       "AutoMapper.Extensions.Microsoft.DependencyInjection >= 12.0.1",
+      "FluentValidation.AspNetCore >= 11.3.1",
       "Hangfire >= 1.8.23",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 10.0.5",
       "Microsoft.AspNetCore.Cors >= 2.3.9",
@@ -4171,8 +4172,7 @@
       "Microsoft.EntityFrameworkCore.Tools >= 10.0.5",
       "Microsoft.Extensions.Configuration >= 10.0.5",
       "Serilog.AspNetCore >= 10.0.0",
-      "Swashbuckle.AspNetCore >= 10.1.7",
-      "fluentvalidation.aspnetcore >= 11.3.1"
+      "Swashbuckle.AspNetCore >= 10.1.7"
     ]
   },
   "packageFolders": {
@@ -4222,6 +4222,10 @@
             "target": "Package",
             "version": "[12.0.1, )"
           },
+          "FluentValidation.AspNetCore": {
+            "target": "Package",
+            "version": "[11.3.1, )"
+          },
           "Hangfire": {
             "target": "Package",
             "version": "[1.8.23, )"
@@ -4267,10 +4271,6 @@
           "Swashbuckle.AspNetCore": {
             "target": "Package",
             "version": "[10.1.7, )"
-          },
-          "fluentvalidation.aspnetcore": {
-            "target": "Package",
-            "version": "[11.3.1, )"
           }
         },
         "imports": [

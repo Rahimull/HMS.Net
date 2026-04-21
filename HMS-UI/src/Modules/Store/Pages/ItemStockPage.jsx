@@ -2,6 +2,7 @@ import BaseCrudPage from "../../../pages/Template/BaseCrudPage";
 import ItemStockApi from "../../../api/store/ItemStockApi";
 import { useEffect, useState } from "react";
 import ItemApi from "@/api/store/ItemApi";
+import Card from "@/components/common/Card";
 const ItemStockPage = () => {
   const [items, setItems] = useState([]);
   useEffect(()=>{
@@ -15,6 +16,14 @@ const ItemStockPage = () => {
   }));
 
   return (
+    <>
+    <Card>
+      
+    </Card>
+
+
+
+    
     <BaseCrudPage
       title="Item Stock"
       service={ItemStockApi}
@@ -47,6 +56,7 @@ const ItemStockPage = () => {
         itemId: Number(form.itemId),
       })}
     />
+    </>
   );
 };
 
