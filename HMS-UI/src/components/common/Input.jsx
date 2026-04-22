@@ -1,53 +1,48 @@
-function Input({
+const Input = ({
   label,
   type = "text",
   name,
   value,
   onChange,
-  onClick,
   placeholder,
+  className = "",
   options = [],
   error,
-}) {
-  const baseClass = "border p-2 rounded w-full";
+  disabled = false,
+}) => {
+  const baseClass = `
+    border p-2 rounded focus:ring-2 focus:ring-blue-500
+    ${error ? "border-red-500" : "border-gray-300"}
+    ${className}
+  `;
 
   return (
-    <div className="flex flex-col gap-1">
-      {label && <label className="text-sm font-medium">{label}</label>}
+    <div className="flex flex-col space-y-1">
 
-      {/* TEXT / NUMBER / DATE / TIME */}
-      {type !== "textarea" && type !== "select" && type !== "checkbox" && (
-        <input
-          className={baseClass}
-          type={type}
-          name={name}
-          value={value || ""}
-          placeholder={placeholder}
-          onChange={onChange}
-          onClick={onClick}
-        />
+      {label && type !== "checkbox" && (
+        <label className="text-sm font-medium">{label}</label>
       )}
 
-      {/* TEXTAREA */}
       {type === "textarea" && (
         <textarea
           className={baseClass}
           name={name}
-          value={value || ""}
+          value={value ?? ""}
           placeholder={placeholder}
           onChange={onChange}
+          disabled={disabled}
         />
       )}
 
-      {/* SELECT */}
       {type === "select" && (
         <select
           className={baseClass}
           name={name}
-          value={value || ""}
+          value={value ?? ""}
           onChange={onChange}
+          disabled={disabled}
         >
-          <option value="">Select...</option>
+          <option value="" disabled>Select...</option>
           {options.map((opt, index) => (
             <option key={index} value={opt.value}>
               {opt.label}
@@ -56,20 +51,35 @@ function Input({
         </select>
       )}
 
-      {/* CHECKBOX */}
       {type === "checkbox" && (
+        <label className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            name={name}
+            checked={value || false}
+            onChange={(e) =>
+              onChange({ target: { name, value: e.target.checked } })
+            }
+          />
+          <span>{label}</span>
+        </label>
+      )}
+
+      {!["textarea", "select", "checkbox"].includes(type) && (
         <input
-          type="checkbox"
+          className={baseClass}
+          type={type}
           name={name}
-          checked={value || false}
-          onChange={(e) => onChange({ target: { name, value: e.target.checked } })}
+          value={value ?? ""}
+          placeholder={placeholder}
+          onChange={onChange}
+          disabled={disabled}
         />
       )}
 
-      {/* ERROR */}
       {error && <span className="text-red-500 text-xs">{error}</span>}
     </div>
   );
-}
+};
 
 export default Input;

@@ -1,22 +1,10 @@
-
+import Button from "@/components/common/Button";
+import Card from "@/components/common/Card";
+import Input from "@/components/common/Input";
+import Form from "@/components/common/Form";
 import { useState } from "react";
 
-const Card = ({ children }) => (
-  <div className="bg-white shadow rounded-xl p-4">{children}</div>
-);
-
-const Button = ({ children, ...props }) => (
-  <button
-    {...props}
-    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-  >
-    {children}
-  </button>
-);
-
 export default function StockManagement() {
-  const [activeTab, setActiveTab] = useState("stock");
-
   const [stockItems, setStockItems] = useState([
     {
       id: 1,
@@ -25,6 +13,7 @@ export default function StockManagement() {
       quantity: 5,
       expiry: "2026-05-01",
       location: "A1",
+      category: "med",
     },
     {
       id: 2,
@@ -33,97 +22,58 @@ export default function StockManagement() {
       quantity: 50,
       expiry: "2025-12-01",
       location: "B2",
+      category: "med",
     },
   ]);
 
-  const [form, setForm] = useState({
-    item: "",
-    batch: "",
-    quantity: "",
-    expiry: "",
-    location: "",
-  });
+  // 📌 fields for dynamic form
+  const fields = [
+    { name: "item", label: "Item Name", required: true, col: 1 },
+    { name: "batch", label: "Batch Number", col:1 },
+    { name: "quantity", label: "Quantity", type: "number", required: true },
+    { name: "expiry", label: "Expiry Date", type: "date" },
+    { name: "location", label: "Location" },
+    {
+      name: "category",
+      label: "Category",
+      type: "select",
+      options: [
+        { label: "Medicine", value: "med" },
+        { label: "Equipment", value: "eq" },
+      ],
+    },
+  ];
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const addStock = () => {
-    if (!form.item || !form.quantity) return;
+  // 🚀 submit handler
+  const handleSubmit = (data) => {
+    if (!data.item || !data.quantity) return;
 
     setStockItems([
       ...stockItems,
       {
         id: Date.now(),
-        ...form,
-        quantity: Number(form.quantity),
+        ...data,
+        quantity: Number(data.quantity),
       },
     ]);
-
-    setForm({ item: "", batch: "", quantity: "", expiry: "", location: "" });
   };
 
+  // 📊 helpers
   const isLowStock = (qty) => qty <= 10;
-
   const isExpired = (date) => new Date(date) < new Date();
 
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
       <h1 className="text-2xl font-bold">Store - Advanced Stock Management</h1>
 
-      {/* STOCK SECTION */}
+      {/* FORM SECTION */}
       <Card>
-        <h2 className="font-bold mb-4">Item Stock</h2>
+        <h2 className="font-bold mb-4">Add Stock Item</h2>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          <input
-            name="item"
-            value={form.item}
-            onChange={handleChange}
-            placeholder="Item Name"
-            className="border p-2 rounded"
-          />
-
-          <input
-            name="batch"
-            value={form.batch}
-            onChange={handleChange}
-            placeholder="Batch Number"
-            className="border p-2 rounded"
-          />
-
-          <input
-            name="quantity"
-            value={form.quantity}
-            onChange={handleChange}
-            placeholder="Quantity"
-            type="number"
-            className="border p-2 rounded"
-          />
-
-          <input
-            name="expiry"
-            value={form.expiry}
-            onChange={handleChange}
-            type="date"
-            className="border p-2 rounded"
-          />
-
-          <input
-            name="location"
-            value={form.location}
-            onChange={handleChange}
-            placeholder="Location"
-            className="border p-2 rounded"
-          />
-        </div>
-
-        <div className="mt-4">
-          <Button onClick={addStock}>Add Stock</Button>
-        </div>
+        <Form fields={fields} onSubmit={handleSubmit} />
       </Card>
 
-      {/* STOCK TABLE */}
+      {/* TABLE SECTION */}
       <Card>
         <h2 className="font-bold mb-4">Stock Overview</h2>
 
@@ -138,22 +88,23 @@ export default function StockManagement() {
               <th>Status</th>
             </tr>
           </thead>
+
           <tbody>
             {stockItems.map((s) => (
               <tr key={s.id} className="border-b">
                 <td>{s.item}</td>
                 <td>{s.batch}</td>
-                <td
-                  className={isLowStock(s.quantity) ? "text-red-600 font-bold" : ""}
-                >
+
+                <td className={isLowStock(s.quantity) ? "text-red-600 font-bold" : ""}>
                   {s.quantity}
                 </td>
-                <td
-                  className={isExpired(s.expiry) ? "text-red-600 font-bold" : ""}
-                >
+
+                <td className={isExpired(s.expiry) ? "text-red-600 font-bold" : ""}>
                   {s.expiry}
                 </td>
+
                 <td>{s.location}</td>
+
                 <td>
                   {isExpired(s.expiry)
                     ? "Expired"

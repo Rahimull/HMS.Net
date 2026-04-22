@@ -17,12 +17,6 @@ const ItemStockPage = () => {
 
   return (
     <>
-    <Card>
-      
-    </Card>
-
-
-
     
     <BaseCrudPage
       title="Item Stock"
