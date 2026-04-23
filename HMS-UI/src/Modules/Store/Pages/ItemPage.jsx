@@ -10,7 +10,7 @@ const ItemPage = () => (
     fields={[
       { name: "name", label: "Name", type: "text", required: true },
       { name: "category", label: "Category", type: "text" },
-      { name: "unit", label: "Uint", type: "text", requiredd:true },
+      { name: "unit", label: "Uint", type: "number", requiredd:true },
       { name: "price", label: "Price", type: "number" },
       { name: "quantityInStock", label: "Quantity In Stock", type: "number"},
       { name: "description", label: "Description", type: "textarea"},

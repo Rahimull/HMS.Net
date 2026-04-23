@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
+import Button from "../common/Button";
+import Input from "../common/Input";
 
 const ReusableForm = ({
   fields,
@@ -24,7 +26,7 @@ const ReusableForm = ({
   const [errors, setErrors] = useState({});
 
 
-  console.log(formData)
+
   // ✅ Sync form with edit/add mode
   useEffect(() => {
     if (initialValues) {
@@ -38,22 +40,13 @@ const ReusableForm = ({
   }, [initialValues, initialState]);
 
   // ✅ Correct type handling (checkbox/select)
-  const handleChange = (e, field) => {
-    let value;
+  const handleChange = (e) => {
+    const {name, value} = e.target;
 
-    if (field.type === "checkbox") {
-      value = e.target.checked; // ✅ boolean
-    } else if (field.type === "select") {
-      // اگر گزینه‌ها عددی هستند (مثل gender)
-      value = e.target.value === "" ? "" : Number(e.target.value);
-    } else {
-      value = e.target.value; // text/date/time/textarea
-    }
-
-    setFormData((prev) => ({
-      ...prev,
-      [field.name]: value,
-    }));
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
 
   const handleSubmit = (e) => {
@@ -96,60 +89,31 @@ const ReusableForm = ({
       onSubmit={handleSubmit}
       className="space-y-4 bg-white p-4 rounded shadow mt-6"
     >
-      {fields.map((field) => (
-        <div key={field.name}>
-          <label className="block mb-1 font-medium">{field.label}</label>
-
-          {field.type === "textarea" ? (
-            <textarea
-              value={formData[field.name] ?? ""}
-              onChange={(e) => handleChange(e, field)}
-              className="w-full border rounded p-2"
-            />
-          ) : field.type === "select" ? (
-            <select
-              value={formData[field.name] ?? ""}
-              onChange={(e) => handleChange(e, field)}
-              className="w-full border rounded p-2"
-            >
-              <option value="">Select {field.label}</option>
-              {field.options?.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          ) : field.type === "checkbox" ? (
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={Boolean(formData[field.name])}
-                onChange={(e) => handleChange(e, field)}
-                className="h-4 w-4"
-              />
-              <span className="text-sm text-gray-600">Yes</span>
-            </div>
-          ) : (
-            <input
-              type={field.type || "text"}
-              value={formData[field.name] ?? ""}
-              onChange={(e) => handleChange(e, field)}
-              className="w-full border rounded p-2"
-            />
-          )}
-
-          {errors[field.name] && (
-            <p className="text-red-500 text-sm">{errors[field.name]}</p>
-          )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {fields.map((field) => (
+        <div 
+        key={field.name}
+        className={field.col === 2 ? "col-span-2" : "col-span-1"}
+        >
+          <Input
+            label={field.label}
+            name={field.name} 
+            type={field.type || "text"}
+            value={formData[field.name] || ""}
+            onChange={handleChange}
+            options={field.options || []}
+            placeholder={field.placeholder}
+            error={errors[field.name]}
+          />
+          
         </div>
       ))}
+      </div>
 
-      <button
-        type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-900"
-      >
+      <Button type="submit" variant="primary">
         {submitText}
-      </button>
+      </Button>
+    
     </form>
   );
 };

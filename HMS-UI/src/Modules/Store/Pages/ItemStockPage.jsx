@@ -20,6 +20,7 @@ const ItemStockPage = () => {
     
     <BaseCrudPage
       title="Item Stock"
+      tableTitle="Itmes Table"
       service={ItemStockApi}
       fields={[
         { name: "quantity", label: "quantity", type: "number", required: true },

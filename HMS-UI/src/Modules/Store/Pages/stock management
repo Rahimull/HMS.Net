@@ -1,0 +1,149 @@
+import Button from "@/components/common/Button";
+import Card from "@/components/common/Card";
+import Input from "@/components/common/Input";
+import Form from "@/components/common/Form";
+import { useState, useEffect } from "react";
+import ItemApi from "@/api/store/ItemApi";
+import ItemStockApi from "@/api/store/ItemStockApi";
+import { useParams } from "react-router-dom";
+
+// export default function StockManagement() {
+//   const [stockItems, setStockItems] = useState([
+//     {
+//       id: 1,
+//       item: "Paracetamol",
+//       batch: "B-100",
+//       quantity: 5,
+//       expiry: "2026-05-01",
+//       location: "A1",
+//       category: "med",
+//     },
+//     {
+//       id: 2,
+//       item: "Amoxicillin",
+//       batch: "B-200",
+//       quantity: 50,
+//       expiry: "2025-12-01",
+//       location: "B2",
+//       category: "med",
+//     },
+//   ]);
+
+//   // 📌 fields for dynamic form
+//   const fields = [
+//     { name: "item", label: "Item Name", required: true, col: 1 },
+//     { name: "batch", label: "Batch Number", col:1 },
+//     { name: "quantity", label: "Quantity", type: "number", required: true },
+//     { name: "expiry", label: "Expiry Date", type: "date" },
+//     { name: "location", label: "Location" },
+//     {
+//       name: "category",
+//       label: "Category",
+//       type: "select",
+//       options: [
+//         { label: "Medicine", value: "med" },
+//         { label: "Equipment", value: "eq" },
+//       ],
+//     },
+//   ];
+
+//   // 🚀 submit handler
+//   const handleSubmit = (data) => {
+//     if (!data.item || !data.quantity) return;
+
+//     setStockItems([
+//       ...stockItems,
+//       {
+//         id: Date.now(),
+//         ...data,
+//         quantity: Number(data.quantity),
+//       },
+//     ]);
+//   };
+
+//   // 📊 helpers
+//   const isLowStock = (qty) => qty <= 10;
+//   const isExpired = (date) => new Date(date) < new Date();
+
+//   return (
+//     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
+//       <h1 className="text-2xl font-bold">Store - Advanced Stock Management</h1>
+
+//       {/* FORM SECTION */}
+//       <Card>
+//         <h2 className="font-bold mb-4">Add Stock Item</h2>
+
+//         <Form fields={fields} onSubmit={handleSubmit} />
+//       </Card>
+
+//       {/* TABLE SECTION */}
+//       <Card>
+//         <h2 className="font-bold mb-4">Stock Overview</h2>
+
+//         <table className="w-full text-left">
+//           <thead>
+//             <tr className="border-b">
+//               <th>Item</th>
+//               <th>Batch</th>
+//               <th>Qty</th>
+//               <th>Expiry</th>
+//               <th>Location</th>
+//               <th>Status</th>
+//             </tr>
+//           </thead>
+
+//           <tbody>
+//             {stockItems.map((s) => (
+//               <tr key={s.id} className="border-b">
+//                 <td>{s.item}</td>
+//                 <td>{s.batch}</td>
+
+//                 <td className={isLowStock(s.quantity) ? "text-red-600 font-bold" : ""}>
+//                   {s.quantity}
+//                 </td>
+
+//                 <td className={isExpired(s.expiry) ? "text-red-600 font-bold" : ""}>
+//                   {s.expiry}
+//                 </td>
+
+//                 <td>{s.location}</td>
+
+//                 <td>
+//                   {isExpired(s.expiry)
+//                     ? "Expired"
+//                     : isLowStock(s.quantity)
+//                     ? "Low Stock"
+//                     : "OK"}
+//                 </td>
+//               </tr>
+//             ))}
+//           </tbody>
+//         </table>
+//       </Card>
+//     </div>
+//   );
+// }
+
+// import { useEffect, useState } from "react";
+// import ItemApi from "../../../api/store/ItemApi";
+// import ItemStockApi from "../../../api/store/ItemStockApi";
+
+/* ================= UI small components ================= */
+
+// const Card = ({ children }) => (
+//   <div className="bg-white shadow rounded-2xl p-6">{children}</div>
+// );
+
+// const Button = ({ children, ...props }) => (
+//   <button
+//     {...props}
+//     className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+//   >
+//     {children}
+//   </button>
+// );
+
+/* ================= Main Page ================= */
+
+
+

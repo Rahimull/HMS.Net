@@ -6,6 +6,7 @@ import useCrud from "../../hooks/useCurd";
 
 const BaseCrudPage = ({
   title,
+  tableTitle,
   service,
   fields,
   columns,
@@ -94,6 +95,7 @@ const BaseCrudPage = ({
         <Loader text={`Fetching ${title}...`} />
       ) : (
         <DataTable
+          
           columns={columns}
           data={data}
           pagination={pagination}

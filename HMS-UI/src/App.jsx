@@ -71,6 +71,7 @@ export default function App() {
 
         {/* Store */}
         <Route path="store/StockManagement" element={<StockManagement />} />
+        <Route path="store/items/:id" element={<StockManagement />} />
         <Route path="store/PurchasesUi" element={<PurchasesUi />} />
         <Route path="store/StorePageUi" element={<StorePageUi />} />
         <Route path="store/items" element={<ItemPage />} />

@@ -1,117 +1,75 @@
-import Button from "@/components/common/Button";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import Card from "@/components/common/Card";
-import Input from "@/components/common/Input";
-import Form from "@/components/common/Form";
-import { useState } from "react";
+import ItemApi from "@/api/store/ItemApi";
+import ItemStockApi from "@/api/store/ItemStockApi";
 
 export default function StockManagement() {
-  const [stockItems, setStockItems] = useState([
-    {
-      id: 1,
-      item: "Paracetamol",
-      batch: "B-100",
-      quantity: 5,
-      expiry: "2026-05-01",
-      location: "A1",
-      category: "med",
-    },
-    {
-      id: 2,
-      item: "Amoxicillin",
-      batch: "B-200",
-      quantity: 50,
-      expiry: "2025-12-01",
-      location: "B2",
-      category: "med",
-    },
-  ]);
+  const { id } = useParams();
+  const [item, setItem] = useState(null);
+  const [stocks, setStocks] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // 📌 fields for dynamic form
-  const fields = [
-    { name: "item", label: "Item Name", required: true, col: 1 },
-    { name: "batch", label: "Batch Number", col:1 },
-    { name: "quantity", label: "Quantity", type: "number", required: true },
-    { name: "expiry", label: "Expiry Date", type: "date" },
-    { name: "location", label: "Location" },
-    {
-      name: "category",
-      label: "Category",
-      type: "select",
-      options: [
-        { label: "Medicine", value: "med" },
-        { label: "Equipment", value: "eq" },
-      ],
-    },
-  ];
+useEffect(() => {
+  if (!id) return;
 
-  // 🚀 submit handler
-  const handleSubmit = (data) => {
-    if (!data.item || !data.quantity) return;
+  Promise.all([
+    ItemApi.getById(id),
+    ItemStockApi.getById(id),
+  ])
+    .then(([itemRes, stockRes]) => {
+      // ✅ Item
+      const itemData = itemRes.data.data;
+      setItem(itemData);
 
-    setStockItems([
-      ...stockItems,
-      {
-        id: Date.now(),
-        ...data,
-        quantity: Number(data.quantity),
-      },
-    ]);
-  };
+      // ✅ ItemStock (ممکن است لیست باشد)
+      const stockData = Array.isArray(stockRes.data.data)
+        ? stockRes.data.data
+        : [];
 
-  // 📊 helpers
-  const isLowStock = (qty) => qty <= 10;
-  const isExpired = (date) => new Date(date) < new Date();
+      setStocks(stockData);
+    })
+    .finally(() => setLoading(false));
+}, [id]);
+
+
+
+  if (loading) return <div>Loading...</div>;
+  if (!item) return <div className="text-red-600">Item not found</div>;
+
+  const totalStock = stocks.reduce((sum, s) => sum + s.quantity, 0);
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
-      <h1 className="text-2xl font-bold">Store - Advanced Stock Management</h1>
+    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+      <h1 className="text-2xl font-bold">Item Profile</h1>
 
-      {/* FORM SECTION */}
       <Card>
-        <h2 className="font-bold mb-4">Add Stock Item</h2>
-
-        <Form fields={fields} onSubmit={handleSubmit} />
+        <div className="grid grid-cols-2 gap-4">
+          <input disabled value={item.name} />
+          <input disabled value={item.category} />
+          <input disabled value={item.unit} />
+          <input disabled value={totalStock} />
+        </div>
       </Card>
 
-      {/* TABLE SECTION */}
       <Card>
-        <h2 className="font-bold mb-4">Stock Overview</h2>
-
-        <table className="w-full text-left">
-          <thead>
-            <tr className="border-b">
-              <th>Item</th>
+        <h2 className="font-semibold mb-4">Stock & Batches</h2>
+        <table className="w-full border">
+          <thead className="bg-gray-100">
+            <tr>
               <th>Batch</th>
               <th>Qty</th>
-              <th>Expiry</th>
               <th>Location</th>
-              <th>Status</th>
+              <th>Expiry</th>
             </tr>
           </thead>
-
           <tbody>
-            {stockItems.map((s) => (
-              <tr key={s.id} className="border-b">
-                <td>{s.item}</td>
-                <td>{s.batch}</td>
-
-                <td className={isLowStock(s.quantity) ? "text-red-600 font-bold" : ""}>
-                  {s.quantity}
-                </td>
-
-                <td className={isExpired(s.expiry) ? "text-red-600 font-bold" : ""}>
-                  {s.expiry}
-                </td>
-
+            {stocks.map(s => (
+              <tr key={s.stockId}>
+                <td>{s.batchNumber}</td>
+                <td>{s.quantity}</td>
                 <td>{s.location}</td>
-
-                <td>
-                  {isExpired(s.expiry)
-                    ? "Expired"
-                    : isLowStock(s.quantity)
-                    ? "Low Stock"
-                    : "OK"}
-                </td>
+                <td>{s.expiryDate}</td>
               </tr>
             ))}
           </tbody>
