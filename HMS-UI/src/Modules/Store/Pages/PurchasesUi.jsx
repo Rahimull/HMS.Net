@@ -1,227 +1,307 @@
 import { useEffect, useState } from "react";
+import usePurchase from "./usePurchases";
+import SuplierApi from "@/api/store/SuplierApi";
+import ItemApi from "@/api/store/ItemApi";
+import Input from "@/components/common/Input";
 
-const Button = ({ children, ...props }) => (
-  <button
-    {...props}
-    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-  >
-    {children}
-  </button>
-);
+const PurchaseUi = () => {
+  const { createPurchase } = usePurchase();
 
-export default function PurchasesUi() {
   const [suppliers, setSuppliers] = useState([]);
-  const [itemsList, setItemsList] = useState([]);
+  const [items, setItems] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+
+  /* ================= LOAD DATA ================= */
+
+  useEffect(() => {
+    SuplierApi.getPaged({ page: 1, pageSize: 1000 })
+      .then((res) => setSuppliers(res.data.data.data));
+
+    ItemApi.getPaged({ page: 1, pageSize: 1000 })
+      .then((res) => setItems(res.data.data.data));
+  }, []);
+
+  /* ================= OPTIONS ================= */
+
+  const supplierOptions = suppliers.map((s) => ({
+    label: s.name,
+    value: s.id,
+  }));
+
+  const itemOptions = items.map((i) => ({
+    label: i.name,
+    value: i.id,
+    price: i.price,
+  }));
+
+  /* ================= HEADER ================= */
 
   const [header, setHeader] = useState({
     supplierId: "",
-    date: new Date().toISOString().substring(0, 10),
     notes: "",
+    date: "",
   });
 
+  /* ================= ROWS ================= */
+
   const [rows, setRows] = useState([]);
-
-  // 🔥 simulate API
-  useEffect(() => {
-    setSuppliers([
-      { id: 1, name: "Supplier A" },
-      { id: 2, name: "Supplier B" },
-    ]);
-
-    setItemsList([
-      { id: 1, name: "Item 1", price: 100 },
-      { id: 2, name: "Item 2", price: 50 },
-    ]);
-  }, []);
-
-  const handleHeaderChange = (e) => {
-    setHeader({ ...header, [e.target.name]: e.target.value });
-  };
 
   const addRow = () => {
     setRows([
       ...rows,
-      {
-        id: Date.now(),
-        itemId: "",
-        batch: "",
-        expiry: "",
-        qty: 1,
-        price: 0,
-        total: 0,
-      },
+      { id: Date.now(), itemId: "", qty: 1, price: 0 },
     ]);
   };
 
   const updateRow = (id, field, value) => {
-    const updated = rows.map((r) => {
-      if (r.id === id) {
-        let newRow = { ...r, [field]: value };
+    setRows((prev) =>
+      prev.map((r) => {
+        if (r.id !== id) return r;
 
-        // 🔥 auto price when item selected
+        let updated = { ...r, [field]: value };
+
+        // 🔥 auto price from item
         if (field === "itemId") {
-          const item = itemsList.find((i) => i.id == value);
-          if (item) newRow.price = item.price;
+          const item = itemOptions.find(
+            (i) => i.value == value
+          );
+
+          if (item) {
+            updated.price = item.price;
+            updated.qty = updated.qty || 1;
+          }
         }
 
-        newRow.total = newRow.qty * newRow.price;
-        return newRow;
-      }
-      return r;
-    });
-    setRows(updated);
+        return updated;
+      })
+    );
   };
 
   const removeRow = (id) => {
     setRows(rows.filter((r) => r.id !== id));
   };
 
-  const totalAmount = rows.reduce((sum, r) => sum + r.total, 0);
+  /* ================= TOTAL ================= */
 
-  const handleSubmit = () => {
-    const payload = {
-      ...header,
-      totalAmount,
-      details: rows,
-    };
+  const grandTotal = rows.reduce(
+    (sum, r) => sum + r.qty * r.price,
+    0
+  );
 
-    console.log("SEND TO API:", payload);
-    alert("Saved Successfully ✅");
+  /* ================= SAVE ================= */
+
+  const handleSave = async () => {
+    setLoading(true);
+
+    try {
+      const payload = {
+        ...header,
+        totalAmount: grandTotal,
+        details: rows.map((r) => ({
+          itemId: r.itemId,
+          qty: r.qty,
+          price: r.price,
+          total: r.qty * r.price,
+        })),
+      };
+
+      await createPurchase(payload);
+
+      alert("Purchase Saved ✅");
+
+      // reset
+      setHeader({
+        supplierId: "",
+        notes: "",
+        date: "",
+      });
+
+      setRows([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  /* ================= UI ================= */
+
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold">Purchases (Pro UX)</h1>
+    <div className="p-6 bg-gray-50 min-h-screen">
 
-      {/* Header */}
-      <div className="bg-white p-6 rounded shadow grid grid-cols-1 md:grid-cols-3 gap-4">
-        <select
+      <h1 className="text-2xl font-bold mb-6">
+        🧾 Purchase Module (Production Ready)
+      </h1>
+
+      {/* ================= HEADER ================= */}
+      <div className="bg-white p-5 rounded shadow grid grid-cols-3 gap-4">
+
+        <Input
           name="supplierId"
+          type="select"
           value={header.supplierId}
-          onChange={handleHeaderChange}
-          className="p-2 border rounded"
-        >
-          <option value="">Select Supplier</option>
-          {suppliers.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name}
-            </option>
-          ))}
-        </select>
-
-        <input
-          type="date"
-          name="date"
-          value={header.date}
-          onChange={handleHeaderChange}
-          className="p-2 border rounded"
+          options={supplierOptions}
+          label="Supplier"
+          onChange={(e) =>
+            setHeader({
+              ...header,
+              supplierId: e.target.value,
+            })
+          }
         />
 
-        <input
+        <Input
+          name="date"
+          type="date"
+          value={header.date}
+          label="Date"
+          onChange={(e) =>
+            setHeader({
+              ...header,
+              date: e.target.value,
+            })
+          }
+        />
+
+        <Input
           name="notes"
-          placeholder="Notes"
+          label="Notes"
           value={header.notes}
-          onChange={handleHeaderChange}
-          className="p-2 border rounded"
+          onChange={(e) =>
+            setHeader({
+              ...header,
+              notes: e.target.value,
+            })
+          }
         />
       </div>
 
-      {/* Table */}
-      <div className="bg-white p-6 rounded shadow">
-        <div className="flex justify-between mb-4">
-          <h2 className="text-lg font-semibold">Items</h2>
-          <Button onClick={addRow}>+ Add Item</Button>
-        </div>
+      {/* ================= DETAILS ================= */}
+      <div className="bg-white mt-6 p-5 rounded shadow">
 
-        <table className="w-full text-left">
+        <table className="w-full border">
+
           <thead>
-            <tr className="border-b">
+            <tr className="bg-gray-100">
               <th>Item</th>
-              <th>Batch</th>
-              <th>Expiry</th>
               <th>Qty</th>
               <th>Price</th>
               <th>Total</th>
-              <th></th>
+              <th>❌</th>
             </tr>
           </thead>
+
           <tbody>
-            {rows.map((r) => (
-              <tr key={r.id} className="border-b">
-                <td>
-                  <select
-                    value={r.itemId}
-                    onChange={(e) => updateRow(r.id, "itemId", e.target.value)}
-                    className="p-1 border rounded"
-                  >
-                    <option value="">Select</option>
-                    {itemsList.map((i) => (
-                      <option key={i.id} value={i.id}>
-                        {i.name}
-                      </option>
-                    ))}
-                  </select>
-                </td>
 
-                <td>
-                  <input
-                    value={r.batch}
-                    onChange={(e) => updateRow(r.id, "batch", e.target.value)}
-                    className="p-1 border rounded"
-                  />
-                </td>
-
-                <td>
-                  <input
-                    type="date"
-                    value={r.expiry}
-                    onChange={(e) => updateRow(r.id, "expiry", e.target.value)}
-                    className="p-1 border rounded"
-                  />
-                </td>
-
-                <td>
-                  <input
-                    type="number"
-                    value={r.qty}
-                    onChange={(e) => updateRow(r.id, "qty", +e.target.value)}
-                    className="p-1 border rounded w-20"
-                  />
-                </td>
-
-                <td>
-                  <input
-                    type="number"
-                    value={r.price}
-                    onChange={(e) => updateRow(r.id, "price", +e.target.value)}
-                    className="p-1 border rounded w-24"
-                  />
-                </td>
-
-                <td>{r.total}</td>
-
-                <td>
-                  <Button onClick={() => removeRow(r.id)}>X</Button>
+            {rows.length === 0 && (
+              <tr>
+                <td
+                  colSpan={5}
+                  className="text-center py-6 text-gray-400"
+                >
+                  No items added yet
                 </td>
               </tr>
+            )}
+
+            {rows.map((r) => (
+              <tr
+                key={r.id}
+                className="hover:bg-gray-50 transition"
+              >
+
+                {/* ITEM */}
+                <td>
+                  <Input
+                    name="itemId"
+                    type="select"
+                    value={r.itemId}
+                    options={itemOptions}
+                    onChange={(e) =>
+                      updateRow(
+                        r.id,
+                        "itemId",
+                        e.target.value
+                      )
+                    }
+                  />
+                </td>
+
+                {/* QTY */}
+                <td>
+                  <Input
+                    type="number"
+                    value={r.qty}
+                    onChange={(e) =>
+                      updateRow(
+                        r.id,
+                        "qty",
+                        Number(e.target.value)
+                      )
+                    }
+                  />
+                </td>
+
+                {/* PRICE */}
+                <td>
+                  <Input
+                    type="number"
+                    value={r.price}
+                    onChange={(e) =>
+                      updateRow(
+                        r.id,
+                        "price",
+                        Number(e.target.value)
+                      )
+                    }
+                  />
+                </td>
+
+                {/* TOTAL */}
+                <td className="font-bold text-blue-600">
+                  {r.qty * r.price}
+                </td>
+
+                {/* DELETE */}
+                <td>
+                  <button
+                    onClick={() => removeRow(r.id)}
+                    className="text-red-600"
+                  >
+                    ❌
+                  </button>
+                </td>
+
+              </tr>
             ))}
+
           </tbody>
         </table>
 
-        <div className="text-right mt-4 text-lg font-bold">
-          Total: {totalAmount}
-        </div>
-      </div>
+        {/* ADD ROW */}
+        <button
+          onClick={addRow}
+          className="mt-4 bg-blue-600 text-white px-4 py-2"
+        >
+          + Add Row
+        </button>
 
-      {/* Save */}
-      <div className="text-right">
-        <Button onClick={handleSubmit}>Save Purchase</Button>
+        {/* GRAND TOTAL */}
+        <h2 className="text-right mt-4 text-xl font-bold text-green-600">
+          Total: {grandTotal.toFixed(2)}
+        </h2>
+
+        {/* SAVE */}
+        <button
+          onClick={handleSave}
+          disabled={loading}
+          className="mt-2 bg-green-600 disabled:bg-gray-400 text-white px-6 py-2"
+        >
+          {loading ? "Saving..." : "Save Purchase"}
+        </button>
+
       </div>
     </div>
   );
-}
+};
 
-
-
-
-
+export default PurchaseUi;

@@ -7,52 +7,58 @@ public class PurchaseSpecification : BaseSpecification<Purchases>
 {
     public PurchaseSpecification(QueryParams query)
     {
-        /* ---------- includ Item and Supplier ---------- */
-         AddInclude(i => i.Item);
-        AddInclude(su => su.Supplier);
-        /* ---------- SEARCH ---------- */
+        // ================= INCLUDE =================
+        AddInclude(x => x.Supplier);
+        AddInclude(x => x.PurchasesDetails);
+
+        // NOTE: Item include should be handled via EF ThenInclude in repository
+
+        // ================= SEARCH =================
         var term = query.Search?.SearchTerm;
 
         if (!string.IsNullOrWhiteSpace(term))
         {
-            AddCriteria(d =>
-                (d.Notes ?? "").Contains(term)
+            AddCriteria(x =>
+                (x.Notes ?? "").Contains(term)
             );
         }
 
-        /* ---------- SORTING ---------- */
-        if (!string.IsNullOrWhiteSpace(query.Sorting?.SortBy))
+        // ================= SORTING =================
+        var sortBy = query.Sorting?.SortBy?.ToLower();
+        var isDesc = query.Sorting?.IsDescending ?? true;
+
+        switch (sortBy)
         {
-            switch (query.Sorting.SortBy.ToLower())
-            {
-                case "name":
-                    if (query.Sorting.IsDescending)
-                        ApplyOrderByDescending(d => d.CreatedAt);
-                    else
-                        ApplyOrderBy(d => d.CreatedAt);
-                    break;
+            case "id":
+                if (isDesc)
+                    ApplyOrderByDescending(x => x.Id);
+                else
+                    ApplyOrderBy(x => x.Id);
+                break;
 
-                case "id":
-                    if (query.Sorting.IsDescending)
-                        ApplyOrderByDescending(d => d.Id);
-                    else
-                        ApplyOrderBy(d => d.Id);
-                    break;
+            case "date":
+                if (isDesc)
+                    ApplyOrderByDescending(x => x.PurchaseDate);
+                else
+                    ApplyOrderBy(x => x.PurchaseDate);
+                break;
 
-                default:
-                    ApplyOrderByDescending(d => d.Id);
-                    break;
-            }
+            case "total":
+                if (isDesc)
+                    ApplyOrderByDescending(x => x.TotalPrice);
+                else
+                    ApplyOrderBy(x => x.TotalPrice);
+                break;
+
+            default:
+                ApplyOrderByDescending(x => x.Id);
+                break;
         }
-        else
-        {
-            ApplyOrderByDescending(d => d.Id);
-        }
 
-        /* ---------- PAGINATION ---------- */
-        ApplyPaging(
-            query.Pagination.PageIndex,
-            query.Pagination.PageSize
-        );
+        // ================= PAGINATION =================
+        var pageIndex = query.Pagination?.PageIndex ?? 0;
+        var pageSize = query.Pagination?.PageSize ?? 10;
+
+        ApplyPaging(pageIndex, pageSize);
     }
 }

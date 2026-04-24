@@ -91,6 +91,8 @@ Migrations/
  20260418155925_FixShiftRealtions.Designer.cs
  20260418163106_FixPayrollRelations.cs
  20260418163106_FixPayrollRelations.Designer.cs
+ 20260424154941_FixPurchases.cs
+ 20260424154941_FixPurchases.Designer.cs
  HMSDBCModelSnapshot.cs
 Models/
  AppUser.cs

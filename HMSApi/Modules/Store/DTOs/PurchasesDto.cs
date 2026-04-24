@@ -1,14 +1,15 @@
 namespace HMSApi.Modules.Store.DTOs;
 
 
-public record PurchasesDto(
-        int Id,
-       int Quantity,
-       decimal TotalPrice,
-       DateTime PurchaseDate,
-       string? Notes,
-       int ItemId,
-       int SupplierId,
-       string? ItemName,
-       string? SupplierName
-);
+public class PurchasesDto
+{
+        public int Id { get; set; }
+        public DateTime PurchaseDate { get; set; }
+        public string? Notes { get; set; }
+        public decimal TotalPrice { get; set; }
+        public int SupplierId { get; set; }
+        public string? SupplierName { get; set; }
+        public List<PurchaseDetailsDto> Details { get; set; } = new();
+
+}
+

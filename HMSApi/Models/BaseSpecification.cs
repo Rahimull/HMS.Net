@@ -21,29 +21,34 @@ public class BaseSpecification<T> : ISpecification<T>
         Criteria = x => !x.IsDeleted;
     }
 
+    // ================= CRITERIA =================
+
     protected void AddCriteria(Expression<Func<T, bool>> criteria)
     {
-        if (Criteria == null)
-        {
-            Criteria = criteria;
-        }
-        else
-        {
-            Criteria = Combine(Criteria, criteria);
-        }
+        Criteria = Criteria == null
+            ? criteria
+            : CombineExpressions(Criteria, criteria);
     }
+
+    // ================= INCLUDE =================
 
     protected void AddInclude(Expression<Func<T, object>> includeExpression)
     {
         Includes.Add(includeExpression);
     }
 
-    // ✅ FIXED: 0-based paging
+    // ================= PAGING =================
+
     protected void ApplyPaging(int pageIndex, int pageSize)
     {
+        if (pageIndex < 0) pageIndex = 0;
+        if (pageSize <= 0) pageSize = 10;
+
         Skip = pageIndex * pageSize;
         Take = pageSize;
     }
+
+    // ================= ORDER BY =================
 
     protected void ApplyOrderBy(Expression<Func<T, object>> orderBy)
     {
@@ -55,15 +60,51 @@ public class BaseSpecification<T> : ISpecification<T>
         OrderByDescending = orderByDescending;
     }
 
-    private static Expression<Func<T, bool>> Combine(
-    Expression<Func<T, bool>> first,
-    Expression<Func<T, bool>> second)
-{
-    var param = Expression.Parameter(typeof(T));
-    var body = Expression.AndAlso(
-        Expression.Invoke(first, param),
-        Expression.Invoke(second, param)
-    );
-    return Expression.Lambda<Func<T, bool>>(body, param);
-}
+    // ================= EXPRESSION COMBINE (FIXED) =================
+
+    private static Expression<Func<T, bool>> CombineExpressions(
+        Expression<Func<T, bool>> first,
+        Expression<Func<T, bool>> second)
+    {
+        var parameter = Expression.Parameter(typeof(T));
+
+        var left = ReplaceParameter(first.Body, first.Parameters[0], parameter);
+        var right = ReplaceParameter(second.Body, second.Parameters[0], parameter);
+
+        var body = Expression.AndAlso(left, right);
+
+        return Expression.Lambda<Func<T, bool>>(body, parameter);
+    }
+
+    // ================= PARAMETER REPLACER (IMPORTANT FIX) =================
+
+    private static Expression ReplaceParameter(
+        Expression body,
+        ParameterExpression toReplace,
+        ParameterExpression newParameter)
+    {
+        return new ReplaceExpressionVisitor(toReplace, newParameter)
+            .Visit(body)!;
+    }
+
+    // ================= HELPER CLASS =================
+
+    private class ReplaceExpressionVisitor : ExpressionVisitor
+    {
+        private readonly ParameterExpression _oldParam;
+        private readonly ParameterExpression _newParam;
+
+        public ReplaceExpressionVisitor(
+            ParameterExpression oldParam,
+            ParameterExpression newParam)
+        {
+            _oldParam = oldParam;
+            _newParam = newParam;
+        }
+
+        protected override Expression VisitParameter(ParameterExpression node)
+        {
+            return node == _oldParam ? _newParam : base.VisitParameter(node);
+        }
+    }
 }

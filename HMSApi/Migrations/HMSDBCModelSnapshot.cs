@@ -1957,17 +1957,11 @@ namespace HMSApi.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ItemId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Notes")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("INTEGER");
 
                     b.Property<int>("SupplierId")
                         .HasColumnType("INTEGER");
@@ -1976,8 +1970,6 @@ namespace HMSApi.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ItemId");
 
                     b.HasIndex("SupplierId");
 
@@ -2891,19 +2883,11 @@ namespace HMSApi.Migrations
 
             modelBuilder.Entity("HMSApi.Modules.Store.Entities.Purchases", b =>
                 {
-                    b.HasOne("HMSApi.Modules.Store.Entities.Items", "Item")
-                        .WithMany()
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("HMSApi.Modules.Store.Entities.Suppliers", "Supplier")
                         .WithMany("Purchases")
                         .HasForeignKey("SupplierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Item");
 
                     b.Navigation("Supplier");
                 });

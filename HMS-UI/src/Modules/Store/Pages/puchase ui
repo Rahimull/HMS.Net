@@ -1,0 +1,480 @@
+import { useEffect, useState } from "react";
+
+const Button = ({ children, ...props }) => (
+  <button
+    {...props}
+    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+  >
+    {children}
+  </button>
+);
+
+export default function PurchasesUi() {
+  const [suppliers, setSuppliers] = useState([]);
+  const [itemsList, setItemsList] = useState([]);
+
+  const [header, setHeader] = useState({
+    supplierId: "",
+    date: new Date().toISOString().substring(0, 10),
+    notes: "",
+  });
+
+  const [rows, setRows] = useState([]);
+
+  // 🔥 simulate API
+  useEffect(() => {
+    setSuppliers([
+      { id: 1, name: "Supplier A" },
+      { id: 2, name: "Supplier B" },
+    ]);
+
+    setItemsList([
+      { id: 1, name: "Item 1", price: 100 },
+      { id: 2, name: "Item 2", price: 50 },
+    ]);
+  }, []);
+
+  const handleHeaderChange = (e) => {
+    setHeader({ ...header, [e.target.name]: e.target.value });
+  };
+
+  const addRow = () => {
+    setRows([
+      ...rows,
+      {
+        id: Date.now(),
+        itemId: "",
+        batch: "",
+        expiry: "",
+        qty: 1,
+        price: 0,
+        total: 0,
+      },
+    ]);
+  };
+
+  const updateRow = (id, field, value) => {
+    const updated = rows.map((r) => {
+      if (r.id === id) {
+        let newRow = { ...r, [field]: value };
+
+        // 🔥 auto price when item selected
+        if (field === "itemId") {
+          const item = itemsList.find((i) => i.id == value);
+          if (item) newRow.price = item.price;
+        }
+
+        newRow.total = newRow.qty * newRow.price;
+        return newRow;
+      }
+      return r;
+    });
+    setRows(updated);
+  };
+
+  const removeRow = (id) => {
+    setRows(rows.filter((r) => r.id !== id));
+  };
+
+  const totalAmount = rows.reduce((sum, r) => sum + r.total, 0);
+
+  const handleSubmit = () => {
+    const payload = {
+      ...header,
+      totalAmount,
+      details: rows,
+    };
+
+    console.log("SEND TO API:", payload);
+    alert("Saved Successfully ✅");
+  };
+
+  return (
+    <div className="p-6 max-w-7xl mx-auto space-y-6">
+      <h1 className="text-2xl font-bold">Purchases (Pro UX)</h1>
+
+      {/* Header */}
+      <div className="bg-white p-6 rounded shadow grid grid-cols-1 md:grid-cols-3 gap-4">
+        <select
+          name="supplierId"
+          value={header.supplierId}
+          onChange={handleHeaderChange}
+          className="p-2 border rounded"
+        >
+          <option value="">Select Supplier</option>
+          {suppliers.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.name}
+            </option>
+          ))}
+        </select>
+
+        <input
+          type="date"
+          name="date"
+          value={header.date}
+          onChange={handleHeaderChange}
+          className="p-2 border rounded"
+        />
+
+        <input
+          name="notes"
+          placeholder="Notes"
+          value={header.notes}
+          onChange={handleHeaderChange}
+          className="p-2 border rounded"
+        />
+      </div>
+
+      {/* Table */}
+      <div className="bg-white p-6 rounded shadow">
+        <div className="flex justify-between mb-4">
+          <h2 className="text-lg font-semibold">Items</h2>
+          <Button onClick={addRow}>+ Add Item</Button>
+        </div>
+
+        <table className="w-full text-left">
+          <thead>
+            <tr className="border-b">
+              <th>Item</th>
+              <th>Batch</th>
+              <th>Expiry</th>
+              <th>Qty</th>
+              <th>Price</th>
+              <th>Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.id} className="border-b">
+                <td>
+                  <select
+                    value={r.itemId}
+                    onChange={(e) => updateRow(r.id, "itemId", e.target.value)}
+                    className="p-1 border rounded"
+                  >
+                    <option value="">Select</option>
+                    {itemsList.map((i) => (
+                      <option key={i.id} value={i.id}>
+                        {i.name}
+                      </option>
+                    ))}
+                  </select>
+                </td>
+
+                <td>
+                  <input
+                    value={r.batch}
+                    onChange={(e) => updateRow(r.id, "batch", e.target.value)}
+                    className="p-1 border rounded"
+                  />
+                </td>
+
+                <td>
+                  <input
+                    type="date"
+                    value={r.expiry}
+                    onChange={(e) => updateRow(r.id, "expiry", e.target.value)}
+                    className="p-1 border rounded"
+                  />
+                </td>
+
+                <td>
+                  <input
+                    type="number"
+                    value={r.qty}
+                    onChange={(e) => updateRow(r.id, "qty", +e.target.value)}
+                    className="p-1 border rounded w-20"
+                  />
+                </td>
+
+                <td>
+                  <input
+                    type="number"
+                    value={r.price}
+                    onChange={(e) => updateRow(r.id, "price", +e.target.value)}
+                    className="p-1 border rounded w-24"
+                  />
+                </td>
+
+                <td>{r.total}</td>
+
+                <td>
+                  <Button onClick={() => removeRow(r.id)}>X</Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div className="text-right mt-4 text-lg font-bold">
+          Total: {totalAmount}
+        </div>
+      </div>
+
+      {/* Save */}
+      <div className="text-right">
+        <Button onClick={handleSubmit}>Save Purchase</Button>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+// import { useState } from "react";
+
+// /* ================= MOCK DATA ================= */
+
+// const itemsList = [
+//   { id: 1, name: "Paracetamol", price: 10 },
+//   { id: 2, name: "Amoxicillin", price: 20 },
+// ];
+
+// const suppliers = [
+//   { id: 1, name: "ABC Pharma" },
+//   { id: 2, name: "Med Supply" },
+// ];
+
+// /* ================= COMPONENT ================= */
+
+// const PurchasesUi = () => {
+//   /* ---------- HEADER ---------- */
+//   const [header, setHeader] = useState({
+//     supplierId: "",
+//     invoiceNo: "",
+//     date: "",
+//   });
+
+//   /* ---------- DETAILS ---------- */
+//   const [rows, setRows] = useState([]);
+
+//   /* ================= ADD ROW ================= */
+
+//   const addRow = () => {
+//     setRows([
+//       ...rows,
+//       { id: Date.now(), itemId: "", qty: 1, price: 0 },
+//     ]);
+//   };
+
+//   /* ================= REMOVE ROW ================= */
+
+//   const removeRow = (id) => {
+//     setRows(rows.filter((r) => r.id !== id));
+//   };
+
+//   /* ================= UPDATE ROW ================= */
+
+//   const updateRow = (id, field, value) => {
+//     setRows((prev) =>
+//       prev.map((row) => {
+//         if (row.id !== id) return row;
+
+//         const updated = { ...row, [field]: value };
+
+//         // auto set price when item selected
+//         if (field === "itemId") {
+//           const item = itemsList.find(i => i.id == value);
+//           if (item) updated.price = item.price;
+//         }
+
+//         return updated;
+//       })
+//     );
+//   };
+
+//   /* ================= CALCULATIONS ================= */
+
+//   const getRowTotal = (row) => row.qty * row.price;
+
+//   const grandTotal = rows.reduce(
+//     (sum, r) => sum + getRowTotal(r),
+//     0
+//   );
+
+//   /* ================= SAVE ================= */
+
+//   const handleSave = () => {
+//     const payload = {
+//       ...header,
+//       totalAmount: grandTotal,
+//       details: rows.map(r => ({
+//         itemId: r.itemId,
+//         qty: r.qty,
+//         price: r.price,
+//         total: getRowTotal(r),
+//       })),
+//     };
+
+//     console.log("SAVE PURCHASE:", payload);
+//     alert("Saved ✅");
+//   };
+
+//   /* ================= UI ================= */
+
+//   return (
+//     <div className="p-6 bg-gray-50 min-h-screen">
+
+//       <h1 className="text-2xl font-bold mb-6">
+//         🧾 Purchase Entry
+//       </h1>
+
+//       {/* ================= HEADER ================= */}
+//       <div className="bg-white p-5 rounded shadow mb-6 grid grid-cols-3 gap-4">
+        
+//         <div>
+//           <label className="text-sm">Supplier</label>
+//           <select
+//             className="border p-2 rounded w-full"
+//             onChange={(e) =>
+//               setHeader({ ...header, supplierId: e.target.value })
+//             }
+//           >
+//             <option value="">Select Supplier</option>
+//             {suppliers.map((s) => (
+//               <option key={s.id} value={s.id}>
+//                 {s.name}
+//               </option>
+//             ))}
+//           </select>
+//         </div>
+
+//         <div>
+//           <label className="text-sm">Invoice No</label>
+//           <input
+//             className="border p-2 rounded w-full"
+//             onChange={(e) =>
+//               setHeader({ ...header, invoiceNo: e.target.value })
+//             }
+//           />
+//         </div>
+
+//         <div>
+//           <label className="text-sm">Date</label>
+//           <input
+//             type="date"
+//             className="border p-2 rounded w-full"
+//             onChange={(e) =>
+//               setHeader({ ...header, date: e.target.value })
+//             }
+//           />
+//         </div>
+//       </div>
+
+//       {/* ================= DETAILS TABLE ================= */}
+//       <div className="bg-white p-5 rounded shadow">
+
+//         <table className="w-full border">
+//           <thead className="bg-gray-100">
+//             <tr>
+//               <th className="p-2">Item</th>
+//               <th className="p-2">Qty</th>
+//               <th className="p-2">Price</th>
+//               <th className="p-2">Total</th>
+//               <th className="p-2">❌</th>
+//             </tr>
+//           </thead>
+
+//           <tbody>
+//             {rows.map((row) => (
+//               <tr key={row.id} className="border-t">
+
+//                 {/* ITEM */}
+//                 <td className="p-2">
+//                   <select
+//                     className="border p-1 rounded w-full"
+//                     value={row.itemId}
+//                     onChange={(e) =>
+//                       updateRow(row.id, "itemId", e.target.value)
+//                     }
+//                   >
+//                     <option value="">Select</option>
+//                     {itemsList.map((i) => (
+//                       <option key={i.id} value={i.id}>
+//                         {i.name}
+//                       </option>
+//                     ))}
+//                   </select>
+//                 </td>
+
+//                 {/* QTY */}
+//                 <td className="p-2">
+//                   <input
+//                     type="number"
+//                     className="border p-1 w-full"
+//                     value={row.qty}
+//                     onChange={(e) =>
+//                       updateRow(row.id, "qty", Number(e.target.value))
+//                     }
+//                   />
+//                 </td>
+
+//                 {/* PRICE */}
+//                 <td className="p-2">
+//                   <input
+//                     type="number"
+//                     className="border p-1 w-full"
+//                     value={row.price}
+//                     onChange={(e) =>
+//                       updateRow(row.id, "price", Number(e.target.value))
+//                     }
+//                   />
+//                 </td>
+
+//                 {/* TOTAL */}
+//                 <td className="p-2 text-center">
+//                   {getRowTotal(row)}
+//                 </td>
+
+//                 {/* DELETE */}
+//                 <td className="p-2 text-center">
+//                   <button
+//                     onClick={() => removeRow(row.id)}
+//                     className="text-red-600"
+//                   >
+//                     ❌
+//                   </button>
+//                 </td>
+
+//               </tr>
+//             ))}
+//           </tbody>
+//         </table>
+
+//         {/* ADD ROW */}
+//         <div className="mt-4">
+//           <button
+//             onClick={addRow}
+//             className="bg-blue-600 text-white px-4 py-2 rounded"
+//           >
+//             + Add Row
+//           </button>
+//         </div>
+
+//         {/* TOTAL */}
+//         <div className="mt-6 text-right text-lg font-semibold">
+//           Grand Total: {grandTotal}
+//         </div>
+
+//         {/* SAVE */}
+//         <div className="mt-4 text-right">
+//           <button
+//             onClick={handleSave}
+//             className="bg-green-600 text-white px-6 py-2 rounded"
+//           >
+//             Save Purchase
+//           </button>
+//         </div>
+
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default PurchasesUi;
+
+
+
