@@ -23,7 +23,6 @@ import { MedicinesPage, MedicineStockPage, PharmacySalePage, PharmacySaleDetails
 
 import AppointmentsUi from "./Modules/Reception/Pages/AppointmentsUI";
 import PharmacyPageUi from "./Modules/Pharmacy/Pages/PharmacyPageUi";
-import StorePageUi from "./Modules/Store/Pages/StorePageUi";
 
 // Store
 import PurchasesUi from "./Modules/Store/Pages/PurchasesUi";
@@ -73,7 +72,6 @@ export default function App() {
         <Route path="store/StockManagement" element={<StockManagement />} />
         <Route path="store/items/:id" element={<StockManagement />} />
         <Route path="store/PurchasesUi" element={<PurchasesUi />} />
-        <Route path="store/StorePageUi" element={<StorePageUi />} />
         <Route path="store/items" element={<ItemPage />} />
         <Route path="store/item-stocks" element={<ItemStockPage />} />
         <Route path="store/purchases" element={<PuchasePage />} />
