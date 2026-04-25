@@ -67,9 +67,11 @@ Common/
   EmployeeStatus.cs
   Gender.cs
   InvoiceStatus.cs
+  ItemType.cs
   LabOrderStatus.cs
   ReportStatus.cs
   Status.cs
+  StockMovementType.cs
   TaskType.cs
   TestType.cs
   TriageLevel.cs
@@ -93,6 +95,8 @@ Migrations/
  20260418163106_FixPayrollRelations.Designer.cs
  20260424154941_FixPurchases.cs
  20260424154941_FixPurchases.Designer.cs
+ 20260425064214_FixedStoreModules.cs
+ 20260425064214_FixedStoreModules.Designer.cs
  HMSDBCModelSnapshot.cs
 Models/
  AppUser.cs
@@ -106,6 +110,35 @@ Models/
  SearchParams.cs
  SortingParams.cs
  SpecificationEvaluator.cs
+Modules/Common/
+ CommonModule.cs
+ Controllers/
+  CategoryController.cs
+  UnitControllser.cs
+ Dtos/
+  CategoryDto.cs
+  CreateCategoryDto.cs
+  CreateUnitDto.cs
+  UnitDto.cs
+  UpdateCategoryDto.cs
+  UpdateUnitDto.cs
+ Entities/
+  Category.cs
+  Unit.cs
+ Mapping/CommonProfile.cs
+ Repository/
+  CategoryrRepository.cs
+  ICategoryRepository.cs
+  IUnitRepository.cs
+  UnitRepository.cs
+ Service/
+  CategoryService.cs
+  ICategoryService.cs
+  IUnitService.cs
+  UnitService.cs
+ Specification/
+  CategorySpecification.cs
+  UnitSpecification.cs
 Modules/Doctors/Controllers/
  ConsultationController.cs
  DiagnosisController.cs
@@ -410,7 +443,7 @@ Modules/
   UpdatePurchasesDto.cs
   UpdateSuplierDto.cs
  Store/Entities/
-  Items.cs
+  Item.cs
   ItemStock.cs
   PurchaseDetails.cs
   Purchases.cs

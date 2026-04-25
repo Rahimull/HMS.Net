@@ -5,7 +5,7 @@ using HMSApi.Repositories;
 
 namespace HMSApi.Modules.Store.Repositories;
 
-public class ItemRepository : BaseRepository<Items>, IItemRepository
+public class ItemRepository : BaseRepository<Item>, IItemRepository
 {
     public ItemRepository(HMSDBC context) : base(context)
     {

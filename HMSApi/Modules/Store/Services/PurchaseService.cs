@@ -26,38 +26,37 @@ public class PurchaseService : BaseService<Purchases, PurchasesDto, CreatePurcha
     }
 
     public override async Task<PurchasesDto> AddAsync(CreatePurchaseDto dto)
+{
+    var entity = new Purchases
     {
-        var entity = new Purchases
+        SupplierId = dto.SupplierId,
+        Notes = dto.Notes,
+        PurchaseDate = dto.PurchaseDate,
+
+        PurchaseDetails = dto.Items.Select(d => new PurchaseDetail
         {
-            SupplierId = dto.SupplierId,
-            Notes = dto.Notes,
-            PurchaseDate = dto.PurchaseDate,
+            ItemId = d.ItemId,
+            Quantity = d.Quantity,
+            UnitPrice = d.UnitPrice,
+            BatchNumber = d.BatchNumber,
+            ExpiryDate = d.ExpiryDate,
+        }).ToList()
+    };
 
-            PurchasesDetails = dto.Details?.Select(d => new PurchaseDetail
-            {
-                ItemId = d.ItemId,
-                Quantity = d.Quantity,
-                UnitPrice = d.UnitPrice,
-                SubTotal = d.Quantity * d.UnitPrice,
-                BatchNumber = d.BatchNumber,
-                ExpiryDate = d.ExpiryDate
-            }).ToList() ?? new List<PurchaseDetail>()
-        };
+    entity.TotalPrice = entity.PurchaseDetails.Sum(x => x.Quantity * x.UnitPrice);
 
-        entity.TotalPrice = entity.PurchasesDetails.Sum(x => x.SubTotal);
+    await _repo.AddAsync(entity);
 
-        await _repo.AddAsync(entity);
+    var created = await _repo.Query()
+        .Include(x => x.Supplier)
+        .Include(x => x.PurchaseDetails)
+            .ThenInclude(d => d.Item)
+        .FirstOrDefaultAsync(x => x.Id == entity.Id);
 
-        var created = await _repo.Query()
-            .Where(x => x.Id == entity.Id)
-            .Include(x => x.Supplier)
-            .Include(x => x.PurchasesDetails)
-                .ThenInclude(d => d.Item)
-            .FirstOrDefaultAsync();
+    if (created == null)
+        throw new Exception("Purchase creation failed");
 
-        if (created == null)
-            throw new Exception("Purchase creation failed");
-
-        return _mapper.Map<PurchasesDto>(created);
-    }
+    return _mapper.Map<PurchasesDto>(created);
 }
+    
+    }

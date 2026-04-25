@@ -86,6 +86,48 @@ namespace HMSApi.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("HMSApi.Models.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("HMSApi.Models.Unit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Units");
+                });
+
             modelBuilder.Entity("HMSApi.Modules.Doctors.Entities.Consultation", b =>
                 {
                     b.Property<int>("Id")
@@ -1827,53 +1869,14 @@ namespace HMSApi.Migrations
                     b.ToTable("Reports");
                 });
 
-            modelBuilder.Entity("HMSApi.Modules.Store.Entities.ItemStock", b =>
+            modelBuilder.Entity("HMSApi.Modules.Store.Entities.Item", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("BatchNumber")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateOnly>("ExpiryDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsDeleted")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("LastUpdated")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ItemId");
-
-                    b.ToTable("ItemStocks");
-                });
-
-            modelBuilder.Entity("HMSApi.Modules.Store.Entities.Items", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
@@ -1889,18 +1892,64 @@ namespace HMSApi.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("QuantityInStock")
+                    b.Property<int>("Type")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Unit")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("UnitId")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("UnitId");
+
+                    b.HasIndex("Name", "CategoryId")
+                        .IsUnique();
+
                     b.ToTable("Items");
+                });
+
+            modelBuilder.Entity("HMSApi.Modules.Store.Entities.ItemStock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("BatchNumber")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly?>("ExpiryDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("ItemStocks");
                 });
 
             modelBuilder.Entity("HMSApi.Modules.Store.Entities.PurchaseDetail", b =>
@@ -1929,9 +1978,6 @@ namespace HMSApi.Migrations
 
                     b.Property<int>("Quantity")
                         .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("SubTotal")
-                        .HasColumnType("TEXT");
 
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("TEXT");
@@ -2851,9 +2897,28 @@ namespace HMSApi.Migrations
                     b.Navigation("Employees");
                 });
 
+            modelBuilder.Entity("HMSApi.Modules.Store.Entities.Item", b =>
+                {
+                    b.HasOne("HMSApi.Models.Category", "Category")
+                        .WithMany("Items")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HMSApi.Models.Unit", "Unit")
+                        .WithMany("Items")
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Unit");
+                });
+
             modelBuilder.Entity("HMSApi.Modules.Store.Entities.ItemStock", b =>
                 {
-                    b.HasOne("HMSApi.Modules.Store.Entities.Items", "Item")
+                    b.HasOne("HMSApi.Modules.Store.Entities.Item", "Item")
                         .WithMany("ItemStocks")
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2864,14 +2929,14 @@ namespace HMSApi.Migrations
 
             modelBuilder.Entity("HMSApi.Modules.Store.Entities.PurchaseDetail", b =>
                 {
-                    b.HasOne("HMSApi.Modules.Store.Entities.Items", "Item")
+                    b.HasOne("HMSApi.Modules.Store.Entities.Item", "Item")
                         .WithMany()
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("HMSApi.Modules.Store.Entities.Purchases", "Purchase")
-                        .WithMany("PurchasesDetails")
+                        .WithMany("PurchaseDetails")
                         .HasForeignKey("PurchaseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -2971,6 +3036,16 @@ namespace HMSApi.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("HMSApi.Models.Category", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("HMSApi.Models.Unit", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("HMSApi.Modules.Doctors.Entities.Consultation", b =>
@@ -3119,14 +3194,14 @@ namespace HMSApi.Migrations
                     b.Navigation("VitalSigns");
                 });
 
-            modelBuilder.Entity("HMSApi.Modules.Store.Entities.Items", b =>
+            modelBuilder.Entity("HMSApi.Modules.Store.Entities.Item", b =>
                 {
                     b.Navigation("ItemStocks");
                 });
 
             modelBuilder.Entity("HMSApi.Modules.Store.Entities.Purchases", b =>
                 {
-                    b.Navigation("PurchasesDetails");
+                    b.Navigation("PurchaseDetails");
                 });
 
             modelBuilder.Entity("HMSApi.Modules.Store.Entities.Suppliers", b =>

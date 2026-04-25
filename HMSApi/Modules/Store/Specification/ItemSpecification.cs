@@ -3,10 +3,14 @@ using HMSApi.Modules.Store.Entities;
 
 namespace HMSApi.Specifications;
 
-public class ItemSpecification : BaseSpecification<Items>
+public class ItemSpecification : BaseSpecification<Item>
 {
     public ItemSpecification(QueryParams query)
     {
+        /* ---------- SEARCH ---------- */
+        AddInclude(u => u.Unit);
+        AddInclude(c => c.Category);
+        
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
 

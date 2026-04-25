@@ -1,11 +1,13 @@
 
+using HMSApi.Common.Enums;
+
 namespace HMSApi.Modules.Store.DTOs;
 
 public record CreateItemDto(
    string Name,
-  string Category,
-  string? Description,
-  string Unit,
-  decimal Price,
-   int QuantityInStock
+    string? Description,
+    decimal Price,
+    ItemType Type,
+    int CategoryId,
+    int UnitId
 );

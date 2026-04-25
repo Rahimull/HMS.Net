@@ -11,7 +11,7 @@ public class PurchaseDetailsController
     : BaseController<
         IPurchaseDetailsService,
         PurchaseDetailsDto,
-        CreatePurchaseDetailsDto,
+        CreatePurchaseDetailDto,
         UpdatePurchaseDetailsDto>
 {
     public PurchaseDetailsController(IPurchaseDetailsService service)

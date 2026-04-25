@@ -3,6 +3,7 @@ using HMSApi.Data;
 using HMSApi.Middleware;
 using HMSApi.Models;
 using HMSApi.Modules.Reception;
+using HMSApi.Mudoles.Common;
 using HMSApi.Mudoles.Doctors;
 using HMSApi.Mudoles.Finance;
 using HMSApi.Mudoles.HR;
@@ -31,6 +32,7 @@ builder.Services
     .AddEntityFrameworkStores<HMSDBC>()
     .AddDefaultTokenProviders();
 
+builder.Services.AddCommonModule();
 builder.Services.AddReceptionModule();
 builder.Services.AddDoctorModule();
 builder.Services.AddPharmacyModule();

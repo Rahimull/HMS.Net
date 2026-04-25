@@ -9,7 +9,7 @@ public class PurchaseSpecification : BaseSpecification<Purchases>
     {
         // ================= INCLUDE =================
         AddInclude(x => x.Supplier);
-        AddInclude(x => x.PurchasesDetails);
+        AddInclude(x => x.PurchaseDetails);
 
         // NOTE: Item include should be handled via EF ThenInclude in repository
 

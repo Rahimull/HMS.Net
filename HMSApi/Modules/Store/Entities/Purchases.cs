@@ -11,17 +11,6 @@ public class Purchases : BaseEntity
     public decimal TotalPrice { get; set; }
     public int SupplierId { get; set; }
     public Suppliers Supplier { get; set; } = null!;
-    public ICollection<PurchaseDetail> PurchasesDetails { get; set; } = new List<PurchaseDetail>();
-
-
-    // public int Quantity { get; set; }
-
-
-    // foreign key
-    // public int ItemId { get; set; }
-
-
-    // navigation property
-    // public Items Item { get; set; } = null!;
+    public ICollection<PurchaseDetail> PurchaseDetails { get; set; } = new List<PurchaseDetail>();
 
 }

@@ -14,5 +14,5 @@ public class UpdatePurchasesDto
     public string? Notes { get; set; }
     public int SupplierId { get; set; }
 
-    public List<CreatePurchaseDetailsDto> Details { get; set; } = new();
+    public List<CreatePurchaseDetailDto> Details { get; set; } = new();
 }

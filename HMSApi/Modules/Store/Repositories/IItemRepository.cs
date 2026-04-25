@@ -5,5 +5,5 @@ using HMSApi.Modules.Store.Entities;
 
 namespace HMSApi.Modules.Store.Repositories;
 
-public interface IItemRepository : IBaseRepository<Items>
+public interface IItemRepository : IBaseRepository<Item>
 {}

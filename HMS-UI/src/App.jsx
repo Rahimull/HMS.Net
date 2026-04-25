@@ -27,6 +27,8 @@ import PharmacyPageUi from "./Modules/Pharmacy/Pages/PharmacyPageUi";
 // Store
 import PurchasesUi from "./Modules/Store/Pages/PurchasesUi";
 import StockManagement from "./Modules/Store/Pages/StockManagement";
+import CategoryPage from "./Modules/Common/Pages/CategoryPage";
+import UnitPage from "./Modules/Common/Pages/UnitPage";
 
 export default function App() {
   return (
@@ -38,6 +40,8 @@ export default function App() {
 
         {/* optional /dashboard */}
         <Route path="dashboard" element={<Navigate to="/" replace />} />
+        <Route path="unit" element={<UnitPage />} />
+        <Route path="category" element={<CategoryPage />} />
 
         {/* Reception */}
         <Route path="patient" element={<PatientPage />} />

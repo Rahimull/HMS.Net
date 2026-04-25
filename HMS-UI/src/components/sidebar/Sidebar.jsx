@@ -46,7 +46,11 @@ const Sidebar = () => {
       {
         key: "overview",
         title: "Overview",
-        items: [{ name: "Dashboard", link: "/", icon: LayoutDashboard }],
+        items: [
+          { name: "Dashboard", link: "/", icon: LayoutDashboard },
+          { name: "Units", link: "/unit", icon: LayoutDashboard },
+          { name: "Category", link: "/Category", icon: LayoutDashboard },
+        ],
       },
       {
         complate: 1,

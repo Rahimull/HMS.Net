@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using HMSApi.Models;
+using HMSApi.Modules.Common.Entities;
 using HMSApi.Modules.Doctors.Entities;
 using HMSApi.Modules.Emergencies.Entities;
 using HMSApi.Modules.Finance.Entities;
@@ -24,6 +25,10 @@ namespace HMSApi.Data;
 public class HMSDBC : IdentityDbContext<AppUser, IdentityRole<int>, int>
 {
     public HMSDBC(DbContextOptions<HMSDBC> options) : base(options) { }
+
+
+    public DbSet<Category> Categories => Set<Category>();
+    public DbSet<Unit> Units => Set<Unit>();
 
     public DbSet<Appointment> Appointments => Set<Appointment>();
     public DbSet<Department> Departments => Set<Department>();
@@ -89,7 +94,7 @@ public class HMSDBC : IdentityDbContext<AppUser, IdentityRole<int>, int>
     public DbSet<Report> Reports => Set<Report>();
 
     // Store Modules
-    public DbSet<Items> Items => Set<Items>();
+    public DbSet<Item> Items => Set<Item>();
     public DbSet<ItemStock> ItemStocks => Set<ItemStock>();
     public DbSet<PurchaseDetail> PurchaseDetails => Set<PurchaseDetail>();
     public DbSet<Purchases> Purchases => Set<Purchases>();

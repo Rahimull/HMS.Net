@@ -8,14 +8,14 @@ using HMSApi.Specifications;
 namespace HMSApi.Modules.Store.Services;
 
 
-public class ItemService : BaseService<Items, ItemDto, CreateItemDto, UpdateItemDto>, IItemService
+public class ItemService : BaseService<Item, ItemDto, CreateItemDto, UpdateItemDto>, IItemService
 {
     public ItemService(IItemRepository repo, IMapper mapper) : base(repo, mapper)
     {
         
     }
 
-    protected override ISpecification<Items> BuildSpecification(QueryParams query)
+    protected override ISpecification<Item> BuildSpecification(QueryParams query)
     {
         return new ItemSpecification(query);
     }

@@ -9,9 +9,11 @@ public class StoreProfile : Profile
     public StoreProfile()
     {
         // ================= ITEM =================
-        CreateMap<CreateItemDto, Items>();
-        CreateMap<UpdateItemDto, Items>();
-        CreateMap<Items, ItemDto>();
+        CreateMap<CreateItemDto, Item>();
+        CreateMap<UpdateItemDto, Item>();
+        CreateMap<Item, ItemDto>()
+        .ForMember(dest => dest.CategoryName, opt=> opt.MapFrom(src => src.Category.Name))
+        .ForMember(dest => dest.UnitName, opt=> opt.MapFrom(src => src.Unit.Name));
 
         // ================= ITEM STOCK =================
         CreateMap<CreateItemStockDto, ItemStock>();
@@ -21,7 +23,7 @@ public class StoreProfile : Profile
                 opt => opt.MapFrom(src => src.Item.Name));
 
         // ================= PURCHASE DETAILS =================
-        CreateMap<CreatePurchaseDetailsDto, PurchaseDetail>();
+        CreateMap<CreatePurchaseDetailDto, PurchaseDetail>();
 
         CreateMap<UpdatePurchaseDetailsDto, PurchaseDetail>();
 
@@ -29,12 +31,12 @@ public class StoreProfile : Profile
             .ForCtorParam("ItemName",
                 opt => opt.MapFrom(src => src.Item.Name))
             .ForCtorParam("PurchaseName",
-                opt => opt.MapFrom(src => src.Purchase.Notes));
+                opt => opt.MapFrom(src => src.Purchase.Id));
 
         // ================= PURCHASE =================
         CreateMap<CreatePurchaseDto, Purchases>()
-            .ForMember(dest => dest.PurchasesDetails,
-                opt => opt.MapFrom(src => src.Details));
+            .ForMember(dest => dest.PurchaseDetails,
+                opt => opt.MapFrom(src => src.Items));
 
         CreateMap<UpdatePurchasesDto, Purchases>();
 
@@ -42,7 +44,7 @@ public class StoreProfile : Profile
             .ForMember(dest => dest.SupplierName,
                 opt => opt.MapFrom(src => src.Supplier.Name))
             .ForMember(dest => dest.Details,
-            opt => opt.MapFrom(src => src.PurchasesDetails));
+            opt => opt.MapFrom(src => src.PurchaseDetails));
 
         // ================= SUPPLIER =================
         CreateMap<CreateSuplierDto, Suppliers>();

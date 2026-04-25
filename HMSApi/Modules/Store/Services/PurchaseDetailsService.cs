@@ -8,7 +8,7 @@ namespace HMSApi.Modules.Store.Services;
 using HMSApi.Specifications;
 
 
-public class PurchaseDetailsService : BaseService<PurchaseDetail, PurchaseDetailsDto, CreatePurchaseDetailsDto, UpdatePurchaseDetailsDto>, IPurchaseDetailsService
+public class PurchaseDetailsService : BaseService<PurchaseDetail, PurchaseDetailsDto, CreatePurchaseDetailDto, UpdatePurchaseDetailsDto>, IPurchaseDetailsService
 {
     public PurchaseDetailsService(IPurchaseDetailsRepository repo, IMapper mapper) : base(repo, mapper)
     {
