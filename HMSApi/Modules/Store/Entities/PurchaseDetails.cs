@@ -6,7 +6,7 @@ public class PurchaseDetail : BaseEntity
 {
     public int Quantity { get; set; }
     public decimal UnitPrice { get; set; }
-    public decimal SubTotal => Quantity * UnitPrice;
+    public decimal SubTotal {get; set;}
     public string? BatchNumber { get; set; }
     public DateOnly ExpiryDate { get; set; }
 

@@ -25,7 +25,7 @@ const ReusableForm = ({
   const [formData, setFormData] = useState(initialState);
   const [errors, setErrors] = useState({});
 
-
+  console.log(formData);
 
   // ✅ Sync form with edit/add mode
   useEffect(() => {

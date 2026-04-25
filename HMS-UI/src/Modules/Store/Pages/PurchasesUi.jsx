@@ -4,13 +4,16 @@ import SuplierApi from "@/api/store/SuplierApi";
 import ItemApi from "@/api/store/ItemApi";
 import Input from "@/components/common/Input";
 
-const PurchaseUi = () => {
-  const { createPurchase } = usePurchase();
+const PurchaseUi = ({ editingPurchase, onClearEdit }) => {
+  const { createPurchase, updatePurchase } = usePurchase();
 
   const [suppliers, setSuppliers] = useState([]);
   const [items, setItems] = useState([]);
 
   const [loading, setLoading] = useState(false);
+
+
+  
 
   /* ================= LOAD DATA ================= */
 
@@ -40,12 +43,35 @@ const PurchaseUi = () => {
   const [header, setHeader] = useState({
     supplierId: "",
     notes: "",
-    date: "",
+    purchaseDate: "",
   });
 
   /* ================= ROWS ================= */
 
   const [rows, setRows] = useState([]);
+
+  /* ================= LOAD EDIT DATA ================= */
+
+  useEffect(() => {
+    if (!editingPurchase) return;
+
+    setHeader({
+      supplierId: editingPurchase.supplierId,
+      notes: editingPurchase.notes,
+      purchaseDate: editingPurchase.purchaseDate?.split("T")[0],
+    });
+
+    setRows(
+      editingPurchase.details.map((d) => ({
+        id: d.id || Date.now() + Math.random(),
+        itemId: d.itemId,
+        qty: d.quantity,
+        price: d.unitPrice,
+      }))
+    );
+  }, [editingPurchase]);
+
+  /* ================= ROW ACTIONS ================= */
 
   const addRow = () => {
     setRows([
@@ -61,16 +87,9 @@ const PurchaseUi = () => {
 
         let updated = { ...r, [field]: value };
 
-        // 🔥 auto price from item
         if (field === "itemId") {
-          const item = itemOptions.find(
-            (i) => i.value == value
-          );
-
-          if (item) {
-            updated.price = item.price;
-            updated.qty = updated.qty || 1;
-          }
+          const item = itemOptions.find((i) => i.value == value);
+          if (item) updated.price = item.price;
         }
 
         return updated;
@@ -89,39 +108,50 @@ const PurchaseUi = () => {
     0
   );
 
-  /* ================= SAVE ================= */
+  /* ================= SAVE (CREATE + UPDATE) ================= */
 
   const handleSave = async () => {
     setLoading(true);
 
     try {
       const payload = {
-        ...header,
-        totalAmount: grandTotal,
+        supplierId: Number(header.supplierId),
+        purchaseDate: header.purchaseDate,
+        notes: header.notes,
+        totalPrice: grandTotal,
+
         details: rows.map((r) => ({
-          itemId: r.itemId,
-          qty: r.qty,
-          price: r.price,
-          total: r.qty * r.price,
+          itemId: Number(r.itemId),
+          quantity: Number(r.qty),
+          unitPrice: Number(r.price),
+          batchNumber: r.batchNumber ?? null,
+          expiryDate: r.expiryDate ?? null,
         })),
       };
 
-      await createPurchase(payload);
+      if (editingPurchase) {
+        await updatePurchase(editingPurchase.id, payload);
+      } else {
+        await createPurchase(payload);
+      }
+      console.log("PURCHASE PAYLOAD:", payload);
 
-      alert("Purchase Saved ✅");
+      alert("Purchase Saved Successfully ✅");
 
-      // reset
       setHeader({
         supplierId: "",
         notes: "",
-        date: "",
+        purchaseDate: "",
       });
 
       setRows([]);
+
+      onClearEdit?.();
     } finally {
       setLoading(false);
     }
   };
+
 
   /* ================= UI ================= */
 
@@ -129,48 +159,36 @@ const PurchaseUi = () => {
     <div className="p-6 bg-gray-50 min-h-screen">
 
       <h1 className="text-2xl font-bold mb-6">
-        🧾 Purchase Module (Production Ready)
+        🧾 Purchase Module {editingPurchase ? "(Edit Mode)" : "(Create Mode)"}
       </h1>
 
       {/* ================= HEADER ================= */}
       <div className="bg-white p-5 rounded shadow grid grid-cols-3 gap-4">
 
         <Input
-          name="supplierId"
           type="select"
           value={header.supplierId}
           options={supplierOptions}
           label="Supplier"
           onChange={(e) =>
-            setHeader({
-              ...header,
-              supplierId: e.target.value,
-            })
+            setHeader({ ...header, supplierId: e.target.value })
           }
         />
 
         <Input
-          name="date"
           type="date"
-          value={header.date}
+          value={header.purchaseDate}
           label="Date"
           onChange={(e) =>
-            setHeader({
-              ...header,
-              date: e.target.value,
-            })
+            setHeader({ ...header, purchaseDate: e.target.value })
           }
         />
 
         <Input
-          name="notes"
           label="Notes"
           value={header.notes}
           onChange={(e) =>
-            setHeader({
-              ...header,
-              notes: e.target.value,
-            })
+            setHeader({ ...header, notes: e.target.value })
           }
         />
       </div>
@@ -194,34 +212,23 @@ const PurchaseUi = () => {
 
             {rows.length === 0 && (
               <tr>
-                <td
-                  colSpan={5}
-                  className="text-center py-6 text-gray-400"
-                >
-                  No items added yet
+                <td colSpan={5} className="text-center py-6 text-gray-400">
+                  No items
                 </td>
               </tr>
             )}
 
             {rows.map((r) => (
-              <tr
-                key={r.id}
-                className="hover:bg-gray-50 transition"
-              >
+              <tr key={r.id} className="hover:bg-gray-50">
 
                 {/* ITEM */}
                 <td>
                   <Input
-                    name="itemId"
                     type="select"
                     value={r.itemId}
                     options={itemOptions}
                     onChange={(e) =>
-                      updateRow(
-                        r.id,
-                        "itemId",
-                        e.target.value
-                      )
+                      updateRow(r.id, "itemId", e.target.value)
                     }
                   />
                 </td>
@@ -232,11 +239,7 @@ const PurchaseUi = () => {
                     type="number"
                     value={r.qty}
                     onChange={(e) =>
-                      updateRow(
-                        r.id,
-                        "qty",
-                        Number(e.target.value)
-                      )
+                      updateRow(r.id, "qty", Number(e.target.value))
                     }
                   />
                 </td>
@@ -247,11 +250,7 @@ const PurchaseUi = () => {
                     type="number"
                     value={r.price}
                     onChange={(e) =>
-                      updateRow(
-                        r.id,
-                        "price",
-                        Number(e.target.value)
-                      )
+                      updateRow(r.id, "price", Number(e.target.value))
                     }
                   />
                 </td>
@@ -282,10 +281,10 @@ const PurchaseUi = () => {
           onClick={addRow}
           className="mt-4 bg-blue-600 text-white px-4 py-2"
         >
-          + Add Row
+          + Add Item
         </button>
 
-        {/* GRAND TOTAL */}
+        {/* TOTAL */}
         <h2 className="text-right mt-4 text-xl font-bold text-green-600">
           Total: {grandTotal.toFixed(2)}
         </h2>
@@ -294,9 +293,13 @@ const PurchaseUi = () => {
         <button
           onClick={handleSave}
           disabled={loading}
-          className="mt-2 bg-green-600 disabled:bg-gray-400 text-white px-6 py-2"
+          className="mt-3 bg-green-600 text-white px-6 py-2 disabled:bg-gray-400"
         >
-          {loading ? "Saving..." : "Save Purchase"}
+          {loading
+            ? "Saving..."
+            : editingPurchase
+            ? "Update Purchase"
+            : "Save Purchase"}
         </button>
 
       </div>

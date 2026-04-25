@@ -1,14 +1,17 @@
 
 namespace HMSApi.Modules.Store.DTOs;
+using HMSApi.Common.Enums;
 
 public record ItemStockDto(
-        int Id,
+    int Id,
     int ItemId,
     string ItemName,
     int Quantity,
-    string Type,
+    StockMovementType Type,
     DateTime Date,
     string? BatchNumber,
     DateOnly? ExpiryDate,
-    string? Notes
+    string? Notes,
+    int? ReferenceId,
+    StockReferenceType? ReferenceType
 );

@@ -72,6 +72,7 @@ Common/
   ReportStatus.cs
   Status.cs
   StockMovementType.cs
+  StockReferenceType.cs
   TaskType.cs
   TestType.cs
   TriageLevel.cs
@@ -97,6 +98,10 @@ Migrations/
  20260424154941_FixPurchases.Designer.cs
  20260425064214_FixedStoreModules.cs
  20260425064214_FixedStoreModules.Designer.cs
+ 20260425103310_FixeItemStockModules.cs
+ 20260425103310_FixeItemStockModules.Designer.cs
+ 20260425121314_FixedPurchaseModules.cs
+ 20260425121314_FixedPurchaseModules.Designer.cs
  HMSDBCModelSnapshot.cs
 Models/
  AppUser.cs

@@ -1,3 +1,4 @@
+
 using HMSApi.Common.Enums;
 using HMSApi.Models;
 
@@ -11,6 +12,7 @@ public class ItemStock : BaseEntity
 
     public int Quantity { get; set; }
 
+
     public StockMovementType Type { get; set; }
 
     public DateTime Date { get; set; } = DateTime.UtcNow;
@@ -20,4 +22,9 @@ public class ItemStock : BaseEntity
     public DateOnly? ExpiryDate { get; set; }
 
     public string? Notes { get; set; }
+
+    public int? ReferenceId { get; set; }
+
+
+    public StockReferenceType? ReferenceType { get; set; }
 }

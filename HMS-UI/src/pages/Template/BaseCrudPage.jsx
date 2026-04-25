@@ -11,7 +11,7 @@ const BaseCrudPage = ({
   fields,
   columns,
   mapFormToPayload,
-  mapEntityToForm = (x) => x, // ✅ برای حل مشکل پر نشدن بعضی فیلدها در Edit (اختیاری ولی مفید)
+  mapEntityToForm = (x) => x,
 }) => {
   const [editing, setEditing] = useState(null);
 
@@ -31,9 +31,30 @@ const BaseCrudPage = ({
     deleteItem,
   } = useCrud(service);
 
+  // 🧠 FIX: normalize entity for EDIT (important for enums/selects)
+  const normalizeEntity = (entity) => {
+    console.log("Edit Data: ", editing);
+    if (!entity) return null;
+
+    const result = mapEntityToForm(entity);
+
+    const normalized = { ...result };
+
+    fields.forEach((f) => {
+      if (f.type === "select") {
+        normalized[f.name] = Number(normalized[f.name]);
+      }
+    });
+    if (normalized.type !== undefined) {
+    normalized.type = Number(normalized.type);
+  }
+
+    return normalized;
+  };
+
   const handleSubmit = async (formData) => {
     const payload = mapFormToPayload(formData);
-    console.log(payload)
+
     if (editing) {
       await updateItem(editing.id, payload);
       setEditing(null);
@@ -43,7 +64,9 @@ const BaseCrudPage = ({
   };
 
   const handlePaginationChange = (updater) => {
-    setPagination((prev) => (typeof updater === "function" ? updater(prev) : updater));
+    setPagination((prev) =>
+      typeof updater === "function" ? updater(prev) : updater
+    );
   };
 
   return (
@@ -61,7 +84,7 @@ const BaseCrudPage = ({
       {/* Form */}
       <ReusableForm
         fields={fields}
-        initialValues={editing ? mapEntityToForm(editing) : null}
+        initialValues={editing ? normalizeEntity(editing) : null}
         onSubmit={handleSubmit}
         submitText={editing ? "Update" : "Add"}
       />
@@ -95,13 +118,14 @@ const BaseCrudPage = ({
         <Loader text={`Fetching ${title}...`} />
       ) : (
         <DataTable
-          
           columns={columns}
           data={data}
           pagination={pagination}
           totalCount={totalCount}
           onPaginationChange={handlePaginationChange}
-          onSortingChange={(sort) => setSorting(sort ?? { sortBy: null, sortDir: "asc" })}
+          onSortingChange={(sort) =>
+            setSorting(sort ?? { sortBy: null, sortDir: "asc" })
+          }
           onEdit={setEditing}
           onDelete={deleteItem}
           loading={loading}

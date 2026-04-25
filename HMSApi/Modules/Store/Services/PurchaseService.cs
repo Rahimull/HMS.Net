@@ -6,57 +6,99 @@ using HMSApi.Services;
 using HMSApi.Models;
 using HMSApi.Specifications;
 using Microsoft.EntityFrameworkCore;
+using HMSApi.Data;
+using HMSApi.Common.Enums;
+
 namespace HMSApi.Modules.Store.Services;
 
-
-public class PurchaseService : BaseService<Purchases, PurchasesDto, CreatePurchaseDto, UpdatePurchasesDto>, IPurchaseService
+public class PurchaseService
+    : BaseService<Purchases, PurchasesDto, CreatePurchaseDto, UpdatePurchasesDto>, IPurchaseService
 {
-    public PurchaseService(IPurchaseRepository repo, IMapper mapper) : base(repo, mapper)
-    {
+    private readonly HMSDBC _context;
 
+    public PurchaseService(
+        IPurchaseRepository repo,
+        IMapper mapper,
+        HMSDBC context
+    ) : base(repo, mapper)
+    {
+        _context = context;
     }
 
-
-
-
-    // 🔥 VERY IMPORTANT
+    // ================= SPECIFICATION =================
     protected override ISpecification<Purchases> BuildSpecification(QueryParams query)
     {
         return new PurchaseSpecification(query);
     }
 
+    // ================= CREATE PURCHASE =================
     public override async Task<PurchasesDto> AddAsync(CreatePurchaseDto dto)
-{
-    var entity = new Purchases
     {
-        SupplierId = dto.SupplierId,
-        Notes = dto.Notes,
-        PurchaseDate = dto.PurchaseDate,
+        using var transaction = await _context.Database.BeginTransactionAsync();
 
-        PurchaseDetails = dto.Items.Select(d => new PurchaseDetail
+        try
         {
-            ItemId = d.ItemId,
-            Quantity = d.Quantity,
-            UnitPrice = d.UnitPrice,
-            BatchNumber = d.BatchNumber,
-            ExpiryDate = d.ExpiryDate,
-        }).ToList()
-    };
+            // 1️⃣ Build Purchase
+            var entity = new Purchases
+            {
+                SupplierId = dto.SupplierId,
+                Notes = dto.Notes,
+                PurchaseDate = dto.PurchaseDate,
 
-    entity.TotalPrice = entity.PurchaseDetails.Sum(x => x.Quantity * x.UnitPrice);
+                PurchaseDetails = dto.Details?.Select(d => new PurchaseDetail
+                {
+                    ItemId = d.ItemId,
+                    Quantity = d.Quantity,
+                    UnitPrice = d.UnitPrice,
+                    BatchNumber = d.BatchNumber,
+                    ExpiryDate = d.ExpiryDate
+                }).ToList() ?? new()
+            };
 
-    await _repo.AddAsync(entity);
+            // 2️⃣ SAVE PURCHASE (IMPORTANT: repo already saves)
+            await _repo.AddAsync(entity);
 
-    var created = await _repo.Query()
-        .Include(x => x.Supplier)
-        .Include(x => x.PurchaseDetails)
-            .ThenInclude(d => d.Item)
-        .FirstOrDefaultAsync(x => x.Id == entity.Id);
+            // 3️⃣ STOCK MOVEMENTS
+            foreach (var d in entity.PurchaseDetails)
+            {
+                _context.ItemStocks.Add(new ItemStock
+                {
+                    ItemId = d.ItemId,
+                    Quantity = d.Quantity,
+                    Type = StockMovementType.Purchase,
+                    BatchNumber = d.BatchNumber,
+                    ExpiryDate = d.ExpiryDate,
+                    ReferenceId = entity.Id, // ✔ now valid after save
+                    ReferenceType = StockReferenceType.Purchase,
+                    Date = DateTime.UtcNow
+                });
+            }
 
-    if (created == null)
-        throw new Exception("Purchase creation failed");
+            await _context.SaveChangesAsync();
 
-    return _mapper.Map<PurchasesDto>(created);
-}
-    
+            // 4️⃣ TOTAL PRICE UPDATE
+            entity.TotalPrice = entity.PurchaseDetails.Sum(x => x.Quantity * x.UnitPrice);
+            await _repo.UpdateAsync(entity);
+
+            // 5️⃣ COMMIT
+            await transaction.CommitAsync();
+
+            // 6️⃣ LOAD FULL DATA
+            var created = await _repo.Query()
+                .Include(x => x.Supplier)
+                .Include(x => x.PurchaseDetails)
+                    .ThenInclude(d => d.Item)
+                .FirstOrDefaultAsync(x => x.Id == entity.Id);
+
+            if (created == null)
+                throw new Exception("Purchase creation failed");
+
+            return _mapper.Map<PurchasesDto>(created);
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
+}
