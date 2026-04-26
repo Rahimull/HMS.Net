@@ -18,4 +18,23 @@ public class PurchasesController
         : base(service)
     {
     }
+
+    [HttpGet("{name}")]
+    public IActionResult GetEnum(string name)
+    {
+        var type = Type.GetType($"HMSApi.Common.Enums.{name}");
+
+        if (type == null)
+            return BadRequest("Enum not found");
+
+        var result = Enum.GetValues(type)
+            .Cast<Enum>()
+            .Select(x => new
+            {
+                value = Convert.ToInt32(x),
+                label = x.ToString()
+            });
+
+        return Ok(result);
+    }
 }

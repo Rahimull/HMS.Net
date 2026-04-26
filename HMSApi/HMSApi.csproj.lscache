@@ -86,22 +86,8 @@ Data/
  HMSDBC.cs
  HMSDBCFactory.cs
 Migrations/
- 20260405035721_InitialCreate_ReceptionModule_with_AppUser.cs
- 20260405035721_InitialCreate_ReceptionModule_with_AppUser.Designer.cs
- 20260409163310_FixRelations.cs
- 20260409163310_FixRelations.Designer.cs
- 20260418155925_FixShiftRealtions.cs
- 20260418155925_FixShiftRealtions.Designer.cs
- 20260418163106_FixPayrollRelations.cs
- 20260418163106_FixPayrollRelations.Designer.cs
- 20260424154941_FixPurchases.cs
- 20260424154941_FixPurchases.Designer.cs
- 20260425064214_FixedStoreModules.cs
- 20260425064214_FixedStoreModules.Designer.cs
- 20260425103310_FixeItemStockModules.cs
- 20260425103310_FixeItemStockModules.Designer.cs
- 20260425121314_FixedPurchaseModules.cs
- 20260425121314_FixedPurchaseModules.Designer.cs
+ 20260425130443_InitialCreate.cs
+ 20260425130443_InitialCreate.Designer.cs
  HMSDBCModelSnapshot.cs
 Models/
  AppUser.cs

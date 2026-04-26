@@ -12,7 +12,7 @@ const usePurchase = () => {
     try {
       const res = await PurchaseApi.getPaged({
         page: 0,
-        pageSize: 10,
+        pageSize: 1000,
       });
 
       setPurchases(res.data.data.data);
@@ -24,6 +24,7 @@ const usePurchase = () => {
   /* ================= CREATE ================= */
 
   const createPurchase = async (payload) => {
+    console.log(payload)
     await PurchaseApi.create(payload);
     fetchPurchases();
   };

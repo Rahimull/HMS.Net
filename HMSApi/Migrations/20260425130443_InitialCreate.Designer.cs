@@ -11,61 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HMSApi.Migrations
 {
     [DbContext(typeof(HMSDBC))]
-    [Migration("20260409163310_FixRelations")]
-    partial class FixRelations
+    [Migration("20260425130443_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.5");
-
-            modelBuilder.Entity("Appointment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateOnly>("AppointmentDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("AppointmentStatus")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<TimeOnly>("AppointmentTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("DepartmentId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("DoctorId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(255)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("PatientId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DepartmentId");
-
-                    b.HasIndex("DoctorId");
-
-                    b.HasIndex("PatientId");
-
-                    b.HasIndex("AppointmentDate", "DoctorId");
-
-                    b.ToTable("Appointments");
-                });
 
             modelBuilder.Entity("HMSApi.Models.AppUser", b =>
                 {
@@ -134,6 +87,48 @@ namespace HMSApi.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("HMSApi.Modules.Common.Entities.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("HMSApi.Modules.Common.Entities.Unit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Units");
                 });
 
             modelBuilder.Entity("HMSApi.Modules.Doctors.Entities.Consultation", b =>
@@ -679,9 +674,6 @@ namespace HMSApi.Migrations
                     b.Property<int>("EmployeeId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("EmployeesId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
@@ -696,7 +688,7 @@ namespace HMSApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployeesId");
+                    b.HasIndex("EmployeeId");
 
                     b.ToTable("Payrolls");
                 });
@@ -711,9 +703,6 @@ namespace HMSApi.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int>("EmployeeId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("EmployeesId")
                         .HasColumnType("INTEGER");
 
                     b.Property<TimeOnly>("EndTime")
@@ -733,7 +722,7 @@ namespace HMSApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployeesId");
+                    b.HasIndex("EmployeeId");
 
                     b.ToTable("Shifts");
                 });
@@ -1683,6 +1672,53 @@ namespace HMSApi.Migrations
                     b.ToTable("ImagingTests");
                 });
 
+            modelBuilder.Entity("HMSApi.Modules.Reception.Entities.Appointment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateOnly>("AppointmentDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("AppointmentStatus")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<TimeOnly>("AppointmentTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasIndex("PatientId");
+
+                    b.HasIndex("AppointmentDate", "DoctorId");
+
+                    b.ToTable("Appointments");
+                });
+
             modelBuilder.Entity("HMSApi.Modules.Reception.Entities.Department", b =>
                 {
                     b.Property<int>("Id")
@@ -1707,6 +1743,86 @@ namespace HMSApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Departments");
+                });
+
+            modelBuilder.Entity("HMSApi.Modules.Reception.Entities.MedicalRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("RecordNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientId")
+                        .IsUnique();
+
+                    b.HasIndex("RecordNumber")
+                        .IsUnique();
+
+                    b.ToTable("MedicalRecords");
+                });
+
+            modelBuilder.Entity("HMSApi.Modules.Reception.Entities.Patient", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly>("DOB")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Gender")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NationalId")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Phone")
+                        .IsUnique();
+
+                    b.ToTable("Patients");
                 });
 
             modelBuilder.Entity("HMSApi.Modules.Reports.Entities.Report", b =>
@@ -1756,53 +1872,14 @@ namespace HMSApi.Migrations
                     b.ToTable("Reports");
                 });
 
-            modelBuilder.Entity("HMSApi.Modules.Store.Entities.ItemStock", b =>
+            modelBuilder.Entity("HMSApi.Modules.Store.Entities.Item", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("BatchNumber")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateOnly>("ExpiryDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsDeleted")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("LastUpdated")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ItemId");
-
-                    b.ToTable("ItemStocks");
-                });
-
-            modelBuilder.Entity("HMSApi.Modules.Store.Entities.Items", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
@@ -1818,18 +1895,70 @@ namespace HMSApi.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("QuantityInStock")
+                    b.Property<int>("Type")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Unit")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("UnitId")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("UnitId");
+
+                    b.HasIndex("Name", "CategoryId")
+                        .IsUnique();
+
                     b.ToTable("Items");
+                });
+
+            modelBuilder.Entity("HMSApi.Modules.Store.Entities.ItemStock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("BatchNumber")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly?>("ExpiryDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ReferenceId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ReferenceType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("ItemStocks");
                 });
 
             modelBuilder.Entity("HMSApi.Modules.Store.Entities.PurchaseDetail", b =>
@@ -1859,9 +1988,6 @@ namespace HMSApi.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("SubTotal")
-                        .HasColumnType("TEXT");
-
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("TEXT");
 
@@ -1886,17 +2012,11 @@ namespace HMSApi.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ItemId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Notes")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("INTEGER");
 
                     b.Property<int>("SupplierId")
                         .HasColumnType("INTEGER");
@@ -1905,8 +2025,6 @@ namespace HMSApi.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ItemId");
 
                     b.HasIndex("SupplierId");
 
@@ -2018,37 +2136,6 @@ namespace HMSApi.Migrations
                     b.HasIndex("SupportStaffId");
 
                     b.ToTable("SupportTasks");
-                });
-
-            modelBuilder.Entity("MedicalRecord", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PatientId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("RecordNumber")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PatientId")
-                        .IsUnique();
-
-                    b.HasIndex("RecordNumber")
-                        .IsUnique();
-
-                    b.ToTable("MedicalRecords");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
@@ -2177,82 +2264,6 @@ namespace HMSApi.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Patient", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Address")
-                        .HasMaxLength(255)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateOnly>("DOB")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Gender")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("NationalId")
-                        .HasMaxLength(50)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Phone")
-                        .IsUnique();
-
-                    b.ToTable("Patients");
-                });
-
-            modelBuilder.Entity("Appointment", b =>
-                {
-                    b.HasOne("HMSApi.Modules.Reception.Entities.Department", "Department")
-                        .WithMany("Appointments")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HMSApi.Modules.Doctors.Entities.Doctor", "Doctor")
-                        .WithMany("Appointments")
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Patient", "Patient")
-                        .WithMany("Appointments")
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Department");
-
-                    b.Navigation("Doctor");
-
-                    b.Navigation("Patient");
-                });
-
             modelBuilder.Entity("HMSApi.Modules.Doctors.Entities.Consultation", b =>
                 {
                     b.HasOne("HMSApi.Modules.Doctors.Entities.Doctor", "Doctor")
@@ -2261,7 +2272,7 @@ namespace HMSApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Patient", "Patient")
+                    b.HasOne("HMSApi.Modules.Reception.Entities.Patient", "Patient")
                         .WithMany("Consultation")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2327,7 +2338,7 @@ namespace HMSApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Patient", "Patient")
+                    b.HasOne("HMSApi.Modules.Reception.Entities.Patient", "Patient")
                         .WithMany()
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2357,7 +2368,7 @@ namespace HMSApi.Migrations
                         .WithMany()
                         .HasForeignKey("DoctorId");
 
-                    b.HasOne("Patient", "Patient")
+                    b.HasOne("HMSApi.Modules.Reception.Entities.Patient", "Patient")
                         .WithMany("Emergencies")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2401,7 +2412,7 @@ namespace HMSApi.Migrations
                         .WithMany()
                         .HasForeignKey("OPDVisitId");
 
-                    b.HasOne("Patient", "Patient")
+                    b.HasOne("HMSApi.Modules.Reception.Entities.Patient", "Patient")
                         .WithMany("Invoices")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2451,24 +2462,24 @@ namespace HMSApi.Migrations
 
             modelBuilder.Entity("HMSApi.Modules.HR.Entities.Payrolls", b =>
                 {
-                    b.HasOne("HMSApi.Modules.HR.Entities.Employees", "Employees")
+                    b.HasOne("HMSApi.Modules.HR.Entities.Employees", "Employee")
                         .WithMany("Payrolls")
-                        .HasForeignKey("EmployeesId")
+                        .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Employees");
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("HMSApi.Modules.HR.Entities.Shift", b =>
                 {
-                    b.HasOne("HMSApi.Modules.HR.Entities.Employees", "Employees")
+                    b.HasOne("HMSApi.Modules.HR.Entities.Employees", "Employee")
                         .WithMany("Shifts")
-                        .HasForeignKey("EmployeesId")
+                        .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Employees");
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("HMSApi.Modules.IPD.Entities.Admission", b =>
@@ -2485,7 +2496,7 @@ namespace HMSApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Patient", "Patient")
+                    b.HasOne("HMSApi.Modules.Reception.Entities.Patient", "Patient")
                         .WithMany("Admissions")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2539,7 +2550,7 @@ namespace HMSApi.Migrations
                         .WithMany()
                         .HasForeignKey("OPDVisitId");
 
-                    b.HasOne("Patient", "Patient")
+                    b.HasOne("HMSApi.Modules.Reception.Entities.Patient", "Patient")
                         .WithMany("LabOrders")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2589,7 +2600,7 @@ namespace HMSApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Patient", "Patient")
+                    b.HasOne("HMSApi.Modules.Reception.Entities.Patient", "Patient")
                         .WithMany("PatientCare")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2616,7 +2627,7 @@ namespace HMSApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Patient", "Patient")
+                    b.HasOne("HMSApi.Modules.Reception.Entities.Patient", "Patient")
                         .WithMany("VitalSigns")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2664,7 +2675,7 @@ namespace HMSApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Patient", "Patient")
+                    b.HasOne("HMSApi.Modules.Reception.Entities.Patient", "Patient")
                         .WithMany()
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2695,7 +2706,7 @@ namespace HMSApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Patient", "Patient")
+                    b.HasOne("HMSApi.Modules.Reception.Entities.Patient", "Patient")
                         .WithMany()
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2710,7 +2721,7 @@ namespace HMSApi.Migrations
 
             modelBuilder.Entity("HMSApi.Modules.OPD.Entities.OPDVisits", b =>
                 {
-                    b.HasOne("Appointment", "Appointment")
+                    b.HasOne("HMSApi.Modules.Reception.Entities.Appointment", "Appointment")
                         .WithMany()
                         .HasForeignKey("AppointmentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2722,7 +2733,7 @@ namespace HMSApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Patient", "Patient")
+                    b.HasOne("HMSApi.Modules.Reception.Entities.Patient", "Patient")
                         .WithMany()
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2754,7 +2765,7 @@ namespace HMSApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Patient", "Patient")
+                    b.HasOne("HMSApi.Modules.Reception.Entities.Patient", "Patient")
                         .WithMany("PharmacySales")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2812,7 +2823,7 @@ namespace HMSApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Patient", "Patient")
+                    b.HasOne("HMSApi.Modules.Reception.Entities.Patient", "Patient")
                         .WithMany("ImagingOrders")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2846,6 +2857,44 @@ namespace HMSApi.Migrations
                     b.Navigation("ImagingTest");
                 });
 
+            modelBuilder.Entity("HMSApi.Modules.Reception.Entities.Appointment", b =>
+                {
+                    b.HasOne("HMSApi.Modules.Reception.Entities.Department", "Department")
+                        .WithMany("Appointments")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HMSApi.Modules.Doctors.Entities.Doctor", "Doctor")
+                        .WithMany("Appointments")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HMSApi.Modules.Reception.Entities.Patient", "Patient")
+                        .WithMany("Appointments")
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("HMSApi.Modules.Reception.Entities.MedicalRecord", b =>
+                {
+                    b.HasOne("HMSApi.Modules.Reception.Entities.Patient", "Patient")
+                        .WithOne("MedicalRecord")
+                        .HasForeignKey("HMSApi.Modules.Reception.Entities.MedicalRecord", "PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Patient");
+                });
+
             modelBuilder.Entity("HMSApi.Modules.Reports.Entities.Report", b =>
                 {
                     b.HasOne("HMSApi.Modules.HR.Entities.Employees", "Employees")
@@ -2857,9 +2906,28 @@ namespace HMSApi.Migrations
                     b.Navigation("Employees");
                 });
 
+            modelBuilder.Entity("HMSApi.Modules.Store.Entities.Item", b =>
+                {
+                    b.HasOne("HMSApi.Modules.Common.Entities.Category", "Category")
+                        .WithMany("Items")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HMSApi.Modules.Common.Entities.Unit", "Unit")
+                        .WithMany("Items")
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Unit");
+                });
+
             modelBuilder.Entity("HMSApi.Modules.Store.Entities.ItemStock", b =>
                 {
-                    b.HasOne("HMSApi.Modules.Store.Entities.Items", "Item")
+                    b.HasOne("HMSApi.Modules.Store.Entities.Item", "Item")
                         .WithMany("ItemStocks")
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2870,14 +2938,14 @@ namespace HMSApi.Migrations
 
             modelBuilder.Entity("HMSApi.Modules.Store.Entities.PurchaseDetail", b =>
                 {
-                    b.HasOne("HMSApi.Modules.Store.Entities.Items", "Item")
+                    b.HasOne("HMSApi.Modules.Store.Entities.Item", "Item")
                         .WithMany()
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("HMSApi.Modules.Store.Entities.Purchases", "Purchase")
-                        .WithMany("PurchasesDetails")
+                        .WithMany("PurchaseDetails")
                         .HasForeignKey("PurchaseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -2889,19 +2957,11 @@ namespace HMSApi.Migrations
 
             modelBuilder.Entity("HMSApi.Modules.Store.Entities.Purchases", b =>
                 {
-                    b.HasOne("HMSApi.Modules.Store.Entities.Items", "Item")
-                        .WithMany()
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("HMSApi.Modules.Store.Entities.Suppliers", "Supplier")
                         .WithMany("Purchases")
                         .HasForeignKey("SupplierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Item");
 
                     b.Navigation("Supplier");
                 });
@@ -2934,17 +2994,6 @@ namespace HMSApi.Migrations
                         .IsRequired();
 
                     b.Navigation("SupportStaff");
-                });
-
-            modelBuilder.Entity("MedicalRecord", b =>
-                {
-                    b.HasOne("Patient", "Patient")
-                        .WithOne("MedicalRecord")
-                        .HasForeignKey("MedicalRecord", "PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Patient");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -2996,6 +3045,16 @@ namespace HMSApi.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("HMSApi.Modules.Common.Entities.Category", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("HMSApi.Modules.Common.Entities.Unit", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("HMSApi.Modules.Doctors.Entities.Consultation", b =>
@@ -3118,27 +3177,7 @@ namespace HMSApi.Migrations
                     b.Navigation("Doctors");
                 });
 
-            modelBuilder.Entity("HMSApi.Modules.Store.Entities.Items", b =>
-                {
-                    b.Navigation("ItemStocks");
-                });
-
-            modelBuilder.Entity("HMSApi.Modules.Store.Entities.Purchases", b =>
-                {
-                    b.Navigation("PurchasesDetails");
-                });
-
-            modelBuilder.Entity("HMSApi.Modules.Store.Entities.Suppliers", b =>
-                {
-                    b.Navigation("Purchases");
-                });
-
-            modelBuilder.Entity("HMSApi.Modules.SupportServices.Entities.SupportStaff", b =>
-                {
-                    b.Navigation("SupportTasks");
-                });
-
-            modelBuilder.Entity("Patient", b =>
+            modelBuilder.Entity("HMSApi.Modules.Reception.Entities.Patient", b =>
                 {
                     b.Navigation("Admissions");
 
@@ -3162,6 +3201,26 @@ namespace HMSApi.Migrations
                     b.Navigation("PharmacySales");
 
                     b.Navigation("VitalSigns");
+                });
+
+            modelBuilder.Entity("HMSApi.Modules.Store.Entities.Item", b =>
+                {
+                    b.Navigation("ItemStocks");
+                });
+
+            modelBuilder.Entity("HMSApi.Modules.Store.Entities.Purchases", b =>
+                {
+                    b.Navigation("PurchaseDetails");
+                });
+
+            modelBuilder.Entity("HMSApi.Modules.Store.Entities.Suppliers", b =>
+                {
+                    b.Navigation("Purchases");
+                });
+
+            modelBuilder.Entity("HMSApi.Modules.SupportServices.Entities.SupportStaff", b =>
+                {
+                    b.Navigation("SupportTasks");
                 });
 #pragma warning restore 612, 618
         }

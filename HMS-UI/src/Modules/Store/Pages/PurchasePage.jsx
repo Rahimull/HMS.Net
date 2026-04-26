@@ -3,14 +3,19 @@ import PurchaseApi from "@/api/store/PurchaseApi";
 import { useEffect, useState } from "react";
 import ItemApi from "@/api/store/ItemApi";
 import SuplierApi from "@/api/store/SuplierApi";
+
 const PurchasePage = () => {
   const [items, setItems] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
+  const [purchases, setPurchases] = useState([]);
 
   useEffect(()=>{
     ItemApi.getPaged({page:1, pageSize:2000}).then(res => setItems(res.data.data.data));
     SuplierApi.getPaged({page:1, pageSize:2000}).then(res => setSuppliers(res.data.data.data));
+    PurchaseApi.getPaged({page:1, pageSize:2000}).then(res => setPurchases(res.data.data.data));
   },[]);
+
+  console.log(purchases)
 
 
 

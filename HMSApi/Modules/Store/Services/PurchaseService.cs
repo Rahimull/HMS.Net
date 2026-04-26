@@ -38,7 +38,7 @@ public class PurchaseService
 
         try
         {
-            // 1️⃣ Build Purchase
+            //  Build Purchase (NULL SAFE)
             var entity = new Purchases
             {
                 SupplierId = dto.SupplierId,
@@ -52,13 +52,13 @@ public class PurchaseService
                     UnitPrice = d.UnitPrice,
                     BatchNumber = d.BatchNumber,
                     ExpiryDate = d.ExpiryDate
-                }).ToList() ?? new()
+                }).ToList() ?? new List<PurchaseDetail>()
             };
 
-            // 2️⃣ SAVE PURCHASE (IMPORTANT: repo already saves)
+            //  SAVE PURCHASE
             await _repo.AddAsync(entity);
 
-            // 3️⃣ STOCK MOVEMENTS
+            //  STOCK MOVEMENTS
             foreach (var d in entity.PurchaseDetails)
             {
                 _context.ItemStocks.Add(new ItemStock
@@ -68,7 +68,7 @@ public class PurchaseService
                     Type = StockMovementType.Purchase,
                     BatchNumber = d.BatchNumber,
                     ExpiryDate = d.ExpiryDate,
-                    ReferenceId = entity.Id, // ✔ now valid after save
+                    ReferenceId = entity.Id,
                     ReferenceType = StockReferenceType.Purchase,
                     Date = DateTime.UtcNow
                 });
@@ -76,14 +76,17 @@ public class PurchaseService
 
             await _context.SaveChangesAsync();
 
-            // 4️⃣ TOTAL PRICE UPDATE
-            entity.TotalPrice = entity.PurchaseDetails.Sum(x => x.Quantity * x.UnitPrice);
+            //  TOTAL PRICE (SAFE)
+            entity.TotalPrice = entity.PurchaseDetails != null
+                ? entity.PurchaseDetails.Sum(x => (x.Quantity) * (x.UnitPrice))
+                : 0;
+
             await _repo.UpdateAsync(entity);
 
-            // 5️⃣ COMMIT
+            //  COMMIT
             await transaction.CommitAsync();
 
-            // 6️⃣ LOAD FULL DATA
+            //  LOAD FULL DATA (SAFE INCLUDE)
             var created = await _repo.Query()
                 .Include(x => x.Supplier)
                 .Include(x => x.PurchaseDetails)
@@ -93,10 +96,38 @@ public class PurchaseService
             if (created == null)
                 throw new Exception("Purchase creation failed");
 
-            return _mapper.Map<PurchasesDto>(created);
+            //  MANUAL SAFE MAPPING (BEST PRACTICE )
+            var result = new PurchasesDto
+            {
+                Id = created.Id,
+                SupplierId = created.SupplierId,
+                SupplierName = created.Supplier != null ? created.Supplier.Name : "",
+
+                Notes = created.Notes,
+                PurchaseDate = created.PurchaseDate,
+                TotalPrice = created.TotalPrice,
+
+                Details = created.PurchaseDetails != null
+                    ? created.PurchaseDetails.Select(d => new PurchaseDetailsDto
+                    {
+                        Id = d.Id,
+                        Quantity = d.Quantity,
+                        UnitPrice = d.UnitPrice,
+                        SubTotal = d.Quantity * d.UnitPrice,
+                        BatchNumber = d.BatchNumber,
+                        ExpiryDate = d.ExpiryDate,
+                        PurchaseId = d.PurchaseId,
+                        ItemId = d.ItemId,
+                        ItemName = d.Item != null ? d.Item.Name : "",
+                    }).ToList()
+                    : new List<PurchaseDetailsDto>()
+            };
+
+            return result;
         }
-        catch
+        catch (Exception ex)
         {
+            Console.WriteLine("ERROR => " + ex.ToString()); 
             await transaction.RollbackAsync();
             throw;
         }

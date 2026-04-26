@@ -49,7 +49,7 @@ public class HMSDBC : IdentityDbContext<AppUser, IdentityRole<int>, int>
 
     // Finance Modules
     public DbSet<InvoiceDetails> InvoiceDetails => Set<InvoiceDetails>();
-    public DbSet<Invoice> Invoices => Set<Invoice>();public DbSet<Payment> Payments => Set<Payment>();
+    public DbSet<Invoice> Invoices => Set<Invoice>(); public DbSet<Payment> Payments => Set<Payment>();
 
     // HR Modules
     public DbSet<Employees> Employees => Set<Employees>();
@@ -117,6 +117,9 @@ public class HMSDBC : IdentityDbContext<AppUser, IdentityRole<int>, int>
         modelBuilder.Entity<MedicalRecord>()
             .HasIndex(m => m.PatientId)
             .IsUnique();
+
+        modelBuilder.Entity<PurchaseDetail>()
+    .Ignore(x => x.SubTotal);
 
         // Soft Delete Flag
 

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using HMSApi.Models;
 
 namespace HMSApi.Modules.Store.Entities;
@@ -6,7 +7,10 @@ public class PurchaseDetail : BaseEntity
 {
     public int Quantity { get; set; }
     public decimal UnitPrice { get; set; }
-    public decimal SubTotal {get; set;}
+
+    [NotMapped]
+    public decimal SubTotal => Quantity * UnitPrice;
+
     public string? BatchNumber { get; set; }
     public DateOnly ExpiryDate { get; set; }
 

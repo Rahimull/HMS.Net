@@ -7,6 +7,5 @@ public record CreatePurchaseDetailDto
     int Quantity,
     decimal UnitPrice,
     string? BatchNumber,
-    DateOnly ExpiryDate,
-    decimal SubTotal
+    DateOnly ExpiryDate
 );

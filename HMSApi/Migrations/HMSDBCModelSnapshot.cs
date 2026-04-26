@@ -1985,9 +1985,6 @@ namespace HMSApi.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("SubTotal")
-                        .HasColumnType("TEXT");
-
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("TEXT");
 
