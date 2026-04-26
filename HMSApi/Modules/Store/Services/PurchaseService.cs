@@ -58,9 +58,10 @@ public class PurchaseService
             //  SAVE PURCHASE
             await _repo.AddAsync(entity);
 
-            //  STOCK MOVEMENTS
+            
             foreach (var d in entity.PurchaseDetails)
             {
+                 // 1. STOCK MOVEMENTS (HISTORY)
                 _context.ItemStocks.Add(new ItemStock
                 {
                     ItemId = d.ItemId,
@@ -72,6 +73,26 @@ public class PurchaseService
                     ReferenceType = StockReferenceType.Purchase,
                     Date = DateTime.UtcNow
                 });
+
+                // 2. CURRENT STOCK (REAL STOCK)
+                var stock = await _context.Set<CurrentStock>()
+                    .FirstOrDefaultAsync(x => x.ItemId == d.ItemId);
+                if (stock == null)
+                {
+                    // Create new Current Stock
+                    _context.Set<CurrentStock>().Add(new CurrentStock
+                    {
+                        ItemId = d.ItemId,
+                        Quantity = d.Quantity,
+                        LastUpdate = DateTime.UtcNow
+                    });
+                }
+                else
+                {
+                    // Update Exist Current Stock
+                    stock.Quantity += d.Quantity;
+                    stock.LastUpdate = DateTime.UtcNow;
+                }
             }
 
             await _context.SaveChangesAsync();

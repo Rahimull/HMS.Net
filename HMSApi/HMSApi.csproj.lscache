@@ -88,6 +88,10 @@ Data/
 Migrations/
  20260425130443_InitialCreate.cs
  20260425130443_InitialCreate.Designer.cs
+ 20260426055217_AddCurrentStock.cs
+ 20260426055217_AddCurrentStock.Designer.cs
+ 20260426055640_AddCurrentStock1.cs
+ 20260426055640_AddCurrentStock1.Designer.cs
  HMSDBCModelSnapshot.cs
 Models/
  AppUser.cs
@@ -412,28 +416,33 @@ Modules/
   Entities/Report.cs
   ReceptionModule.cs
  Store/Controllers/
+  CurrentStockController.cs
   ItemControllser.cs
   ItemStockController.cs
   PurchaseConroller.cs
   PurchaseDetailsController.cs
   SuplierController.cs
  Store/DTOs/
+  CreateCurrentStockDto.cs
   CreateIemDto.cs
   CreateItemStockDto.cs
   CreatePurchasesDetailsDto.cs
   CreatePurchasesDto.cs
   CreateSuplierDto.cs
+  CurrentStockDto.cs
   ItemDto.cs
   ItemStockDto.cs
   PurchasesDetailsDto.cs
   PurchasesDto.cs
   SuplierDto.cs
+  UpdateCurrentStockDto.cs
   UpdateItemDto.cs
   UpdateItemStockDto.cs
   UpdatePurchasesDetailsDto.cs
   UpdatePurchasesDto.cs
   UpdateSuplierDto.cs
  Store/Entities/
+  CurrentStock.cs
   Item.cs
   ItemStock.cs
   PurchaseDetails.cs
@@ -442,6 +451,8 @@ Modules/
  Store/
   Mapping/StoreProfile.cs
   Repositories/
+   CurrentStockRepository.cs
+   ICurrentStockRepository.cs
    IItemRepository.cs
    IItemStockRepository.cs
    IPurchaseDetailsRepository.cs
@@ -453,6 +464,8 @@ Modules/
    PurchaseRepository.cs
    SuplierRepository.cs
   Services/
+   CurrentStockService.cs
+   ICurrentStockService.cs
    IItemService.cs
    IItemStockService.cs
    IPurchaseDetailsService.cs
@@ -464,6 +477,7 @@ Modules/
    PurchaseService.cs
    SuplierService.cs
   Specification/
+   CurrentStockSpecification.cs
    ItemSpecification.cs
    ItemStockSpecification.cs
    PurchaseDetailsSpecification.cs

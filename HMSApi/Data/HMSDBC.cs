@@ -95,6 +95,7 @@ public class HMSDBC : IdentityDbContext<AppUser, IdentityRole<int>, int>
 
     // Store Modules
     public DbSet<Item> Items => Set<Item>();
+    public DbSet<CurrentStock> CurrentStocks => Set<CurrentStock>();
     public DbSet<ItemStock> ItemStocks => Set<ItemStock>();
     public DbSet<PurchaseDetail> PurchaseDetails => Set<PurchaseDetail>();
     public DbSet<Purchases> Purchases => Set<Purchases>();
@@ -117,6 +118,14 @@ public class HMSDBC : IdentityDbContext<AppUser, IdentityRole<int>, int>
         modelBuilder.Entity<MedicalRecord>()
             .HasIndex(m => m.PatientId)
             .IsUnique();
+
+        // Current Stock <-> Item Single Relations
+        modelBuilder.Entity<CurrentStock>()
+            .HasKey(x => x.ItemId);
+        modelBuilder.Entity<CurrentStock>()
+            .HasOne(x => x.Item)
+            .WithOne()
+            .HasForeignKey<CurrentStock>(x => x.ItemId);
 
         modelBuilder.Entity<PurchaseDetail>()
     .Ignore(x => x.SubTotal);

@@ -3,6 +3,7 @@ using System;
 using HMSApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HMSApi.Migrations
 {
     [DbContext(typeof(HMSDBC))]
-    partial class HMSDBCModelSnapshot : ModelSnapshot
+    [Migration("20260426055217_AddCurrentStock")]
+    partial class AddCurrentStock
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.5");
@@ -1883,6 +1886,9 @@ namespace HMSApi.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("ItemId1")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("LastUpdate")
                         .HasColumnType("TEXT");
 
@@ -1890,6 +1896,8 @@ namespace HMSApi.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("ItemId");
+
+                    b.HasIndex("ItemId1");
 
                     b.ToTable("CurrentStocks");
                 });
@@ -2936,6 +2944,10 @@ namespace HMSApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("HMSApi.Modules.Store.Entities.Item", null)
+                        .WithMany("CurrentStocks")
+                        .HasForeignKey("ItemId1");
+
                     b.Navigation("Item");
                 });
 
@@ -3238,6 +3250,8 @@ namespace HMSApi.Migrations
 
             modelBuilder.Entity("HMSApi.Modules.Store.Entities.Item", b =>
                 {
+                    b.Navigation("CurrentStocks");
+
                     b.Navigation("ItemStocks");
                 });
 
