@@ -59,6 +59,7 @@ const DataTable = ({
 
     getCoreRowModel: getCoreRowModel(),
   });
+  console.log("Data Table: ",data)
 
   return (
     <Card>

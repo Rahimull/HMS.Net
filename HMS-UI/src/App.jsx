@@ -29,6 +29,7 @@ import PurchasesUi from "./Modules/Store/Pages/PurchasesUi";
 import StockManagement from "./Modules/Store/Pages/StockManagement";
 import CategoryPage from "./Modules/Common/Pages/CategoryPage";
 import UnitPage from "./Modules/Common/Pages/UnitPage";
+import CurrentStockPage from "./Modules/Store/Pages/CurrentStockPage"
 
 export default function App() {
   return (
@@ -81,6 +82,7 @@ export default function App() {
         <Route path="store/purchases" element={<PuchasePage />} />
         <Route path="store/purchase-details" element={<PuchaseDetailsPage />} />
         <Route path="store/suppliers" element={<SuplierPage />} />
+        <Route path="store/currentstock" element={<CurrentStockPage />} />
 
         {/* Pharmacy */}
         <Route path="pharmacy/PharmacyPageUi" element={<PharmacyPageUi />} />

@@ -21,6 +21,7 @@ public static class StoreModule
         services.AddScoped<IItemRepository, ItemRepository>();
         services.AddScoped<IItemStockRepository, ItemStockRepository>();
         services.AddScoped<ISuplierRepository, SuplierRepository>();
+        services.AddScoped<ICurrentStockRepository, CurrentStockRepository>();
     
         
 
@@ -32,6 +33,7 @@ public static class StoreModule
         services.AddScoped<IPurchaseDetailsService, PurchaseDetailsService>();
         services.AddScoped<IItemStockService, ItemStockService>();
         services.AddScoped<ISuplierService, SuplierService>();
+        services.AddScoped<ICurrentStockService, CurrentStockService>();
     
         
 

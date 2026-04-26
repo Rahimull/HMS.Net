@@ -106,6 +106,7 @@ const Sidebar = () => {
           { name: "OK---> Purchases", link: "/store/purchases", icon: ShoppingCart },
           { name: "OK---> Purchase Details", link: "/store/purchase-details", icon: Layers },
           { name: "OK---> Suppliers", link: "/store/suppliers", icon: Truck },
+          { name: "OK---> Current Stock", link: "/store/currentStock", icon: Truck },
         ],
       },
       {

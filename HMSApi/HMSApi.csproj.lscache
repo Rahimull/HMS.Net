@@ -92,6 +92,8 @@ Migrations/
  20260426055217_AddCurrentStock.Designer.cs
  20260426055640_AddCurrentStock1.cs
  20260426055640_AddCurrentStock1.Designer.cs
+ 20260426073023_FixedCurrentStock.cs
+ 20260426073023_FixedCurrentStock.Designer.cs
  HMSDBCModelSnapshot.cs
 Models/
  AppUser.cs

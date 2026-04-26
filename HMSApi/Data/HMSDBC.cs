@@ -121,7 +121,8 @@ public class HMSDBC : IdentityDbContext<AppUser, IdentityRole<int>, int>
 
         // Current Stock <-> Item Single Relations
         modelBuilder.Entity<CurrentStock>()
-            .HasKey(x => x.ItemId);
+            .HasIndex(x => x.ItemId)
+            .IsUnique();
         modelBuilder.Entity<CurrentStock>()
             .HasOne(x => x.Item)
             .WithOne()
