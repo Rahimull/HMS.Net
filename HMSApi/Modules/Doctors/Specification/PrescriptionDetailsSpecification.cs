@@ -10,7 +10,7 @@ public class PrescriptionDetailsSpecification : BaseSpecification<PrescriptionDe
     {
         /* ---------- Inlude Prescription and Medicine ---------- */
         AddInclude(p => p.Prescription);
-        AddInclude(m => m.Medicine);
+        AddInclude(m => m.Item);
 
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;

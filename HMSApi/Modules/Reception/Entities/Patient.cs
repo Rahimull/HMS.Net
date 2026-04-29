@@ -9,6 +9,7 @@ using HMSApi.Modules.Laboratory.Entities;
 using HMSApi.Modules.Nursing.Entities;
 using HMSApi.Modules.Pharmacy.Entities;
 using HMSApi.Modules.Radiology.Entities;
+using HMSApi.Modules.Store.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace HMSApi.Modules.Reception.Entities;
@@ -45,7 +46,7 @@ public class Patient : BaseEntity
     public ICollection<Consultation> Consultation { get; set; } = new List<Consultation>();
 
     public ICollection<Admission> Admissions { get; set; } = new List<Admission>();
-    public ICollection<PharmacySales> PharmacySales { get; set; } = new List<PharmacySales>();
+    public ICollection<Item> Item { get; set; } = new List<Item>();
     public ICollection<LabOrder> LabOrders { get; set; } = new List<LabOrder>();
     public ICollection<ImagingOrders> ImagingOrders { get; set; } = new List<ImagingOrders>();
     public ICollection<Emergency> Emergencies { get; set; } = new List<Emergency>();

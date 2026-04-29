@@ -79,10 +79,9 @@ public class HMSDBC : IdentityDbContext<AppUser, IdentityRole<int>, int>
     public DbSet<OPDVisits> OPDVisits => Set<OPDVisits>();
 
     // Pharmacy Modules
-    public DbSet<Medicines> Medicines => Set<Medicines>();
-    public DbSet<MedicineStock> MedicineStocks => Set<MedicineStock>();
-    public DbSet<PharmacySales> PharmacySales => Set<PharmacySales>();
-    public DbSet<PharmacySalesdetails> PharmacySalesdetails => Set<PharmacySalesdetails>();
+ 
+    public DbSet<Sale> Sales => Set<Sale>();
+    public DbSet<SaleDetails> Salesdetails => Set<SaleDetails>();
 
     // Radiology Modules
     public DbSet<ImagingOrders> ImagingOrders => Set<ImagingOrders>();

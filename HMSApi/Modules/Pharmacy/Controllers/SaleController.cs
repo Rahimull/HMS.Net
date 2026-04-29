@@ -8,10 +8,10 @@ namespace HMSApi.Modules.Pharmacy.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class MedicineController : BaseController<IMedicineService, MedicineDto, CreateMedicineDto, UpdateMedicineDto>
+public class SaleController: BaseController<ISaleService, SaleDto, CreateSaleDto, UpdateSaleDto>
 {
-    public MedicineController(IMedicineService service) : base(service)
+    public SaleController(ISaleService service) : base(service)
     {
-
+        
     }
 }

@@ -1,14 +1,14 @@
 namespace HMSApi.Modules.Pharmacy.DTOs;
 
 
-public record PharmacySaleDetailsDto(
+public record SaleDetailsDto(
        int Id,
        string? BatchNumber,
        int Quantity,
        decimal UnitPrice,
        decimal TotalPrice,
-       int PharmacySaleId,
+       int SaleId,
        int MedicineId,
-       string PharmacySaleName,
+       string SaleName,
        string MedicineName
 );

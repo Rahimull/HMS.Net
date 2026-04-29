@@ -3,20 +3,21 @@ using HMSApi.Modules.Pharmacy.Entities;
 
 namespace HMSApi.Specifications;
 
-public class MedicineStockSpecification : BaseSpecification<MedicineStock>
+public class SaleDetailsSpecification : BaseSpecification<SaleDetails>
 {
-    public MedicineStockSpecification(QueryParams query)
+    public SaleDetailsSpecification(QueryParams query)
     {
-        /* ---------- SEARCH ---------- */
-        AddInclude(m => m.Medicine);
-        
+        /* ---------- include Medicine and Prasmacy sale ---------- */
+        AddInclude(m => m.Item);
+        AddInclude(p => p.Sale);
+
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
 
         if (!string.IsNullOrWhiteSpace(term))
         {
             AddCriteria(d =>
-                (d.BatchNumber ?? "").Contains(term)
+                (d.CreatedAt.ToString() ?? "").Contains(term)
             );
         }
 
@@ -27,9 +28,9 @@ public class MedicineStockSpecification : BaseSpecification<MedicineStock>
             {
                 case "name":
                     if (query.Sorting.IsDescending)
-                        ApplyOrderByDescending(d => d.BatchNumber);
+                        ApplyOrderByDescending(d => d.Item);
                     else
-                        ApplyOrderBy(d => d.BatchNumber);
+                        ApplyOrderBy(d => d.Item);
                     break;
 
                 case "id":

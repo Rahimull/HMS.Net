@@ -1,11 +1,11 @@
 namespace HMSApi.Modules.Pharmacy.DTOs;
 
 
-public record UpdatePharmacySaleDetailsDto(
+public record CreateSaleDetailsDto(
        string? BatchNumber,
        int Quantity,
        decimal UnitPrice,
        decimal TotalPrice,
-       int PharmacySaleId,
+       int SaleId,
        int MedicineId
 );

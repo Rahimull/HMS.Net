@@ -1,8 +1,8 @@
 namespace HMSApi.Modules.Pharmacy.DTOs;
 
 
-public record CreatePharmacySaleDto(
-       DateTime SaleDate,
+public record UpdateSaleDto(
+        DateTime SaleDate,
        decimal TotalAmount,
        string? Notes,
        int PatientId,

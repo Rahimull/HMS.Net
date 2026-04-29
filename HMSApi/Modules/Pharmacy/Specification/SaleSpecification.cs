@@ -3,17 +3,20 @@ using HMSApi.Modules.Pharmacy.Entities;
 
 namespace HMSApi.Specifications;
 
-public class MedicineSpecification : BaseSpecification<Medicines>
+public class SaleSpecification : BaseSpecification<Sale>
 {
-    public MedicineSpecification(QueryParams query)
+    public SaleSpecification(QueryParams query)
     {
+        /* ---------- Include Patient, Doctors and Prescriptin ---------- */
+       
+
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
 
         if (!string.IsNullOrWhiteSpace(term))
         {
             AddCriteria(d =>
-                (d.Name ?? "").Contains(term)
+                (d.Notes ?? "").Contains(term)
             );
         }
 
@@ -24,9 +27,9 @@ public class MedicineSpecification : BaseSpecification<Medicines>
             {
                 case "name":
                     if (query.Sorting.IsDescending)
-                        ApplyOrderByDescending(d => d.Name);
+                        ApplyOrderByDescending(d => d.Id);
                     else
-                        ApplyOrderBy(d => d.Price);
+                        ApplyOrderBy(d => d.Id);
                     break;
 
                 case "id":

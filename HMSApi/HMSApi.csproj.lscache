@@ -311,54 +311,34 @@ Modules/
   OPDVisits.cs
  OPD/ReceptionModule.cs
  Pharmacy/Controllers/
-  MedicineController.cs
-  MedicineStockController.cs
-  PharmacySaleController.cs
-  PharmacySaleDetailsController.cs
+  SaleController.cs
+  SaleDetailsController.cs
  Pharmacy/DTOs/
-  CreateMedicineDto.cs
-  CreateMedicineStockDto.cs
-  CreatePharmacySaleDetailsDto.cs
-  CreatePharmacySaleDto.cs
-  MedicineDto.cs
-  MedicineStockDto.cs
-  PahrmacySaleDto.cs
+  CreateSaleDetailsDto.cs
+  CreateSaleDto.cs
   PharmacySaleDetailsDto.cs
-  UpdateMedicineDto.cs
-  UpdateMedicineStockDto.cs
-  UpdatePharmacySaleDetailsDto.cs
-  UpdatePharmacySaleDto.cs
+  SaleDto.cs
+  UpdateSaleDetailsDto.cs
+  UpdateSaleDto.cs
  Pharmacy/Entities/
-  Medicines.cs
-  MedicineStock.cs
+  Sale.cs
   SaleDetails.cs
-  Sales.cs
  Pharmacy/
   Mapping/PharmacyProfile.cs
   PharmacyModules.cs
   Repositories/
-   IMedicinesRepository.cs
-   IMedicineStockRepository.cs
-   IPharmacySaleDetailsRepository.cs
-   IPharmacySaleRepository.cs
-   MedicinesRepository.cs
-   MedicineStockRepository.cs
-   PharmacySaleDetailsRepository.cs
-   PharmacySaleRepository.cs
+   ISaleDetailsRepository.cs
+   ISaleRepository.cs
+   SaleDetailsRepository.cs
+   SaleRepository.cs
   Services/
-   IMedicineService.cs
-   IMedicineStockService.cs
-   IPharmacySaleDetailsService.cs
-   IPharmacySaleService.cs
-   MedicineService.cs
-   MedicineStockService.cs
-   PharmacySaleDetailsService.cs
-   PharmacySaleService.cs
+   ISaleDetailsService.cs
+   ISaleService.cs
+   SaleDetailsService.cs
+   SaleService.cs
   Specification/
-   MedicineSpecification.cs
-   MedicineStockSpecification.cs
-   PharmacySaleDetailsSpecification.cs
-   PharmacySaleSpecification.cs
+   SaleDetailsSpecification.cs
+   SaleSpecification.cs
  Radiology/Entities/
   ImagingOrderDetails.cs
   ImagingOrders.cs

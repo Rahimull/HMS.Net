@@ -34,7 +34,7 @@ public class DoctorProfile : Profile
         CreateMap<CreatePrescriptionDetailsDto, PrescriptionDetails>();
         CreateMap<UpdatePrescriptionDetailsDto, PrescriptionDetails>();
         CreateMap<PrescriptionDetails, PrescriptionDetailsDto>()
-            .ForCtorParam("MedicineName", opt => opt.MapFrom(src => src.Medicine.Name))
+            .ForCtorParam("MedicineName", opt => opt.MapFrom(src => src.Item.Name))
             .ForCtorParam("PrescriptionName", opt => opt.MapFrom(src => src.Prescription.Patient.FirstName +" "+ src.Prescription.Patient.LastName))
         ;
 

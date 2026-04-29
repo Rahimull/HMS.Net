@@ -6,9 +6,9 @@ using HMSApi.Repositories;
 
 namespace HMSApi.Modules.Pharmacy.Repositories;
 
-public class PharmacySaleRepository : BaseRepository<PharmacySales>, IPharmacySaleRepository
+public class SaleRepository : BaseRepository<Sale>, ISaleRepository
 {
-    public PharmacySaleRepository(HMSDBC context) : base(context)
+    public SaleRepository(HMSDBC context) : base(context)
     {
         
     }

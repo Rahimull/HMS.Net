@@ -16,22 +16,16 @@ public static class DoctorModule
         // ===============================
         // Repositories
         // ===============================
-        services.AddScoped<IMedicineRepository, MedicineRepository>();
-        services.AddScoped<IMedicineStockRepository, MedicineStockRepository>();
-        services.AddScoped<IPharmacySaleRepository, PharmacySaleRepository>();
-        services.AddScoped<IPharmacySaleDetailsRepository, PharmacySaleDetailsRepository>();
+        services.AddScoped<ISaleRepository, SaleRepository>();
+        services.AddScoped<ISaleDetailsRepository, SaleDetailsRepository>();
     
         
 
         // ===============================
         // Services
         // ===============================
-        services.AddScoped<IPharmacySaleService, PharmacySaleService>();
-        services.AddScoped<IPharmacySaleDetailsService, PharmacySaleDetailsService>();
-        services.AddScoped<IMedicineService, MedicineService>();
-        services.AddScoped<IMedicineStockService, MedicineStockService>();
-    
-        
+        services.AddScoped<ISaleService, SaleService>();
+        services.AddScoped<ISaleDetailsService, SaleDetailsService>();
 
 
 

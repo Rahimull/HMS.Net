@@ -5,5 +5,5 @@ using HMSApi.Modules.Pharmacy.Entities;
 
 namespace HMSApi.Modules.Pharmacy.Repositories;
 
-public interface IMedicineRepository : IBaseRepository<Medicines>
+public interface ISaleRepository : IBaseRepository<Sale>
 {}

@@ -39,7 +39,7 @@ public class Doctor : BaseEntity
     public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
     public ICollection<OPDVisits> OPDVisits { get; set; } = new List<OPDVisits>();
     public ICollection<Admission> Admission { get; set; } = new List<Admission>();
-    public ICollection<PharmacySales> PharmacySales { get; set; } = new List<PharmacySales>();
+    public ICollection<Sale> Sale { get; set; } = new List<Sale>();
     public ICollection<LabOrder> LabOrder { get; set; } = new List<LabOrder>();
     public ICollection<ImagingOrders> ImagingOrders { get; set; } = new List<ImagingOrders>();
     public ICollection<EmergencyTreatments> EmergencyTreatments { get; set; } = new List<EmergencyTreatments>();
