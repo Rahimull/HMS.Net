@@ -331,8 +331,8 @@ Modules/
  Pharmacy/Entities/
   Medicines.cs
   MedicineStock.cs
-  PharmacySaleDetails.cs
-  PharmacySales.cs
+  SaleDetails.cs
+  Sales.cs
  Pharmacy/
   Mapping/PharmacyProfile.cs
   PharmacyModules.cs
