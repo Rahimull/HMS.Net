@@ -1,8 +1,8 @@
 import Api from "../Api";
 
-const endpoint = "/PharmacySaleDetails";
+const endpoint = "/Sales";
 
-const PharmacySaleDetailsApi = {
+const SaleApi = {
   getPaged: (queryParams) =>
     Api.post(`${endpoint}/paged`, {
       params: queryParams,
@@ -13,4 +13,4 @@ const PharmacySaleDetailsApi = {
   delete: (id) => Api.delete(`${endpoint}/${id}`),
 };
 
-export default PharmacySaleDetailsApi;
+export default SaleApi;

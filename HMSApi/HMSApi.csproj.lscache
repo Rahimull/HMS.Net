@@ -94,6 +94,8 @@ Migrations/
  20260426055640_AddCurrentStock1.Designer.cs
  20260426073023_FixedCurrentStock.cs
  20260426073023_FixedCurrentStock.Designer.cs
+ 20260429074826_FixedSale.cs
+ 20260429074826_FixedSale.Designer.cs
  HMSDBCModelSnapshot.cs
 Models/
  AppUser.cs
@@ -316,7 +318,7 @@ Modules/
  Pharmacy/DTOs/
   CreateSaleDetailsDto.cs
   CreateSaleDto.cs
-  PharmacySaleDetailsDto.cs
+  SaleDetailsDto.cs
   SaleDto.cs
   UpdateSaleDetailsDto.cs
   UpdateSaleDto.cs

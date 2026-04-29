@@ -57,23 +57,47 @@ const Sidebar = () => {
         key: "reception",
         title: "Reception",
         items: [
-          { name: "Patident Appointment", link: "/patientAppointmentUi", icon: Users },
+          {
+            name: "Patident Appointment",
+            link: "/patientAppointmentUi",
+            icon: Users,
+          },
           { name: "OK--->  Patident", link: "/patient", icon: Users },
-          { name: `OK--->  Department` , link: "/department", icon: Building2 },
-          { name: "OK---> Appointment", link: "/appointment", icon: CalendarClock },
-          { name: "OK---> Medical Record", link: "/medicalrecord", icon: FileText },
+          { name: `OK--->  Department`, link: "/department", icon: Building2 },
+          {
+            name: "OK---> Appointment",
+            link: "/appointment",
+            icon: CalendarClock,
+          },
+          {
+            name: "OK---> Medical Record",
+            link: "/medicalrecord",
+            icon: FileText,
+          },
         ],
       },
       {
         key: "doctors",
         title: "Doctors",
         items: [
-          { name: "Appointment test Ui", link: "/appointmentsUi", icon: CalendarClock },
+          {
+            name: "Appointment test Ui",
+            link: "/appointmentsUi",
+            icon: CalendarClock,
+          },
           { name: "OK---> Doctors", link: "/doctors", icon: Stethoscope },
-          { name: "OK---> Consultations", link: "/consultations", icon: ClipboardList },
+          {
+            name: "OK---> Consultations",
+            link: "/consultations",
+            icon: ClipboardList,
+          },
           { name: "OK---> Diagnosis", link: "/diagnosis", icon: ListChecks },
           { name: "OK---> Prescription", link: "/prescription", icon: Pill },
-          { name: "OK---> Prescription Details", link: "/prescriptiondetails", icon: Layers },
+          {
+            name: "OK---> Prescription Details",
+            link: "/prescriptiondetails",
+            icon: Layers,
+          },
           { name: "OK---> Schedule", link: "/schedule", icon: CalendarDays },
         ],
       },
@@ -91,7 +115,11 @@ const Sidebar = () => {
         title: "Finance",
         items: [
           { name: "Invoices", link: "/finance/invoices", icon: Receipt },
-          { name: "Invoice Details", link: "/finance/invoice-details", icon: FileText },
+          {
+            name: "Invoice Details",
+            link: "/finance/invoice-details",
+            icon: FileText,
+          },
           { name: "Payments", link: "/finance/payments", icon: CreditCard },
         ],
       },
@@ -99,30 +127,61 @@ const Sidebar = () => {
         key: "store",
         title: "Store",
         items: [
-          { name: "StockManagement", link: "/store/StockManagement", icon: Package },
+          {
+            name: "StockManagement",
+            link: "/store/StockManagement",
+            icon: Package,
+          },
           { name: "PurchasesUi", link: "/store/PurchasesUi", icon: Package },
           { name: "OK---> Items", link: "/store/items", icon: Package },
-          { name: "OK---> Item Stocks", link: "/store/item-stocks", icon: Boxes },
-          { name: "OK---> Purchases", link: "/store/purchases", icon: ShoppingCart },
-          { name: "OK---> Purchase Details", link: "/store/purchase-details", icon: Layers },
+          {
+            name: "OK---> Item Stocks",
+            link: "/store/item-stocks",
+            icon: Boxes,
+          },
+          {
+            name: "OK---> Purchases",
+            link: "/store/purchases",
+            icon: ShoppingCart,
+          },
+          {
+            name: "OK---> Purchase Details",
+            link: "/store/purchase-details",
+            icon: Layers,
+          },
           { name: "OK---> Suppliers", link: "/store/suppliers", icon: Truck },
-          { name: "OK---> Current Stock", link: "/store/currentStock", icon: Truck },
+          {
+            name: "OK---> Current Stock",
+            link: "/store/currentStock",
+            icon: Truck,
+          },
         ],
       },
       {
         key: "pharmacy",
-        
+
         title: "Pharmacy",
         items: [
-          { name: "PharmacyPageUi", link: "/pharmacy/PharmacyPageUi", icon: FlaskConical },
-          { name: "OK--->  Medicines", link: "/pharmacy/medicines", icon: FlaskConical },
-          { name: "OK--->  Medicine Stocks", link: "/pharmacy/medicine-stocks", icon: Boxes },
-          { name: "OK---> Sales", link: "/pharmacy/sales", icon: BadgeDollarSign },
-          { name: "OK---> Sale Details", link: "/pharmacy/sale-details", icon: FileText },
+          {
+            name: "PharmacyPageUi",
+            link: "/pharmacy/PharmacyPageUi",
+            icon: FlaskConical,
+          },
+
+          {
+            name: "OK---> Sales",
+            link: "/pharmacy/sales",
+            icon: BadgeDollarSign,
+          },
+          {
+            name: "OK---> Sale Details",
+            link: "/pharmacy/sale-details",
+            icon: FileText,
+          },
         ],
       },
     ],
-    []
+    [],
   );
 
   // ✅ open/close state for dropdown groups
@@ -134,7 +193,9 @@ const Sidebar = () => {
 
   // ✅ open active group automatically when route changes
   useEffect(() => {
-    const activeGroup = groups.find((g) => g.items.some((it) => isPathActive(it.link)));
+    const activeGroup = groups.find((g) =>
+      g.items.some((it) => isPathActive(it.link)),
+    );
     if (activeGroup) {
       setOpenGroups((prev) => ({ ...prev, [activeGroup.key]: true }));
     }
@@ -154,7 +215,9 @@ const Sidebar = () => {
       .map((g) => ({
         ...g,
         items: g.items.filter(
-          (it) => it.name.toLowerCase().includes(q) || it.link.toLowerCase().includes(q)
+          (it) =>
+            it.name.toLowerCase().includes(q) ||
+            it.link.toLowerCase().includes(q),
         ),
       }))
       .filter((g) => g.items.length > 0);
@@ -276,12 +339,14 @@ const Sidebar = () => {
               <div
                 className={[
                   "grid transition-all duration-200",
-                  isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
+                  isOpen
+                    ? "grid-rows-[1fr] opacity-100"
+                    : "grid-rows-[0fr] opacity-0",
                 ].join(" ")}
               >
                 <div className="overflow-hidden space-y-1">
                   {group.items.map((item) => (
-                    <NavItem  key={item.link} item={item} />
+                    <NavItem key={item.link} item={item} />
                   ))}
                 </div>
               </div>

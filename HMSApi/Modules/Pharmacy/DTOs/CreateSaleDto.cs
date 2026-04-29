@@ -1,11 +1,20 @@
 namespace HMSApi.Modules.Pharmacy.DTOs;
 
 
-public record CreateSaleDto(
-       DateTime SaleDate,
-       decimal TotalAmount,
-       string? Notes,
-       int PatientId,
-       int DoctorId,
-       int PrescriptionId
-);
+public class CreateSaleDto
+{
+    public DateTime? SaleDate { get; set; }
+
+    public string? Notes { get; set; }
+
+    public bool IsPaid { get; set; }
+
+    public int? PatientId { get; set; }
+
+    public int? DoctorId { get; set; }
+
+    public int? PrescriptionId { get; set; }
+
+    public List<CreateSaleDetailsDto> Details { get; set; }
+        = new();
+}

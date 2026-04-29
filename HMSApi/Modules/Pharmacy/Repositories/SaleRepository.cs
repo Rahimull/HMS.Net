@@ -12,4 +12,7 @@ public class SaleRepository : BaseRepository<Sale>, ISaleRepository
     {
         
     }
+
+
+    
 }

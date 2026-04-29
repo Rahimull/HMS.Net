@@ -1,12 +1,12 @@
 import BaseCrudPage from "../../../pages/Template/BaseCrudPage";
-import PharmacySaleApi from "@/api/pharmacy/PharmacySaleApi";
+import PharmacySaleApi from "@/api/pharmacy/SaleApi";
 import { useState, useEffect } from "react";
 
 import PrescriptionApi from "@/api/doctor/PrescriptionApi";
 import PatientApi from "@/api/reception/PatientApi";
 import DoctorApi from "@/api/doctor/DoctorApi";
 
-const PharmacySalePage = () => {
+const SalePage = () => {
 const [patients, setPatients] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [perscriptions, setPrescriptions] = useState([]);
@@ -71,4 +71,4 @@ const [patients, setPatients] = useState([]);
   );
 };
 
-export default PharmacySalePage;
+export default SalePage;

@@ -2,18 +2,18 @@ import BaseCrudPage from "../../../pages/Template/BaseCrudPage";
 import PrescriptionDetailsApi from "@/api/doctor/PrescriptionDetailsApi";
 import { useEffect, useState } from "react";
 import PrescriptionApi from "@/api/doctor/PrescriptionApi";
-import MedicinesApi from "@/api/pharmacy/MedicinesApi";
+import ItemApi from "@/api/store/ItemApi";
 
 const PrescriptionDetailePage = () => {
-  const [medicines, setMedicines] = useState([]);
+  const [Item, setItem] = useState([]);
   const [prescriptions, setPrescriptions] = useState([]);
 
   useEffect(() => {
     PrescriptionApi.getPaged({ page: 1, pageSize: 1000 }).then((res) =>
       setPrescriptions(res.data.data.data),
     );
-    MedicinesApi.getPaged({ page: 1, pageSize: 1000 }).then((res) =>
-      setMedicines(res.data.data.data),
+    ItemApi.getPaged({ page: 1, pageSize: 1000 }).then((res) =>
+      setItem(res.data.data.data),
     );
   }, []);
 
@@ -21,7 +21,7 @@ const PrescriptionDetailePage = () => {
     label : p.id,
     value: p.id
   }))
-  const medicineOptions = medicines.map(p => ({
+  const medicineOptions = Item.map(p => ({
     label : p.name,
     value: p.id
   }))

@@ -1,23 +1,24 @@
 import BaseCrudPage from "../../../pages/Template/BaseCrudPage";
-import PharmacySaleDetailsApi from "@/api/pharmacy/PharmacySaleDetailsApi";
+import SaleDetailsApi from "@/api/pharmacy/SaleDetailsApi";
 import { useEffect, useState } from "react";
-import MedicinesApi from "@/api/pharmacy/MedicinesApi";
-import PharmacySaleApi from "@/api/pharmacy/PharmacySaleApi";
-const PharmacySaleDetailsPage = () => {
-  const [medicines, setMedicines] = useState([]);
-  const [pharmacySale, setPharmacySale] = useState([]);
+import ItemApi from "@/api/store/ItemApi";
+import SaleApi from "@/api/pharmacy/SaleApi";
+const SaleDetailsPage = () => {
+  const [Items, setItems] = useState([]);
+  const [Sale, setSale] = useState([]);
   useEffect(() => {
-    MedicinesApi.getPaged({ page: 1, pageSize: 2000 }).then((res) =>
-      setMedicines(res.data.data.data));
-    PharmacySaleApi.getPaged({ page: 1, pageSize: 2000 }).then((res) =>
-      setPharmacySale(res.data.data.data));
+    ItemApi.getPaged({ page: 1, pageSize: 2000 }).then((res) =>
+      setItems(res.data.data.data));
+    
+    SaleApi.getPaged({ page: 1, pageSize: 2000 }).then((res) =>
+      setSale(res.data.data.data));
   }, []);
 
-  const medicineOptions = medicines.map((m) => ({
+  const ItemOptions = Items.map((m) => ({
     label: m.name,
     value: m.id,
   }));
-  const PharmacySaleOptions = pharmacySale.map((m) => ({
+  const SaleOptions = Sale.map((m) => ({
     label: m.id,
     value: m.id,
   }));
@@ -25,8 +26,8 @@ const PharmacySaleDetailsPage = () => {
 
   return (
     <BaseCrudPage
-      title="PharmacySaleDetails"
-      service={PharmacySaleDetailsApi}
+      title="SaleDetails"
+      service={SaleDetailsApi}
       fields={[
         {
           name: "batchNumber",
@@ -38,12 +39,12 @@ const PharmacySaleDetailsPage = () => {
         { name: "unitPrice", label: "Unit Price", type: "number" },
         { name: "totalPrice", label: "Totale Price", type: "number" },
         {
-          name: "pharmacySaleId",
+          name: "SaleId",
           label: "Pharmacy Sale",
           type: "select",
-          options: PharmacySaleOptions,
+          options: SaleOptions,
         },
-        { name: "medicineId", label: "Medicine", type: "select", options: medicineOptions },
+        { name: "ItemId", label: "Item", type: "select", options: ItemOptions },
       ]}
       columns={[
         { accessorKey: "id", header: "ID", enableSorting: true },
@@ -55,19 +56,19 @@ const PharmacySaleDetailsPage = () => {
         { accessorKey: "quantity", header: "Quantity" },
         { accessorKey: "unitPrice", header: "Unit Price" },
         { accessorKey: "totalPrice", header: "Total Price" },
-        { accessorKey: "pharmacySaleId", header: "Pharmacy Sale" },
-        { accessorKey: "medicineId", header: "Medicine" },
+        { accessorKey: "SaleId", header: "Pharmacy Sale" },
+        { accessorKey: "ItemId", header: "Item" },
       ]}
       mapFormToPayload={(form) => ({
         batchNumber: form.batchNumber,
         quantity: form.quantity,
         unitPrice: form.unitPrice,
         totalPrice: form.totalPrice,
-        pharmacySaleId: form.pharmacySaleId,
-        medicineId: form.medicineId,
+        SaleId: form.SaleId,
+        ItemId: form.ItemId,
       })}
     />
   );
 };
 
-export default PharmacySaleDetailsPage;
+export default SaleDetailsPage;

@@ -9,6 +9,7 @@ public class Sale : BaseEntity
     public DateTime SaleDate { get; set; } = DateTime.UtcNow;
     public decimal TotalAmount { get; set; }
     public string? Notes { get; set; }
+    public bool IsPaid {get; set;}
 
     public int? PatientId { get; set; }
 

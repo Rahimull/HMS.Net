@@ -1,4 +1,3 @@
-export { default as MedicinesPage } from "./MedicinesPages";
-export { default as MedicineStockPage } from "./MedicineStockPage";
-export { default as PharmacySalePage } from "./PharmacySalePage";
-export { default as PharmacySaleDetailsPage } from "./PharmacySaleDetailsPage";
+
+export { default as SalePage } from "./SalePage";
+export { default as SaleDetailsPage } from "./SaleDetailsPage";
