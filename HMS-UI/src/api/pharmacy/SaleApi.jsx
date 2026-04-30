@@ -1,10 +1,10 @@
 import Api from "../Api";
 
-const endpoint = "/Sales";
+const endpoint = "/pharmacy/sales";
 
 const SaleApi = {
   getPaged: (queryParams) =>
-    Api.post(`${endpoint}/paged`, {
+    Api.get(endpoint, {
       params: queryParams,
     }),
 
