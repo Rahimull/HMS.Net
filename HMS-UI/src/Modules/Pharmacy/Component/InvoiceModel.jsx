@@ -1,3 +1,11 @@
+import InvoiceHeader from "./InvoiceHeader";
+import InvoiceActions from "./InvoiceAction";
+import InvoiceItems from "./InvoiceItems";
+import InvoiceSummary from "./InvoiceSummary";
+
+
+
+
 const InvoiceModel = ({cart, total, onClose, onConfirm, loading}) => {
     const tax = 0;
     const grandTotal = total + tax

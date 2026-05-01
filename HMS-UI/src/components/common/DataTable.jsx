@@ -3,7 +3,12 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import Card from "@/components/common/Card";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter
+} from "@/components/common/Card";
 import { useState, useMemo, Children } from "react";
 
 const DataTable = ({
