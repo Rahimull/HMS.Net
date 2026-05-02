@@ -23,4 +23,7 @@ public class CreateItemStockDto
     public DateOnly? ExpiryDate { get; set; }
 
     public string? Notes { get; set; }
+     public StockReferenceType? ReferenceType { get; set; }
+
+    public int? ReferenceId { get; set; }
 }

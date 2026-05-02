@@ -10,9 +10,9 @@ namespace HMSApi.Modules.Store.Controllers;
 public class PurchaseDetailsController
     : BaseController<
         IPurchaseDetailsService,
-        PurchaseDetailsDto,
+        PurchaseDetailDto,
         CreatePurchaseDetailDto,
-        UpdatePurchaseDetailsDto>
+        UpdatePurchaseDetailDto>
 {
     public PurchaseDetailsController(IPurchaseDetailsService service)
         : base(service)

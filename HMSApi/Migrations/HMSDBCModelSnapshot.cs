@@ -1409,7 +1409,10 @@ namespace HMSApi.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("TotalAmount")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalProfit")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -1424,16 +1427,22 @@ namespace HMSApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<decimal>("BuyPrice")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Discount")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("ItemId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ItemStockId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Quantity")
@@ -1442,15 +1451,14 @@ namespace HMSApi.Migrations
                     b.Property<int>("SaleId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("TEXT");
-
                     b.Property<decimal>("UnitPrice")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ItemId");
+
+                    b.HasIndex("ItemStockId");
 
                     b.HasIndex("SaleId");
 
@@ -1796,6 +1804,23 @@ namespace HMSApi.Migrations
                     b.ToTable("Reports");
                 });
 
+            modelBuilder.Entity("HMSApi.Modules.Store.Entities.BatchSequence", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("LastNumber")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BatchSequence");
+                });
+
             modelBuilder.Entity("HMSApi.Modules.Store.Entities.CurrentStock", b =>
                 {
                     b.Property<int>("Id")
@@ -1831,14 +1856,29 @@ namespace HMSApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Barcode")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BrandName")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("CategoryId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
+
+                    b.Property<string>("GenericName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
@@ -1850,9 +1890,6 @@ namespace HMSApi.Migrations
                     b.Property<int?>("PatientId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int>("Type")
                         .HasColumnType("INTEGER");
 
@@ -1861,13 +1898,19 @@ namespace HMSApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Barcode")
+                        .IsUnique();
+
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
 
                     b.HasIndex("PatientId");
 
                     b.HasIndex("UnitId");
 
-                    b.HasIndex("Name", "CategoryId")
+                    b.HasIndex("Name", "CategoryId", "UnitId")
                         .IsUnique();
 
                     b.ToTable("Items");
@@ -1880,16 +1923,20 @@ namespace HMSApi.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("BatchNumber")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("BuyPrice")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("TEXT");
-
                     b.Property<DateOnly?>("ExpiryDate")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("InitialQuantity")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
@@ -1900,19 +1947,12 @@ namespace HMSApi.Migrations
                     b.Property<string>("Notes")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("ReferenceId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("ReferenceType")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Type")
+                    b.Property<int>("RemainingQuantity")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BatchNumber");
 
                     b.HasIndex("ItemId");
 
@@ -1926,12 +1966,13 @@ namespace HMSApi.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("BatchNumber")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateOnly>("ExpiryDate")
+                    b.Property<DateOnly?>("ExpiryDate")
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsDeleted")
@@ -1987,6 +2028,46 @@ namespace HMSApi.Migrations
                     b.HasIndex("SupplierId");
 
                     b.ToTable("Purchases");
+                });
+
+            modelBuilder.Entity("HMSApi.Modules.Store.Entities.StockMovement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ItemStockId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ReferenceId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ReferenceType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemStockId");
+
+                    b.ToTable("StockMovement");
                 });
 
             modelBuilder.Entity("HMSApi.Modules.Store.Entities.Suppliers", b =>
@@ -2719,6 +2800,12 @@ namespace HMSApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("HMSApi.Modules.Store.Entities.ItemStock", "ItemStock")
+                        .WithMany()
+                        .HasForeignKey("ItemStockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("HMSApi.Modules.Pharmacy.Entities.Sale", "Sale")
                         .WithMany("SaleDetails")
                         .HasForeignKey("SaleId")
@@ -2726,6 +2813,8 @@ namespace HMSApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Item");
+
+                    b.Navigation("ItemStock");
 
                     b.Navigation("Sale");
                 });
@@ -2906,6 +2995,17 @@ namespace HMSApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Supplier");
+                });
+
+            modelBuilder.Entity("HMSApi.Modules.Store.Entities.StockMovement", b =>
+                {
+                    b.HasOne("HMSApi.Modules.Store.Entities.ItemStock", "ItemStock")
+                        .WithMany("StockMovements")
+                        .HasForeignKey("ItemStockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ItemStock");
                 });
 
             modelBuilder.Entity("HMSApi.Modules.SupportServices.Entities.SupportStaff", b =>
@@ -3141,6 +3241,11 @@ namespace HMSApi.Migrations
             modelBuilder.Entity("HMSApi.Modules.Store.Entities.Item", b =>
                 {
                     b.Navigation("ItemStocks");
+                });
+
+            modelBuilder.Entity("HMSApi.Modules.Store.Entities.ItemStock", b =>
+                {
+                    b.Navigation("StockMovements");
                 });
 
             modelBuilder.Entity("HMSApi.Modules.Store.Entities.Purchases", b =>

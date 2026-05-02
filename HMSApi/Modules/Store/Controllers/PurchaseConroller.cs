@@ -12,7 +12,7 @@ public class PurchasesController
         IPurchaseService,
         PurchasesDto,
         CreatePurchaseDto,
-        UpdatePurchasesDto>
+        UpdatePurchaseDto>
 {
     public PurchasesController(IPurchaseService service)
         : base(service)

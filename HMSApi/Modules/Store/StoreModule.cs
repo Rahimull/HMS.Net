@@ -30,7 +30,7 @@ public static class StoreModule
         // ===============================
         services.AddScoped<IItemService, ItemService>();
         services.AddScoped<IPurchaseService, PurchaseService>();
-        services.AddScoped<IPurchaseDetailsService, PurchaseDetailsService>();
+        services.AddScoped<IPurchaseDetailsService, PurchaseDetailService>();
         services.AddScoped<IItemStockService, ItemStockService>();
         services.AddScoped<ISuplierService, SuplierService>();
         services.AddScoped<ICurrentStockService, CurrentStockService>();

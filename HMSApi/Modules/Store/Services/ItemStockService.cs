@@ -78,20 +78,3 @@ public class ItemStockService : BaseService<ItemStock, ItemStockDto, CreateItemS
 }
 
 
-
-// var entity = _mapper.Map<ItemStock>(dto);
-// entity.Date = DateTime.UtcNow;
-
-// if (dto.ReferenceType == null)
-//     entity.ReferenceType = null;
-
-// await _repo.AddAsync(entity);
-
-// var created = await _repo.Query()
-//     .Where(x => x.Id == entity.Id)
-//     .Include(x => x.Item)
-//     .FirstOrDefaultAsync();
-
-// if(created== null)
-//     throw new Exception("Stock create Faild");
-// return _mapper.Map<ItemStockDto>(created);

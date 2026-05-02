@@ -1,7 +1,7 @@
 namespace HMSApi.Modules.Store.DTOs;
 
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations;
+
 using HMSApi.Common.Enums;
 
 public class CreateStockMovementDto

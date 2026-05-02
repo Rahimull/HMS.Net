@@ -2,4 +2,4 @@ using HMSApi.Modules.Store.DTOs;
 using HMSApi.Services;
 namespace HMSApi.Modules.Store.Services;
 
-public interface IPurchaseService : IBaseService<PurchasesDto, CreatePurchaseDto, UpdatePurchasesDto>{}
+public interface IPurchaseService : IBaseService<PurchasesDto, CreatePurchaseDto, UpdatePurchaseDto>{}
