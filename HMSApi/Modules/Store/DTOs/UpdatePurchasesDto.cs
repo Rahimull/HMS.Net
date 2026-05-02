@@ -1,18 +1,13 @@
 namespace HMSApi.Modules.Store.DTOs;
 
+using System.ComponentModel.DataAnnotations;
 
-// public record UpdatePurchasesDto(
-//        DateTime PurchaseDate,
-//        string? Notes,
-//        int SupplierId
-// );
-
-
-public class UpdatePurchasesDto
+public class UpdatePurchaseDto
 {
-    public DateTime PurchaseDate { get; set; }
-    public string? Notes { get; set; }
-    public int SupplierId { get; set; }
+    [Required]
+    public int Id { get; set; }
 
-    public List<CreatePurchaseDetailDto> Details { get; set; } = new();
+    public DateTime PurchaseDate { get; set; }
+
+    public string? Notes { get; set; }
 }

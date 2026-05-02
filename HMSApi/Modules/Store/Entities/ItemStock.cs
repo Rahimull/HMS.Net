@@ -1,30 +1,25 @@
 
 using HMSApi.Common.Enums;
 using HMSApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HMSApi.Modules.Store.Entities;
 
-
+[Index(nameof(ItemId))]
+[Index(nameof(BatchNumber))]
 public class ItemStock : BaseEntity
 {
     public int ItemId { get; set; }
     public Item Item { get; set; } = null!;
 
-    public int Quantity { get; set; }
+    public int InitialQuantity { get; set; }
+    public int RemainingQuantity { get; set; }
 
+    public decimal BuyPrice { get; set; }
 
-    public StockMovementType Type { get; set; }
-
-    public DateTime Date { get; set; } = DateTime.UtcNow;
-
-    public string? BatchNumber { get; set; }
-
+    public string BatchNumber { get; set; } = null!;
     public DateOnly? ExpiryDate { get; set; }
 
     public string? Notes { get; set; }
-
-    public int? ReferenceId { get; set; }
-
-
-    public StockReferenceType? ReferenceType { get; set; }
+    public ICollection<StockMovement> StockMovements { get; set; } = new List<StockMovement>();
 }

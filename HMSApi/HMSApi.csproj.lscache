@@ -407,17 +407,20 @@ Modules/
   PurchaseDetailsController.cs
   SuplierController.cs
  Store/DTOs/
+  BatchSequenceDto.cs
   CreateCurrentStockDto.cs
   CreateIemDto.cs
   CreateItemStockDto.cs
   CreatePurchasesDetailsDto.cs
   CreatePurchasesDto.cs
+  CreateStockMovementDto.cs
   CreateSuplierDto.cs
   CurrentStockDto.cs
   ItemDto.cs
   ItemStockDto.cs
   PurchasesDetailsDto.cs
   PurchasesDto.cs
+  StockMovementDto.cs
   SuplierDto.cs
   UpdateCurrentStockDto.cs
   UpdateItemDto.cs
@@ -426,11 +429,13 @@ Modules/
   UpdatePurchasesDto.cs
   UpdateSuplierDto.cs
  Store/Entities/
+  BatchSequence.cs
   CurrentStock.cs
   Item.cs
   ItemStock.cs
   PurchaseDetails.cs
   Purchases.cs
+  StockMovement.cs
   Suplier.cs
  Store/
   Mapping/StoreProfile.cs
@@ -448,6 +453,7 @@ Modules/
    PurchaseRepository.cs
    SuplierRepository.cs
   Services/
+   BatchNumberService.cs
    CurrentStockService.cs
    ICurrentStockService.cs
    IItemService.cs

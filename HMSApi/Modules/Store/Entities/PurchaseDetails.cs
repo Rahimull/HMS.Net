@@ -11,8 +11,8 @@ public class PurchaseDetail : BaseEntity
     [NotMapped]
     public decimal SubTotal => Quantity * UnitPrice;
 
-    public string? BatchNumber { get; set; }
-    public DateOnly ExpiryDate { get; set; }
+    public string BatchNumber { get; set; } = null!;
+    public DateOnly? ExpiryDate { get; set; }
 
     public int PurchaseId { get; set; }
     public Purchases Purchase { get; set; } = null!;

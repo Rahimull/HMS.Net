@@ -32,55 +32,71 @@ public class PurchaseService
     }
 
     // ================= CREATE PURCHASE =================
+
+
     public override async Task<PurchasesDto> AddAsync(CreatePurchaseDto dto)
     {
         using var transaction = await _context.Database.BeginTransactionAsync();
 
         try
         {
-            //  Build Purchase (NULL SAFE)
             var entity = new Purchases
             {
                 SupplierId = dto.SupplierId,
                 Notes = dto.Notes,
                 PurchaseDate = dto.PurchaseDate,
-
-                PurchaseDetails = dto.Details?.Select(d => new PurchaseDetail
-                {
-                    ItemId = d.ItemId,
-                    Quantity = d.Quantity,
-                    UnitPrice = d.UnitPrice,
-                    BatchNumber = d.BatchNumber,
-                    ExpiryDate = d.ExpiryDate
-                }).ToList() ?? new List<PurchaseDetail>()
             };
 
-            //  SAVE PURCHASE
+            entity.PurchaseDetails = dto.Details?.Select(d => new PurchaseDetail
+            {
+                ItemId = d.ItemId,
+                Quantity = d.Quantity,
+                UnitPrice = d.UnitPrice,
+                BatchNumber = d.BatchNumber,
+                ExpiryDate = d.ExpiryDate
+            }).ToList() ?? new();
+
+            entity.TotalPrice = entity.PurchaseDetails.Sum(x => x.Quantity * x.UnitPrice);
+
             await _repo.AddAsync(entity);
 
-            
+            var itemIds = entity.PurchaseDetails.Select(x => x.ItemId).ToList();
+            var currentStock = await _context.CurrentStocks
+                .Where(x => itemIds.Contains(x.ItemId))
+                .ToListAsync();
+
             foreach (var d in entity.PurchaseDetails)
             {
-                 // 1. STOCK MOVEMENTS (HISTORY)
-                _context.ItemStocks.Add(new ItemStock
+                // 1. CREATE BATCH (ItemStock)
+                var itemStock =  new ItemStock
                 {
                     ItemId = d.ItemId,
+                    InitialQuantity = d.Quantity,
+                    BuyPrice = d.UnitPrice,
+                    BatchNumber = d.BatchNumber,
+                    ExpiryDate = d.ExpiryDate
+                };
+                await _context.ItemStocks.AddAsync(itemStock);
+                
+                // 2. Stock Movement (HISTORY)
+                var stockMovement = new StockMovement
+                {
+                    ItemStock = itemStock, 
                     Quantity = d.Quantity,
                     Type = StockMovementType.Purchase,
-                    BatchNumber = d.BatchNumber,
-                    ExpiryDate = d.ExpiryDate,
                     ReferenceId = entity.Id,
                     ReferenceType = StockReferenceType.Purchase,
-                    Date = DateTime.UtcNow
-                });
+                    CreatedAt = DateTime.UtcNow
+                };
 
-                // 2. CURRENT STOCK (REAL STOCK)
-                var stock = await _context.Set<CurrentStock>()
-                    .FirstOrDefaultAsync(x => x.ItemId == d.ItemId);
+                await _context.StockMovement.AddAsync(stockMovement);
+               
+                // 3. Current Stock
+                var stock = currentStock.FirstOrDefault(x => x.ItemId == d.ItemId);
+
                 if (stock == null)
                 {
-                    // Create new Current Stock
-                    _context.Set<CurrentStock>().Add(new CurrentStock
+                    await _context.CurrentStocks.AddAsync(new CurrentStock
                     {
                         ItemId = d.ItemId,
                         Quantity = d.Quantity,
@@ -89,68 +105,26 @@ public class PurchaseService
                 }
                 else
                 {
-                    // Update Exist Current Stock
                     stock.Quantity += d.Quantity;
                     stock.LastUpdate = DateTime.UtcNow;
                 }
             }
 
             await _context.SaveChangesAsync();
-
-            //  TOTAL PRICE (SAFE)
-            entity.TotalPrice = entity.PurchaseDetails != null
-                ? entity.PurchaseDetails.Sum(x => (x.Quantity) * (x.UnitPrice))
-                : 0;
-
-            await _repo.UpdateAsync(entity);
-
-            //  COMMIT
             await transaction.CommitAsync();
 
-            //  LOAD FULL DATA (SAFE INCLUDE)
-            var created = await _repo.Query()
-                .Include(x => x.Supplier)
-                .Include(x => x.PurchaseDetails)
-                    .ThenInclude(d => d.Item)
-                .FirstOrDefaultAsync(x => x.Id == entity.Id);
-
-            if (created == null)
-                throw new Exception("Purchase creation failed");
-
-            //  MANUAL SAFE MAPPING (BEST PRACTICE )
-            var result = new PurchasesDto
-            {
-                Id = created.Id,
-                SupplierId = created.SupplierId,
-                SupplierName = created.Supplier != null ? created.Supplier.Name : "",
-
-                Notes = created.Notes,
-                PurchaseDate = created.PurchaseDate,
-                TotalPrice = created.TotalPrice,
-
-                Details = created.PurchaseDetails != null
-                    ? created.PurchaseDetails.Select(d => new PurchaseDetailsDto
-                    {
-                        Id = d.Id,
-                        Quantity = d.Quantity,
-                        UnitPrice = d.UnitPrice,
-                        SubTotal = d.Quantity * d.UnitPrice,
-                        BatchNumber = d.BatchNumber,
-                        ExpiryDate = d.ExpiryDate,
-                        PurchaseId = d.PurchaseId,
-                        ItemId = d.ItemId,
-                        ItemName = d.Item != null ? d.Item.Name : "",
-                    }).ToList()
-                    : new List<PurchaseDetailsDto>()
-            };
-
-            return result;
+            return _mapper.Map<PurchasesDto>(entity);
         }
-        catch (Exception ex)
+        catch
         {
-            Console.WriteLine("ERROR => " + ex.ToString()); 
             await transaction.RollbackAsync();
             throw;
         }
     }
+
+
+
+
+
+
 }

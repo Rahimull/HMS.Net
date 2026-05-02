@@ -3,12 +3,8 @@ import CurrentStockApi from "@/api/store/CurrentStockApi";
 import PharmacySaleApi from "@/api/pharmacy/SaleApi";
 import Input from "@/components/common/Input";
 import InvoiceModel from "../Component/InvoiceModel";
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardFooter,
-} from "@/components/common/Card";
+import { Card } from "@/components/common/Card";
+
 /* ================= STATUS ================= */
 const getStatus = (qty) => {
   if (qty === 0) return "bg-red-500";
@@ -17,7 +13,6 @@ const getStatus = (qty) => {
   return "bg-emerald-500";
 };
 
-/* ================= MAIN POS ================= */
 const PharmacyPOS = () => {
   const [items, setItems] = useState([]);
   const [cart, setCart] = useState([]);
@@ -28,14 +23,14 @@ const PharmacyPOS = () => {
   /* LOAD STOCK */
   useEffect(() => {
     CurrentStockApi.getPaged({ page: 1, pageSize: 1000 }).then((res) =>
-      setItems(res?.data?.data?.data || []),
+      setItems(res?.data?.data?.data || [])
     );
   }, []);
 
   /* FILTER */
   const filtered = useMemo(() => {
     return items.filter((x) =>
-      x.itemName?.toLowerCase().includes(search.toLowerCase()),
+      x.itemName?.toLowerCase().includes(search.toLowerCase())
     );
   }, [items, search]);
 
@@ -50,7 +45,7 @@ const PharmacyPOS = () => {
         return prev.map((c) =>
           c.itemId === item.itemId
             ? { ...c, qty: Math.min(c.qty + 1, item.quantity) }
-            : c,
+            : c
         );
       }
 
@@ -59,7 +54,7 @@ const PharmacyPOS = () => {
         {
           itemId: item.itemId,
           itemName: item.itemName,
-          price: item.price || 0,
+          price: item.itemPrice || 0,
           qty: 1,
           max: item.quantity,
         },
@@ -68,21 +63,21 @@ const PharmacyPOS = () => {
   };
 
   /* UPDATE QTY */
-  const updateQty = (id, qty) => {
+  const updateQty = (id, qty, max) => {
     setCart((prev) =>
       prev
         .map((c) =>
           c.itemId === id
             ? { ...c, qty: Math.max(0, Math.min(qty, c.max)) }
-            : c,
+            : c
         )
-        .filter((c) => c.qty > 0),
+        .filter((c) => c.qty > 0)
     );
   };
 
   const subtotal = cart.reduce((s, i) => s + i.qty * i.price, 0);
 
-  /* CONFIRM SALE → BACKEND */
+  /* CONFIRM SALE */
   const confirmSale = async () => {
     try {
       setLoading(true);
@@ -111,27 +106,30 @@ const PharmacyPOS = () => {
   };
 
   return (
-    <div className="h-screen flex bg-gray-100 text-gray-800">
-      {/* ================= PRODUCTS ================= */}
+    <div className="h-screen flex bg-gray-100">
+
+      {/* ================= LEFT: PRODUCTS ================= */}
       <div className="flex-1 flex flex-col">
+
         {/* HEADER */}
-        <div className="bg-white border-b px-6 py-4 flex justify-between">
+        <div className="bg-white border-b px-6 py-4 flex justify-between items-center">
           <div>
-            <h1 className="text-lg font-bold">🏥 Pharmacy ERP POS</h1>
-            <p className="text-xs text-gray-500">Enterprise Hospital System</p>
+            <h1 className="text-lg font-bold">🏥 Pharmacy POS</h1>
+            <p className="text-xs text-gray-500">Fast selling system</p>
           </div>
 
-          <div className="w-[320px]">
+          <div className="w-[300px]">
             <Input
-              placeholder="Search medicines..."
+              placeholder="Search medicine..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
         </div>
 
-        {/* GRID SHOW CARD EVERY ROW 3 CARD */}
+        {/* GRID */}
         <div className="p-6 grid grid-cols-3 gap-4 overflow-auto">
+
           {filtered.map((item) => (
             <Card
               key={item.itemId}
@@ -139,23 +137,26 @@ const PharmacyPOS = () => {
               className="cursor-pointer group"
               onClick={() => addToCart(item)}
             >
-              {/* SYSTEM HEADER */}
-              <div className="flex items-center justify-between text-[10px] text-gray-400 mb-2">
+
+              {/* HEADER SMALL */}
+              <div className="flex justify-between text-[10px] text-gray-400 mb-2">
                 <span>HMS Pharmacy</span>
                 <span>{new Date().toLocaleDateString()}</span>
               </div>
-              {/* TOP */}
-              <div className="flex items-start justify-between gap-2">
-                <span className="text-sm font-semibold text-gray-900 truncate">
+
+              {/* TITLE */}
+              <div className="flex justify-between items-start">
+                <span className="text-sm font-semibold truncate">
                   {item.itemName}
                 </span>
 
                 <span
-                  className={`w-2.5 h-2.5 rounded-full mt-1 shrink-0 ${getStatus(
-                    item.quantity,
+                  className={`w-2.5 h-2.5 rounded-full mt-1 ${getStatus(
+                    item.quantity
                   )}`}
                 />
               </div>
+
               {/* STOCK */}
               <p className="text-xs text-gray-500 mt-2">
                 Stock:{" "}
@@ -163,79 +164,150 @@ const PharmacyPOS = () => {
                   {item.quantity}
                 </span>
               </p>
-              <p>
-                <span>Farzan</span>
-              </p>
 
               {/* PRICE */}
-              <div className="mt-3 flex items-center justify-between">
+              <div className="mt-3 flex justify-between items-center">
                 <span className="text-emerald-600 font-semibold text-sm">
-                  {item.unitPrice} 100 AFN
+                  {item.itemPrice} AFN
                 </span>
 
                 <span className="text-[11px] text-gray-400 opacity-0 group-hover:opacity-100 transition">
                   add →
                 </span>
               </div>
+
             </Card>
           ))}
+
         </div>
       </div>
 
-      {/* ================= CART ================= */}
-      <div className="w-[300px] bg-white border-l flex flex-col">
-        <div className="p-4 border-b font-bold">🛒 Live Cart</div>
+      {/* ================= RIGHT: CART ================= */}
+     <div className="w-[320px] bg-white border-l flex flex-col">
 
-        <div className="flex-1 overflow-auto p-3 space-y-2">
-          {cart.length === 0 && (
-            <p className="text-center text-gray-400 mt-10">Cart is empty</p>
-          )}
+  {/* HEADER */}
+  <div className="p-4 border-b flex justify-between items-center">
+    <div>
+      <h2 className="font-bold">🛒 Cart</h2>
+      <p className="text-xs text-gray-500">{cart.length} items</p>
+    </div>
 
-          {cart.map((i) => (
-            <div key={i.itemId} className="border rounded-xl p-3">
-              <div className="flex justify-between">
-                <span>{i.itemName}</span>
-                <span className="font-bold">
-                  {(i.qty * i.price).toFixed(2)}
-                </span>
-              </div>
+    <button
+      onClick={() => setCart([])}
+      className="text-xs text-red-500 hover:underline"
+    >
+      Clear
+    </button>
+  </div>
 
-              <div className="flex gap-2 mt-2">
-                <button
-                  onClick={() => updateQty(i.itemId, i.qty - 1)}
-                  className="bg-red-500 text-white w-7 h-7 rounded"
-                >
-                  -
-                </button>
-                <span>{i.qty}</span>
-                <button
-                  onClick={() => updateQty(i.itemId, i.qty + 1)}
-                  className="bg-green-500 text-white w-7 h-7 rounded"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+  {/* ITEMS */}
+  <div className="flex-1 overflow-auto p-3 space-y-2">
 
-        {/* FOOTER */}
-        <div className="p-4 border-t">
-          <div className="flex justify-between mb-3">
-            <span>Total</span>
-            <span className="font-bold text-lg">{subtotal.toFixed(2)} AFN</span>
+    {cart.length === 0 && (
+      <p className="text-center text-gray-400 mt-10">
+        No items selected
+      </p>
+    )}
+
+    {cart.map((i) => (
+      <div
+        key={i.itemId}
+        className="border rounded-xl p-3 hover:bg-gray-50 transition"
+      >
+
+        {/* TOP */}
+        <div className="flex justify-between items-start">
+          <div className="flex-1">
+            <p className="text-sm font-semibold truncate">
+              {i.itemName}
+            </p>
+
+            <p className="text-xs text-gray-400">
+              {i.price} AFN × {i.qty}
+            </p>
           </div>
 
           <button
-            onClick={() => setShowInvoice(true)}
-            className="w-full py-3 rounded-xl bg-slate-900 text-white font-semibold"
+            onClick={() => updateQty(i.itemId, 0)}
+            className="text-xs text-red-500 hover:underline"
           >
-            Create Invoice
+            ✕
           </button>
         </div>
-      </div>
 
-      {/* INVOICE */}
+        {/* CONTROLS */}
+        <div className="flex items-center justify-between mt-3">
+
+          <div className="flex items-center gap-2">
+
+            <button
+              onClick={() => updateQty(i.itemId, i.qty - 1)}
+              className="
+                w-7 h-7 rounded bg-red-500 text-white
+                flex items-center justify-center
+              "
+            >
+              -
+            </button>
+
+            <span className="w-6 text-center font-medium">
+              {i.qty}
+            </span>
+
+            <button
+              onClick={() => updateQty(i.itemId, i.qty + 1)}
+              className="
+                w-7 h-7 rounded bg-green-500 text-white
+                flex items-center justify-center
+              "
+            >
+              +
+            </button>
+
+          </div>
+
+          {/* LINE TOTAL */}
+          <span className="font-semibold text-emerald-600 text-sm">
+            {(i.qty * i.price).toFixed(2)} AFN
+          </span>
+
+        </div>
+
+      </div>
+    ))}
+  </div>
+
+  {/* FOOTER / CHECKOUT */}
+  <div className="p-4 border-t space-y-3">
+
+    <div className="flex justify-between font-semibold">
+      <span>Total</span>
+      <span className="text-lg">
+        {subtotal.toFixed(2)} AFN
+      </span>
+    </div>
+
+    <button
+      onClick={() => setShowInvoice(true)}
+      disabled={cart.length === 0}
+      className="
+        w-full py-3 rounded-xl
+        bg-slate-900 text-white font-semibold
+        hover:bg-slate-800 transition
+        disabled:opacity-50
+      "
+    >
+      Checkout
+    </button>
+
+  </div>
+
+</div>
+
+
+
+
+      {/* ================= INVOICE ================= */}
       {showInvoice && (
         <InvoiceModel
           cart={cart}
@@ -245,6 +317,7 @@ const PharmacyPOS = () => {
           loading={loading}
         />
       )}
+
     </div>
   );
 };

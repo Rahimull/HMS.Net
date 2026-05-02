@@ -99,6 +99,10 @@ public class HMSDBC : IdentityDbContext<AppUser, IdentityRole<int>, int>
     public DbSet<PurchaseDetail> PurchaseDetails => Set<PurchaseDetail>();
     public DbSet<Purchases> Purchases => Set<Purchases>();
     public DbSet<Suppliers> Suppliers => Set<Suppliers>();
+    public DbSet<BatchSequence> BatchSequence => Set<BatchSequence>();
+    public DbSet<StockMovement> StockMovement => Set<StockMovement>();
+
+
 
     // Support Services Modules
     public DbSet<SupportStaff> SupportStaffs => Set<SupportStaff>();

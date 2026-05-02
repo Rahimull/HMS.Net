@@ -5,17 +5,22 @@ using HMSApi.Common.Enums;
 namespace HMSApi.Modules.Store.DTOs;
 
 
-public record CreateItemStockDto(
-    int ItemId,
-    int Quantity,
+using System.ComponentModel.DataAnnotations;
 
-    [property: JsonConverter(typeof(JsonStringEnumConverter))]
-    StockMovementType Type,
-    string? BatchNumber,
-    DateOnly? ExpiryDate,
-    string? Notes,
-    int? ReferenceId,
+public class CreateItemStockDto
+{
+    [Required]
+    public int ItemId { get; set; }
 
-     [property: JsonConverter(typeof(JsonStringEnumConverter))]
-    StockReferenceType? ReferenceType
-);
+    [Range(1, int.MaxValue)]
+    public int Quantity { get; set; }
+
+    [Range(0, double.MaxValue)]
+    public decimal BuyPrice { get; set; }
+
+    public string? BatchNumber { get; set; }
+
+    public DateOnly? ExpiryDate { get; set; }
+
+    public string? Notes { get; set; }
+}

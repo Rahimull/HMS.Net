@@ -24,9 +24,10 @@ public class StoreProfile : Profile
 
         CreateMap<ItemStock, ItemStockDto>()
             .ForMember(dest => dest.ItemName,
-                opt => opt.MapFrom(src => src.Item.Name));
+                opt => opt.MapFrom(src => src.Item.Name))
+            .ForMember(d => d.IsExpired, opt => opt.MapFrom(s => s.ExpiryDate.HasValue && s.ExpiryDate < DateOnly.FromDateTime(DateTime.UtcNow)));
 
-        // ================= ITEM STOCK =================
+        // ================= ITEM CURRENT STOCK =================
         CreateMap<CreateCurrentStockDto, CurrentStock>();
         CreateMap<UpdateCurrentStockDto, CurrentStock>();
 
@@ -37,30 +38,26 @@ public class StoreProfile : Profile
         // ================= PURCHASE DETAILS =================
         CreateMap<CreatePurchaseDetailDto, PurchaseDetail>();
 
-        CreateMap<PurchaseDetail, PurchaseDetailsDto>()
-            .ForMember(dest => dest.ItemName,
-                opt => opt.MapFrom(src => src.Item.Name))
-            .ForMember(dest => dest.PurchaseName,
-                opt => opt.MapFrom(src => "Purchase #" + src.PurchaseId));
+        CreateMap<PurchaseDetail, PurchaseDetailDto>()
+    .ForMember(d => d.ItemName, opt => opt.MapFrom(s => s.Item.Name))
+    .ForMember(d => d.SubTotal, opt => opt.MapFrom(s => s.Quantity * s.UnitPrice));
 
         // ================= PURCHASE =================
         CreateMap<CreatePurchaseDto, Purchases>()
             .ForMember(dest => dest.PurchaseDetails,
                 opt => opt.MapFrom(src => src.Details));
 
-        CreateMap<UpdatePurchasesDto, Purchases>();
+        CreateMap<UpdatePurchaseDto, Purchases>();
 
         CreateMap<Purchases, PurchasesDto>()
-            .ForMember(dest => dest.SupplierName,
-                opt => opt.MapFrom(src => src.Supplier.Name))
-            .ForMember(dest => dest.Details,
-                opt => opt.MapFrom(src => src.PurchaseDetails));
+    .ForMember(d => d.SupplierName, opt => opt.MapFrom(s => s.Supplier.Name))
+    .ForMember(d => d.Details, opt => opt.MapFrom(s => s.PurchaseDetails));
 
         // ================= SUPPLIER =================
         CreateMap<CreateSuplierDto, Suppliers>();
         CreateMap<UpdateSuplierDto, Suppliers>();
         CreateMap<Suppliers, SuplierDto>();
 
-        
+
     }
 }

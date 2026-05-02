@@ -34,6 +34,11 @@ public static class StoreModule
         services.AddScoped<IItemStockService, ItemStockService>();
         services.AddScoped<ISuplierService, SuplierService>();
         services.AddScoped<ICurrentStockService, CurrentStockService>();
+
+        // ===============================
+        // Batch Sequence Service
+        // ===============================
+        services.AddScoped<BatchNumberService>();
     
         
 

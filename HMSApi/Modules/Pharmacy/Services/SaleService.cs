@@ -3,15 +3,16 @@ using HMSApi.Data;
 using HMSApi.Models;
 using HMSApi.Modules.Pharmacy.DTOs;
 using HMSApi.Modules.Pharmacy.Entities;
-using HMSApi.Modules.Pharmacy.Repositories;
 using HMSApi.Modules.Store.Entities;
+using HMSApi.Common.Enums;
 using HMSApi.Services;
 using HMSApi.Specifications;
 using Microsoft.EntityFrameworkCore;
+using HMSApi.Modules.Pharmacy.Repositories;
 
 namespace HMSApi.Modules.Pharmacy.Services;
 
-public class SaleService 
+public class SaleService
     : BaseService<Sale, SaleDto, CreateSaleDto, UpdateSaleDto>, ISaleService
 {
     private readonly HMSDBC _context;
@@ -30,7 +31,7 @@ public class SaleService
         return new SaleSpecification(query);
     }
 
-    //  CREATE SALE WITH FEFO + STOCK CONTROL
+    // ================= CREATE SALE (FEFO + STOCK SAFE) =================
     public override async Task<SaleDto> AddAsync(CreateSaleDto dto)
     {
         using var transaction = await _context.Database.BeginTransactionAsync();
@@ -47,18 +48,18 @@ public class SaleService
                 PrescriptionId = dto.PrescriptionId
             };
 
-            decimal total = 0;
+            decimal totalAmount = 0;
+            decimal totalProfit = 0;
 
             foreach (var d in dto.Details)
             {
-                //  1. Get Item
                 var item = await _context.Items.FindAsync(d.ItemId);
                 if (item == null)
                     throw new Exception($"Item not found: {d.ItemId}");
 
-                //  2. Get all stocks (FEFO)
+                // FEFO STOCK
                 var stocks = await _context.ItemStocks
-                    .Where(x => x.ItemId == d.ItemId && x.Quantity > 0)
+                    .Where(x => x.ItemId == d.ItemId && x.RemainingQuantity > 0)
                     .OrderBy(x => x.ExpiryDate ?? DateOnly.MaxValue)
                     .ToListAsync();
 
@@ -66,66 +67,82 @@ public class SaleService
                     throw new Exception($"No stock available for {item.Name}");
 
                 int remaining = d.Quantity;
+                int totalUsed = 0;
 
-                //  3. Price
-                var price = d.UnitPrice ?? item.Price;
+                var unitDiscount = d.Discount / d.Quantity;
 
                 foreach (var stock in stocks)
                 {
                     if (remaining <= 0) break;
 
-                    var usedQty = Math.Min(stock.Quantity, remaining);
+                    var usedQty = Math.Min(stock.RemainingQuantity, remaining);
 
-                    //  Deduct from batch
-                    stock.Quantity -= usedQty;
-
+                    stock.RemainingQuantity -= usedQty;
                     remaining -= usedQty;
+                    totalUsed += usedQty;
 
-                    var subTotal = (usedQty * price) - d.Discount;
+                    var unitProfit = (d.UnitPrice - stock.BuyPrice - unitDiscount);
+                    var lineTotal = usedQty * (d.UnitPrice - unitDiscount) ?? 0m;
 
-                    total += subTotal;
+                    totalAmount += lineTotal;
+                    totalProfit += usedQty * unitProfit ?? 0m;
 
-                    //  Create SaleDetails (per batch)
                     sale.SaleDetails.Add(new SaleDetails
                     {
                         ItemId = d.ItemId,
+                        ItemStockId = stock.Id,
                         Quantity = usedQty,
-                        UnitPrice = price,
+                        UnitPrice = d.UnitPrice ?? 0m,
+                        BuyPrice = stock.BuyPrice,
                         Discount = d.Discount,
-                        TotalPrice = subTotal
+                        // TotalPrice = lineTotal
+                    });
+
+                    // STOCK MOVEMENT (OUT)
+                    _context.Set<StockMovement>().Add(new StockMovement
+                    {
+                        ItemStockId = stock.Id,
+                        Quantity = -usedQty,
+                        Type = StockMovementType.Sale,
+                        ReferenceId = sale.Id,
+                        ReferenceType = StockReferenceType.Sale,
+                        Notes = "Sale deduction"
                     });
                 }
 
                 if (remaining > 0)
                     throw new Exception($"Not enough stock for {item.Name}");
 
-                //  4. Update CurrentStock
+                // CURRENT STOCK UPDATE
                 var current = await _context.CurrentStocks
                     .FirstOrDefaultAsync(x => x.ItemId == d.ItemId);
 
                 if (current != null)
                 {
-                    current.Quantity -= d.Quantity;
+                    current.Quantity -= totalUsed;
                     current.LastUpdate = DateTime.UtcNow;
                 }
             }
 
-            sale.TotalAmount = total;
+            sale.TotalAmount = totalAmount;
+            sale.TotalProfit = totalProfit;
 
-            //  Save
-            await _context.Set<Sale>().AddAsync(sale);
+            await _context.Sales.AddAsync(sale);
             await _context.SaveChangesAsync();
 
             await transaction.CommitAsync();
 
-            //  RETURN DTO (clean)
-            var result = await _context.Set<Sale>()
+            // RETURN DTO
+            var result = await _context.Sales
                 .Where(x => x.Id == sale.Id)
+                .Include(x => x.SaleDetails)
+                    .ThenInclude(d => d.Item)
                 .Select(x => new SaleDto
                 {
                     Id = x.Id,
                     SaleDate = x.SaleDate,
                     TotalAmount = x.TotalAmount,
+                    TotalProfit = x.TotalProfit,
                     IsPaid = x.IsPaid,
                     Notes = x.Notes,
 

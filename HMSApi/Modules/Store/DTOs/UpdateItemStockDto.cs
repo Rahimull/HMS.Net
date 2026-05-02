@@ -2,14 +2,17 @@
 
 namespace HMSApi.Modules.Store.DTOs;
 
-using System.Text.Json.Serialization;
-using HMSApi.Common.Enums;
+using System.ComponentModel.DataAnnotations;
 
-public record UpdateItemStockDto(
-    int Quantity,
-    [property: JsonConverter(typeof(JsonStringEnumConverter))]
-    StockMovementType Type,
-    string? BatchNumber,
-    DateOnly? ExpiryDate,
-    string? Notes
-);
+public class UpdateItemStockDto
+{
+    [Required]
+    public int Id { get; set; }
+
+    [Range(0, int.MaxValue)]
+    public int RemainingQuantity { get; set; }
+
+    public DateOnly? ExpiryDate { get; set; }
+
+    public string? Notes { get; set; }
+}

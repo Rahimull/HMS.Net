@@ -1,6 +1,12 @@
 namespace HMSApi.Modules.Store.DTOs;
 
-public record CreateCurrentStockDto(
-    int Quantity,
-    int ItemId
-);
+using System.ComponentModel.DataAnnotations;
+
+public class CreateCurrentStockDto
+{
+    [Required]
+    public int ItemId { get; set; }
+
+    [Range(0, int.MaxValue)]
+    public int Quantity { get; set; }
+}
