@@ -47,20 +47,28 @@ const mapEntityToForm = (item) => ({
   service={ItemApi}
   fields={[
     { name: "name", label: "Name", type: "text", required: true },
+    { name: "genericName", label: "Generic Name", type: "text"},
+    { name: "brandName", label: "Brand Name", type: "text"},
+    { name: "code", label: "code", type: "text"},
+    { name: "barcode", label: "Barcode", type: "text" },
     { name: "categoryId", label: "Category", type: "select", options: categoryOptions },
     { name: "unitId", label: "Unit", type: "select", options: unitsOptions },
     { name: "type", label: "type", type: "select", options: itemTypeOptions },
-    { name: "price", label: "Price", type: "number" },
+    { name: "isActive", label: "Is Active", type: "checkbox"},
+   
     { name: "description", label: "Description", type: "textarea" },
   ]}
 
   columns={[
     { accessorKey: "id", header: "ID", enableSorting: true },
     { accessorKey: "name", header: "Name", enableSorting: true },
+    { accessorKey: "brandName", header: "Brand Name", enableSorting: true },
+    { accessorKey: "code", header: "Code", enableSorting: true },
+    { accessorKey: "barcode", header: "Barcode" },
     { accessorKey: "categoryName", header: "Category" },
     { accessorKey: "unitName", header: "Unit" },
     { accessorKey: "type", header: "Type" },
-    { accessorKey: "price", header: "Price", cell: (info) => `${info.getValue()} af` },
+    { accessorKey: "isActive", header: "isActive" },
     { accessorKey: "description", header: "Description" },
   ]}
 
@@ -68,7 +76,10 @@ const mapEntityToForm = (item) => ({
 
   mapFormToPayload={(form) => ({
     name: form.name,
-    price: Number(form.price),
+    genericName: form.genericName,
+    brandName: form.brandName,
+    code: form.code,
+    barcode: form.barcode,
     type: Number(form.type),
     unitId: Number(form.unitId),
     categoryId: Number(form.categoryId),

@@ -1,4 +1,5 @@
 
+using System.ComponentModel.DataAnnotations.Schema;
 using HMSApi.Common.Enums;
 using HMSApi.Models;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,7 @@ public class ItemStock : BaseEntity
 
     public int InitialQuantity { get; set; }
     public int RemainingQuantity { get; set; }
-
+    [Column(TypeName = "decimal(18,2)")]
     public decimal BuyPrice { get; set; }
 
     public string BatchNumber { get; set; } = null!;

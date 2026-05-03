@@ -9,7 +9,7 @@ const emptyLine = () => ({
   itemId: "",
   qty: 1,
   price: 0,
-  batchNumber: "",
+  // batchNumber: "",
   expiryDate: "",
   error: {},
 });
@@ -72,7 +72,7 @@ const PurchaseUi = ({ editingPurchase, onClearEdit }) => {
         itemId: d.itemId,
         qty: d.quantity,
         price: d.unitPrice,
-        batchNumber: d.batchNumber || "",
+        // batchNumber: d.batchNumber || "",
         expiryDate: d.expiryDate ? d.expiryDate.split("T")[0] : "",
         error: {},
       }))
@@ -138,7 +138,7 @@ const PurchaseUi = ({ editingPurchase, onClearEdit }) => {
     if (e.key === "Enter") {
       e.preventDefault();
 
-      const order = ["itemId", "qty", "price", "batchNumber", "expiryDate"];
+      const order = ["itemId", "qty", "price", "expiryDate"];
       const next = order[order.indexOf(field) + 1];
 
       if (!next) return addLine();
@@ -153,6 +153,8 @@ const PurchaseUi = ({ editingPurchase, onClearEdit }) => {
   const handleSave = async () => {
     setLoading(true);
 
+   
+
     try {
       const payload = {
         supplierId: Number(header.supplierId),
@@ -165,10 +167,12 @@ const PurchaseUi = ({ editingPurchase, onClearEdit }) => {
             itemId: Number(l.itemId),
             quantity: Number(l.qty),
             unitPrice: Number(l.price),
-            batchNumber: l.batchNumber || null,
+            batchNumber: "",
             expiryDate: l.expiryDate || null,
           })),
       };
+
+       console.log(payload)
 
       if (editingPurchase)
         await updatePurchase(editingPurchase.id, payload);
@@ -248,7 +252,7 @@ const PurchaseUi = ({ editingPurchase, onClearEdit }) => {
           <div>Product</div>
           <div>Qty</div>
           <div>Price</div>
-          <div>Batch</div>
+          {/* <div>Batch</div> */}
           <div>Expiry</div>
           <div>Total</div>
         </div>
@@ -291,12 +295,12 @@ const PurchaseUi = ({ editingPurchase, onClearEdit }) => {
               }
             />
 
-            <Input
+            {/* <Input
               value={l.batchNumber}
               onChange={(e) =>
                 updateLine(l.id, "batchNumber", e.target.value)
               }
-            />
+            /> */}
 
             <Input
               type="date"

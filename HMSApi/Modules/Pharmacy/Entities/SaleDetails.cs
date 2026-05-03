@@ -20,7 +20,10 @@ public class SaleDetails : BaseEntity
     [Column(TypeName = "decimal(18,2)")]
     public decimal Discount { get; set; } = 0;
 
+    [NotMapped]
      public decimal TotalPrice => (UnitPrice * Quantity) - Discount; // Total Price
+
+     [NotMapped]
     public decimal Profit => (TotalPrice - (BuyPrice * Quantity)); // Profit
    
     // Foreign Keys

@@ -36,106 +36,121 @@ public class PurchaseService
 
     // ================= CREATE PURCHASE =================
 
-public override async Task<PurchasesDto> AddAsync(CreatePurchaseDto dto)
-{
-    using var transaction = await _context.Database.BeginTransactionAsync();
-
-    try
+    public override async Task<PurchasesDto> AddAsync(CreatePurchaseDto dto)
     {
-        var entity = new Purchases
-        {
-            SupplierId = dto.SupplierId,
-            Notes = dto.Notes,
-            PurchaseDate = dto.PurchaseDate ?? DateTime.UtcNow,
-        };
+        using var transaction = await _context.Database.BeginTransactionAsync();
 
-        entity.PurchaseDetails = (dto.Details ?? new())
-            .Select(d => new PurchaseDetail
+        try
+        {
+            // ================= VALIDATION =================
+            if (dto.SupplierId <= 0)
+                throw new Exception("Invalid Supplier");
+
+            if (dto.Details == null || !dto.Details.Any())
+                throw new Exception("Purchase must have at least one item");
+
+            if (dto.Details.Any(x => x.ItemId <= 0))
+                throw new Exception("Invalid ItemId detected");
+
+            // ================= CREATE PURCHASE =================
+            var entity = new Purchases
+            {
+                SupplierId = dto.SupplierId,
+                Notes = dto.Notes,
+                PurchaseDate = dto.PurchaseDate ?? DateTime.UtcNow,
+            };
+
+            entity.PurchaseDetails = dto.Details.Select(d => new PurchaseDetail
             {
                 ItemId = d.ItemId,
                 Quantity = d.Quantity,
                 UnitPrice = d.UnitPrice,
+                BatchNumber = d.BatchNumber,
                 ExpiryDate = d.ExpiryDate
             }).ToList();
 
-        entity.TotalPrice = entity.PurchaseDetails.Sum(x => x.Quantity * x.UnitPrice);
+            entity.TotalPrice = entity.PurchaseDetails.Sum(x => x.Quantity * x.UnitPrice);
 
-        await _repo.AddAsync(entity);
+            await _repo.AddAsync(entity);
 
-        var itemIds = entity.PurchaseDetails.Select(x => x.ItemId).Distinct().ToList();
+            // ================= LOAD CURRENT STOCK =================
+            var itemIds = entity.PurchaseDetails.Select(x => x.ItemId).Distinct().ToList();
 
-        var currentStock = await _context.CurrentStocks
-            .Where(x => itemIds.Contains(x.ItemId))
-            .ToListAsync();
+            var currentStocks = await _context.CurrentStocks
+                .Where(x => itemIds.Contains(x.ItemId))
+                .ToListAsync();
 
-        foreach (var d in entity.PurchaseDetails)
-        {
-            // 1. Generate batch if null (IMPORTANT FIX)
-            var batchNumber = d.BatchNumber;
-
-            if (string.IsNullOrEmpty(batchNumber))
+            // ================= GENERATE BATCHES FIRST =================
+            foreach (var d in entity.PurchaseDetails)
             {
-                batchNumber = await _batchNumber.GenerateAsync();
+                if (string.IsNullOrWhiteSpace(d.BatchNumber))
+                {
+                    d.BatchNumber = await _batchNumber.GenerateAsync(); // ✅ once per line
+                }
             }
 
-            // 2. CREATE BATCH (ItemStock)
-            var itemStock = new ItemStock
+            // ================= PROCESS EACH LINE =================
+            foreach (var d in entity.PurchaseDetails)
             {
-                ItemId = d.ItemId,
-                InitialQuantity = d.Quantity,
-                RemainingQuantity = d.Quantity,
-                BuyPrice = d.UnitPrice,
-                BatchNumber = batchNumber,
-                ExpiryDate = d.ExpiryDate
-            };
-
-            await _context.ItemStocks.AddAsync(itemStock);
-            await _context.SaveChangesAsync(); // to get Id
-
-            // 3. Stock Movement (HISTORY)
-            var stockMovement = new StockMovement
-            {
-                ItemStockId = itemStock.Id,
-                Quantity = d.Quantity,
-                UnitPrice = d.UnitPrice,
-                Type = StockMovementType.Purchase,
-                ReferenceId = entity.Id,
-                ReferenceType = StockReferenceType.Purchase,
-                CreatedAt = DateTime.UtcNow
-            };
-
-            await _context.StockMovement.AddAsync(stockMovement);
-
-            // 4. Current Stock
-            var stock = currentStock.FirstOrDefault(x => x.ItemId == d.ItemId);
-
-            if (stock == null)
-            {
-                await _context.CurrentStocks.AddAsync(new CurrentStock
+                // 🔹 Create ItemStock
+                var itemStock = new ItemStock
                 {
                     ItemId = d.ItemId,
+                    InitialQuantity = d.Quantity,
+                    RemainingQuantity = d.Quantity,
+                    BuyPrice = d.UnitPrice,
+                    BatchNumber = d.BatchNumber!, // now guaranteed
+                    ExpiryDate = d.ExpiryDate
+                };
+
+                await _context.ItemStocks.AddAsync(itemStock);
+
+                // 🔹 Movement
+                var movement = new StockMovement
+                {
+                    ItemStock = itemStock,
                     Quantity = d.Quantity,
-                    LastUpdate = DateTime.UtcNow
-                });
+                    UnitPrice = d.UnitPrice,
+                    Type = StockMovementType.Purchase,
+                    ReferenceId = entity.Id,
+                    ReferenceType = StockReferenceType.Purchase,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                await _context.StockMovement.AddAsync(movement);
+
+                // 🔹 CurrentStock
+                var stock = currentStocks.FirstOrDefault(x => x.ItemId == d.ItemId);
+
+                if (stock == null)
+                {
+                    await _context.CurrentStocks.AddAsync(new CurrentStock
+                    {
+                        ItemId = d.ItemId,
+                        Quantity = d.Quantity,
+                        LastUpdate = DateTime.UtcNow
+                    });
+                }
+                else
+                {
+                    stock.Quantity += d.Quantity;
+                    stock.LastUpdate = DateTime.UtcNow;
+                }
             }
-            else
-            {
-                stock.Quantity += d.Quantity;
-                stock.LastUpdate = DateTime.UtcNow;
-            }
+
+            // ================= SAVE =================
+            await _context.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+
+            return _mapper.Map<PurchasesDto>(entity);
         }
-
-        await _context.SaveChangesAsync();
-        await transaction.CommitAsync();
-
-        return _mapper.Map<PurchasesDto>(entity);
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
-    catch
-    {
-        await transaction.RollbackAsync();
-        throw;
-    }
-}
 
 
 }

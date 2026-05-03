@@ -53,7 +53,6 @@ public class ItemStockService : BaseService<ItemStock, ItemStockDto, CreateItemS
                 Type = StockMovementType.Purchase,
                 ReferenceType = dto.ReferenceType,
                 ReferenceId = dto.ReferenceId,
-                CreatedAt = DateTime.UtcNow
             };
 
             await _context.Set<StockMovement>().AddAsync(movement);

@@ -17,29 +17,40 @@ public class BatchNumberService
     public async Task<string> GenerateAsync()
     {
         var year = DateTime.UtcNow.Year;
-        using var transaction = await _context.Database.BeginTransactionAsync();
 
-        var sequence = await _context.Set<BatchSequence>()
-            .FirstOrDefaultAsync(x => x.Year == year);
-
-        if (sequence == null)
+        for (int i = 0; i < 3; i++) // retry max 3 times
         {
-            sequence = new BatchSequence
+            try
             {
-                Year = year,
-                LastNumber = 1
-            };
+                var sequence = await _context.Set<BatchSequence>()
+                    .FirstOrDefaultAsync(x => x.Year == year);
 
-            _context.Add(sequence);
+                if (sequence == null)
+                {
+                    sequence = new BatchSequence
+                    {
+                        Year = year,
+                        LastNumber = 1
+                    };
+
+                    _context.Add(sequence);
+                }
+                else
+                {
+                    sequence.LastNumber += 1;
+                }
+
+                await _context.SaveChangesAsync();
+
+                return $"BN-{year}-{sequence.LastNumber:D4}";
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                // retry
+                _context.ChangeTracker.Clear();
+            }
         }
-        else
-        {
-            sequence.LastNumber +=1;
-        }
 
-        await _context.SaveChangesAsync();
-        await transaction.CommitAsync();
-        return $"BN-{year}-{sequence.LastNumber:D4}";
-
+        throw new Exception("Failed to generate batch number");
     }
 }

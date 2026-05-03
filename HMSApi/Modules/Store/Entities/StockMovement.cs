@@ -1,4 +1,5 @@
 
+using System.ComponentModel.DataAnnotations.Schema;
 using HMSApi.Common.Enums;
 using HMSApi.Models;
 
@@ -9,6 +10,8 @@ public class StockMovement : BaseEntity
     public ItemStock ItemStock { get; set; } = null!;
 
     public int Quantity { get; set; } // +100, -2
+
+    [Column(TypeName = "decimal(18,2)")]
     public decimal UnitPrice { get; set; } // snapshot for report
 
     public StockMovementType Type { get; set; }

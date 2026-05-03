@@ -98,6 +98,8 @@ Migrations/
  20260429074826_FixedSale.Designer.cs
  20260502110415_FixedStoreAndPharmacy.cs
  20260502110415_FixedStoreAndPharmacy.Designer.cs
+ 20260502153833_UpdateBatchSequence.cs
+ 20260502153833_UpdateBatchSequence.Designer.cs
  HMSDBCModelSnapshot.cs
 Models/
  AppUser.cs
