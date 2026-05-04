@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import CurrentStockApi from "@/api/store/CurrentStockApi";
+import ItemStockApi from "@/api/store/ItemStockApi";
 import PharmacySaleApi from "@/api/pharmacy/SaleApi";
 import Input from "@/components/common/Input";
 import InvoiceModel from "../Component/InvoiceModel";
@@ -14,37 +14,69 @@ const getStatus = (qty) => {
 };
 
 const PharmacyPOS = () => {
-  const [items, setItems] = useState([]);
+  const [stocks, setStocks] = useState([]); // <-- ItemStock
   const [cart, setCart] = useState([]);
   const [search, setSearch] = useState("");
   const [showInvoice, setShowInvoice] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  /* LOAD STOCK */
+  /* ================= LOAD ITEM STOCK ================= */
   useEffect(() => {
-    CurrentStockApi.getPaged({ page: 1, pageSize: 1000 }).then((res) =>
-      setItems(res?.data?.data?.data || [])
+    ItemStockApi.getPaged({ page: 1, pageSize: 1000 }).then((res) =>
+      setStocks(res?.data?.data?.data || [])
     );
   }, []);
 
-  /* FILTER */
+  /* ================= GROUP BY ITEM ================= */
+  const items = useMemo(() => {
+    const map = {};
+
+    stocks.forEach((s) => {
+      if (!map[s.itemId]) {
+        map[s.itemId] = {
+          itemId: s.itemId,
+          itemName: s.itemName,
+          quantity: 0,
+          batches: [],
+        };
+      }
+
+      map[s.itemId].quantity += s.remainingQuantity;
+
+      map[s.itemId].batches.push({
+        id: s.id,
+        batchNumber: s.batchNumber,
+        buyPrice: s.buyPrice,
+        qty: s.remainingQuantity,
+        expiryDate: s.expiryDate,
+      });
+    });
+
+    return Object.values(map);
+  }, [stocks]);
+
+  /* ================= FILTER ================= */
   const filtered = useMemo(() => {
     return items.filter((x) =>
       x.itemName?.toLowerCase().includes(search.toLowerCase())
     );
   }, [items, search]);
 
-  /* ADD TO CART */
+  /* ================= ADD TO CART (WITH BATCH) ================= */
   const addToCart = (item) => {
-    if (item.quantity === 0) return;
+    const batch = item.batches[0]; // FEFO later
+
+    if (!batch || batch.qty === 0) return;
 
     setCart((prev) => {
-      const exist = prev.find((c) => c.itemId === item.itemId);
+      const exist = prev.find(
+        (c) => c.itemId === item.itemId && c.batchId === batch.id
+      );
 
       if (exist) {
         return prev.map((c) =>
-          c.itemId === item.itemId
-            ? { ...c, qty: Math.min(c.qty + 1, item.quantity) }
+          c.itemId === item.itemId && c.batchId === batch.id
+            ? { ...c, qty: Math.min(c.qty + 1, c.max) }
             : c
         );
       }
@@ -54,30 +86,64 @@ const PharmacyPOS = () => {
         {
           itemId: item.itemId,
           itemName: item.itemName,
-          price: item.itemPrice || 0,
+
+          batchId: batch.id,
+          batchNumber: batch.batchNumber,
+          expiryDate: batch.expiryDate,
+
+          buyPrice: batch.buyPrice,
+          salePrice: batch.buyPrice, // default
+
           qty: 1,
-          max: item.quantity,
+          max: batch.qty,
         },
       ];
     });
   };
 
-  /* UPDATE QTY */
-  const updateQty = (id, qty, max) => {
+  /* ================= CHANGE BATCH ================= */
+  const changeBatch = (line, batchId) => {
+    const item = items.find((i) => i.itemId === line.itemId);
+    const batch = item.batches.find((b) => b.id == batchId);
+
     setCart((prev) =>
-      prev
-        .map((c) =>
-          c.itemId === id
-            ? { ...c, qty: Math.max(0, Math.min(qty, c.max)) }
-            : c
-        )
-        .filter((c) => c.qty > 0)
+      prev.map((c) =>
+        c === line
+          ? {
+              ...c,
+              batchId: batch.id,
+              batchNumber: batch.batchNumber,
+              expiryDate: batch.expiryDate,
+              buyPrice: batch.buyPrice,
+              salePrice: batch.buyPrice,
+              max: batch.qty,
+            }
+          : c
+      )
     );
   };
 
-  const subtotal = cart.reduce((s, i) => s + i.qty * i.price, 0);
+  /* ================= UPDATE QTY ================= */
+  const updateQty = (line, qty) => {
+    setCart((prev) =>
+      prev
+        .map((c) =>
+          c === line
+            ? { ...c, qty: Math.max(1, Math.min(qty, c.max)) }
+            : c
+        )
+    );
+  };
 
-  /* CONFIRM SALE */
+  /* ================= TOTAL ================= */
+  const subtotal = cart.reduce((s, i) => s + i.qty * i.salePrice, 0);
+
+  const totalProfit = cart.reduce(
+    (s, i) => s + (i.salePrice - i.buyPrice) * i.qty,
+    0
+  );
+
+  /* ================= CONFIRM ================= */
   const confirmSale = async () => {
     try {
       setLoading(true);
@@ -87,8 +153,9 @@ const PharmacyPOS = () => {
         isPaid: true,
         details: cart.map((i) => ({
           itemId: i.itemId,
+          itemStockId: i.batchId,
           quantity: i.qty,
-          unitPrice: i.price,
+          unitPrice: i.salePrice,
           discount: 0,
         })),
       };
@@ -108,14 +175,13 @@ const PharmacyPOS = () => {
   return (
     <div className="h-screen flex bg-gray-100">
 
-      {/* ================= LEFT: PRODUCTS ================= */}
+      {/* ================= LEFT ================= */}
       <div className="flex-1 flex flex-col">
 
-        {/* HEADER */}
         <div className="bg-white border-b px-6 py-4 flex justify-between items-center">
           <div>
             <h1 className="text-lg font-bold">🏥 Pharmacy POS</h1>
-            <p className="text-xs text-gray-500">Fast selling system</p>
+            <p className="text-xs text-gray-500">Batch-based selling</p>
           </div>
 
           <div className="w-[300px]">
@@ -127,7 +193,6 @@ const PharmacyPOS = () => {
           </div>
         </div>
 
-        {/* GRID */}
         <div className="p-6 grid grid-cols-3 gap-4 overflow-auto">
 
           {filtered.map((item) => (
@@ -137,177 +202,163 @@ const PharmacyPOS = () => {
               className="cursor-pointer group"
               onClick={() => addToCart(item)}
             >
-
-              {/* HEADER SMALL */}
               <div className="flex justify-between text-[10px] text-gray-400 mb-2">
                 <span>HMS Pharmacy</span>
                 <span>{new Date().toLocaleDateString()}</span>
               </div>
 
-              {/* TITLE */}
               <div className="flex justify-between items-start">
                 <span className="text-sm font-semibold truncate">
                   {item.itemName}
                 </span>
 
                 <span
-                  className={`w-2.5 h-2.5 rounded-full mt-1 ${getStatus(
+                  className={`w-2.5 h-2.5 rounded-full ${getStatus(
                     item.quantity
                   )}`}
                 />
               </div>
 
-              {/* STOCK */}
               <p className="text-xs text-gray-500 mt-2">
-                Stock:{" "}
-                <span className="text-gray-700 font-medium">
-                  {item.quantity}
-                </span>
+                Stock: {item.quantity}
               </p>
 
-              {/* PRICE */}
-              <div className="mt-3 flex justify-between items-center">
-                <span className="text-emerald-600 font-semibold text-sm">
-                  {item.itemPrice} AFN
-                </span>
-
-                <span className="text-[11px] text-gray-400 opacity-0 group-hover:opacity-100 transition">
-                  add →
-                </span>
-              </div>
-
+              <p className="text-xs text-gray-400">
+                Batches: {item.batches.length}
+              </p>
             </Card>
           ))}
 
         </div>
       </div>
 
-      {/* ================= RIGHT: CART ================= */}
-     <div className="w-[320px] bg-white border-l flex flex-col">
+      {/* ================= CART ================= */}
+      <div className="w-[320px] bg-white border-l flex flex-col">
 
-  {/* HEADER */}
-  <div className="p-4 border-b flex justify-between items-center">
-    <div>
-      <h2 className="font-bold">🛒 Cart</h2>
-      <p className="text-xs text-gray-500">{cart.length} items</p>
-    </div>
+        <div className="p-4 border-b flex justify-between">
+          <h2 className="font-bold">🛒 Cart</h2>
+          <span className="text-xs">{cart.length} items</span>
+        </div>
 
-    <button
-      onClick={() => setCart([])}
-      className="text-xs text-red-500 hover:underline"
-    >
-      Clear
-    </button>
-  </div>
+        <div className="flex-1 overflow-auto p-3 space-y-2">
 
-  {/* ITEMS */}
-  <div className="flex-1 overflow-auto p-3 space-y-2">
+          {cart.map((line, idx) => {
+            const item = items.find((i) => i.itemId === line.itemId);
 
-    {cart.length === 0 && (
-      <p className="text-center text-gray-400 mt-10">
-        No items selected
-      </p>
-    )}
+            return (
+              <div key={idx} className="border rounded-xl p-3">
 
-    {cart.map((i) => (
-      <div
-        key={i.itemId}
-        className="border rounded-xl p-3 hover:bg-gray-50 transition"
-      >
+                <div className="flex justify-between">
+                  <span className="text-sm font-semibold">
+                    {line.itemName}
+                  </span>
 
-        {/* TOP */}
-        <div className="flex justify-between items-start">
-          <div className="flex-1">
-            <p className="text-sm font-semibold truncate">
-              {i.itemName}
-            </p>
+                  <button
+                    onClick={() =>
+                      setCart((p) => p.filter((x) => x !== line))
+                    }
+                    className="text-red-500 text-xs"
+                  >
+                    ✕
+                  </button>
+                </div>
 
-            <p className="text-xs text-gray-400">
-              {i.price} AFN × {i.qty}
-            </p>
+                {/* BATCH */}
+                <select
+                  value={line.batchId}
+                  onChange={(e) => changeBatch(line, e.target.value)}
+                  className="w-full border mt-2 px-2 py-1 text-xs rounded"
+                >
+                  {item.batches.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.batchNumber} | Exp: {b.expiryDate} | Buy: {b.buyPrice}
+                    </option>
+                  ))}
+                </select>
+
+                {/* SALE PRICE */}
+                <input
+                  type="number"
+                  value={line.salePrice}
+                  onChange={(e) =>
+                    setCart((p) =>
+                      p.map((c) =>
+                        c === line
+                          ? { ...c, salePrice: Number(e.target.value) }
+                          : c
+                      )
+                    )
+                  }
+                  className="w-full border mt-2 px-2 py-1 text-xs"
+                />
+
+                {/* QTY */}
+                <div className="flex justify-between mt-2">
+
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => updateQty(line, line.qty - 1)}
+                      className="w-6 h-6 bg-red-500 text-white"
+                    >
+                      -
+                    </button>
+
+                    <span>{line.qty}</span>
+
+                    <button
+                      onClick={() => updateQty(line, line.qty + 1)}
+                      className="w-6 h-6 bg-green-500 text-white"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <span className="text-emerald-600 font-bold text-sm">
+                    {(line.qty * line.salePrice).toFixed(2)}
+                  </span>
+                </div>
+
+                {/* PROFIT */}
+                <div className="text-xs text-gray-500 mt-1">
+                  Profit:{" "}
+                  <span className="text-emerald-600">
+                    {(
+                      (line.salePrice - line.buyPrice) *
+                      line.qty
+                    ).toFixed(2)}
+                  </span>
+                </div>
+
+              </div>
+            );
+          })}
+        </div>
+
+        {/* FOOTER */}
+        <div className="p-4 border-t">
+
+          <div className="flex justify-between">
+            <span>Total</span>
+            <span>{subtotal.toFixed(2)}</span>
+          </div>
+
+          <div className="flex justify-between text-green-600 font-bold">
+            <span>Profit</span>
+            <span>{totalProfit.toFixed(2)}</span>
           </div>
 
           <button
-            onClick={() => updateQty(i.itemId, 0)}
-            className="text-xs text-red-500 hover:underline"
+            onClick={() => setShowInvoice(true)}
+            disabled={!cart.length}
+            className="w-full mt-3 bg-black text-white py-2 rounded"
           >
-            ✕
+            Checkout
           </button>
-        </div>
-
-        {/* CONTROLS */}
-        <div className="flex items-center justify-between mt-3">
-
-          <div className="flex items-center gap-2">
-
-            <button
-              onClick={() => updateQty(i.itemId, i.qty - 1)}
-              className="
-                w-7 h-7 rounded bg-red-500 text-white
-                flex items-center justify-center
-              "
-            >
-              -
-            </button>
-
-            <span className="w-6 text-center font-medium">
-              {i.qty}
-            </span>
-
-            <button
-              onClick={() => updateQty(i.itemId, i.qty + 1)}
-              className="
-                w-7 h-7 rounded bg-green-500 text-white
-                flex items-center justify-center
-              "
-            >
-              +
-            </button>
-
-          </div>
-
-          {/* LINE TOTAL */}
-          <span className="font-semibold text-emerald-600 text-sm">
-            {(i.qty * i.price).toFixed(2)} AFN
-          </span>
 
         </div>
-
       </div>
-    ))}
-  </div>
 
-  {/* FOOTER / CHECKOUT */}
-  <div className="p-4 border-t space-y-3">
-
-    <div className="flex justify-between font-semibold">
-      <span>Total</span>
-      <span className="text-lg">
-        {subtotal.toFixed(2)} AFN
-      </span>
-    </div>
-
-    <button
-      onClick={() => setShowInvoice(true)}
-      disabled={cart.length === 0}
-      className="
-        w-full py-3 rounded-xl
-        bg-slate-900 text-white font-semibold
-        hover:bg-slate-800 transition
-        disabled:opacity-50
-      "
-    >
-      Checkout
-    </button>
-
-  </div>
-
-</div>
-
-
-
-
-      {/* ================= INVOICE ================= */}
+      {/* INVOICE */}
       {showInvoice && (
         <InvoiceModel
           cart={cart}
@@ -317,7 +368,6 @@ const PharmacyPOS = () => {
           loading={loading}
         />
       )}
-
     </div>
   );
 };

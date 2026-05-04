@@ -27,77 +27,18 @@ const Toast = ({ toast }) => {
   );
 };
 
-/* ================= KPI CARD ================= */
-const KPI = ({ title, value, sub, color }) => (
+/* ================= KPI ================= */
+const KPI = ({ title, value, color }) => (
   <div className={`p-5 rounded-xl text-white shadow bg-gradient-to-r ${color}`}>
     <p className="text-sm opacity-80">{title}</p>
     <h2 className="text-2xl font-bold">{value}</h2>
-    {sub && <p className="text-xs opacity-70">{sub}</p>}
   </div>
 );
 
-/* ================= SMART STOCK CARD ================= */
-const SmartCard = ({ item, onAction }) => {
-  const status =
-    item.quantity === 0
-      ? "OUT"
-      : item.quantity < 10
-      ? "LOW"
-      : "GOOD";
-
-  const style =
-    status === "OUT"
-      ? "border-red-500"
-      : status === "LOW"
-      ? "border-yellow-500"
-      : "border-green-500";
-
-  return (
-    <div className={`bg-white p-4 rounded-xl shadow border-l-4 ${style}`}>
-
-      <div className="flex justify-between items-center">
-        <h3 className="font-bold">{item.itemName}</h3>
-
-        <span className="text-xs px-2 py-1 rounded bg-gray-100">
-          {status}
-        </span>
-      </div>
-
-      <p className="text-2xl font-bold mt-2">{item.quantity}</p>
-
-      {/* MINI INTELLIGENCE */}
-      {status === "LOW" && (
-        <p className="text-xs text-red-500 mt-1">
-          ⚠ Recommended restock: +50 units
-        </p>
-      )}
-
-      {status === "OUT" && (
-        <p className="text-xs text-red-600 mt-1">
-          ❌ Stock empty - urgent action required
-        </p>
-      )}
-
-      <button
-        onClick={() => onAction(item)}
-        className="mt-3 w-full bg-blue-500 text-white py-1 rounded"
-      >
-        Quick Action
-      </button>
-
-    </div>
-  );
-};
-
 /* ================= MAIN ================= */
-const UltraStockPage = () => {
-
+const CurrentStockPage = () => {
   const [stocks, setStocks] = useState([]);
   const [search, setSearch] = useState("");
-
-  const [selected, setSelected] = useState(null);
-  const [qty, setQty] = useState(0);
-
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
@@ -105,53 +46,25 @@ const UltraStockPage = () => {
   }, []);
 
   const load = async () => {
-    const res = await CurrentStockApi.getPaged({
-      page: 1,
-      pageSize: 1000,
-    });
-
-    setStocks(res?.data?.data?.data || []);
-  };
-
-  /* ================= INTELLIGENCE ENGINE ================= */
-  const lowStock = stocks.filter(x => x.quantity < 10);
-  const outStock = stocks.filter(x => x.quantity === 0);
-
-  const predictedRestock = useMemo(() => {
-    return lowStock.map(x => ({
-      ...x,
-      recommended: Math.max(50 - x.quantity, 10),
-    }));
-  }, [lowStock]);
-
-  /* ================= ACTION ================= */
-  const openAction = (item) => {
-    setSelected(item);
-    setQty(item.quantity < 10 ? 50 : 10);
-  };
-
-  const confirm = async () => {
     try {
-      await CurrentStockApi.restock({
-        itemId: selected.itemId,
-        quantity: qty,
+      const res = await CurrentStockApi.getPaged({
+        page: 1,
+        pageSize: 500,
       });
 
-      setToast({
-        message: "Stock updated successfully",
-        type: "success",
-      });
+      const data =
+        res?.data?.data?.data ??
+        res?.data?.data ??
+        res?.data ??
+        [];
 
-      setSelected(null);
-      load();
+      setStocks(Array.isArray(data) ? data : []);
     } catch {
       setToast({
-        message: "Operation failed",
+        message: "Failed to load stock data",
         type: "error",
       });
     }
-
-    setTimeout(() => setToast(null), 2500);
   };
 
   /* ================= FILTER ================= */
@@ -161,29 +74,58 @@ const UltraStockPage = () => {
     );
   }, [stocks, search]);
 
+  /* ================= KPI ================= */
+  const lowStock = useMemo(
+    () => stocks.filter(x => x.quantity < (x.minLevel ?? 10)),
+    [stocks]
+  );
+
+  const outStock = useMemo(
+    () => stocks.filter(x => x.quantity === 0),
+    [stocks]
+  );
+
+  /* ================= CHART ================= */
+  const chartData = useMemo(() => filtered.slice(0, 20), [filtered]);
+
+  /* ================= ACTION ================= */
+  const openBatch = (item) => {
+    window.location.href = `/item-stock?itemId=${item.itemId}`;
+  };
+
+  const getStatus = (item) => {
+    if (item.quantity === 0) return "OUT";
+    if (item.quantity < (item.minLevel ?? 10)) return "LOW";
+    return "GOOD";
+  };
+
+  const getStatusColor = (status) => {
+    if (status === "OUT") return "text-red-600";
+    if (status === "LOW") return "text-yellow-600";
+    return "text-green-600";
+  };
+
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
 
       {/* HEADER */}
       <div>
-        <h1 className="text-2xl font-bold">Intelligent Stock System</h1>
-        <p className="text-gray-500">AI-assisted inventory control</p>
+        <h1 className="text-2xl font-bold">Current Stock Dashboard</h1>
+        <p className="text-gray-500">Inventory overview (read-only)</p>
       </div>
 
       {/* KPI */}
       <div className="grid md:grid-cols-4 gap-4">
-
         <KPI title="Items" value={stocks.length} color="from-blue-500 to-blue-600" />
         <KPI title="Low Stock" value={lowStock.length} color="from-yellow-500 to-yellow-600" />
         <KPI title="Out of Stock" value={outStock.length} color="from-red-500 to-red-600" />
-        <KPI title="Risk Items" value={predictedRestock.length} color="from-purple-500 to-purple-600" />
-
+        <KPI title="Active Items" value={stocks.length - outStock.length} color="from-purple-500 to-purple-600" />
       </div>
 
-      {/* ALERT ENGINE */}
+      {/* ALERT */}
       {outStock.length > 0 && (
         <div className="bg-red-100 border-l-4 border-red-500 p-4 rounded">
-          ⚠ Critical: {outStock.length} items are out of stock
+          ⚠ {outStock.length} items are out of stock
         </div>
       )}
 
@@ -197,7 +139,7 @@ const UltraStockPage = () => {
       {/* CHART */}
       <div className="bg-white p-4 rounded-xl shadow">
         <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={filtered}>
+          <BarChart data={chartData}>
             <XAxis dataKey="itemName" hide />
             <Tooltip />
             <Bar dataKey="quantity" fill="#6366f1" />
@@ -205,60 +147,59 @@ const UltraStockPage = () => {
         </ResponsiveContainer>
       </div>
 
-      {/* SMART GRID */}
-      <div className="grid md:grid-cols-3 gap-4">
-        {filtered.map(item => (
-          <SmartCard
-            key={item.itemId}
-            item={item}
-            onAction={openAction}
-          />
-        ))}
+      {/* TABLE */}
+      <div className="bg-white rounded-xl shadow overflow-hidden">
+
+        <table className="w-full text-sm">
+          <thead className="bg-gray-100 text-left">
+            <tr>
+              <th className="p-3">Item</th>
+              <th className="p-3">Quantity</th>
+              <th className="p-3">Min Level</th>
+              <th className="p-3">Status</th>
+              <th className="p-3">Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {filtered.map(item => {
+              const status = getStatus(item);
+
+              return (
+                <tr key={item.itemId} className="border-t hover:bg-gray-50">
+
+                  <td className="p-3 font-medium">
+                    {item.itemName}
+                  </td>
+
+                  <td className="p-3">
+                    {item.quantity}
+                  </td>
+
+                  <td className="p-3">
+                    {item.minLevel ?? 10}
+                  </td>
+
+                  <td className={`p-3 font-bold ${getStatusColor(status)}`}>
+                    {status}
+                  </td>
+
+                  <td className="p-3">
+                    <button
+                      onClick={() => openBatch(item)}
+                      className="px-3 py-1 bg-blue-500 text-white rounded"
+                    >
+                      Batch
+                    </button>
+                  </td>
+
+                </tr>
+              );
+            })}
+          </tbody>
+
+        </table>
       </div>
-
-      {/* ACTION PANEL (MODAL++) */}
-      {selected && (
-        <div className="fixed inset-0 bg-black/50 flex justify-end">
-
-          <div className="w-[400px] bg-white p-6 h-full shadow-xl">
-
-            <h2 className="text-lg font-bold">
-              Smart Action Panel
-            </h2>
-
-            <p className="text-gray-500 text-sm mt-2">
-              {selected.itemName}
-            </p>
-
-            <div className="mt-4">
-              <label className="text-sm">Quantity</label>
-
-              <input
-                type="number"
-                className="border w-full p-2 rounded mt-1"
-                value={qty}
-                onChange={(e) => setQty(Number(e.target.value))}
-              />
-            </div>
-
-            <button
-              onClick={confirm}
-              className="w-full mt-4 bg-green-500 text-white py-2 rounded"
-            >
-              Execute Action
-            </button>
-
-            <button
-              onClick={() => setSelected(null)}
-              className="w-full mt-2 bg-gray-200 py-2 rounded"
-            >
-              Cancel
-            </button>
-
-          </div>
-
-        </div>
-      )}
 
       {/* TOAST */}
       <Toast toast={toast} />
@@ -267,4 +208,4 @@ const UltraStockPage = () => {
   );
 };
 
-export default UltraStockPage;
+export default CurrentStockPage;

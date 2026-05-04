@@ -82,6 +82,7 @@ Common/
 Controller/
  BaseController.cs
  Controller.cs
+ ProductController.cs
 Data/
  HMSDBC.cs
  HMSDBCFactory.cs
@@ -109,6 +110,7 @@ Models/
  PagedResult.cs
  PagedSpecification.cs
  PaginationParams.cs
+ Product.cs
  QueryParams.cs
  SearchParams.cs
  SortingParams.cs

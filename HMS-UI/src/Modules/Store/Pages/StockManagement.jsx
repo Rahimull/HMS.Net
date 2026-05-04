@@ -13,21 +13,21 @@ const StockManagement = () => {
   const [addOpen, setAddOpen] = useState(false);
   const [actionModal, setActionModal] = useState(null);
 
-  /*
-    actionModal:
-    { type: "receive" | "adjust", itemId: number }
-  */
+ 
+    // actionModal:
+    // { type: "receive" | "adjust", itemId: number }
+ 
 
   const [form, setForm] = useState({
     itemId: "",
-    quantity: 0,
+    initialQuantity: 0,
     location: "",
     batchNumber: "",
     expiryDate: "",
   });
 
   const [actionForm, setActionForm] = useState({
-    quantity: 0,
+    initialQuantity: 0,
     reason: "",
   });
 
@@ -48,7 +48,7 @@ const StockManagement = () => {
   const getStock = (id) => stocks.filter((s) => s.itemId === id);
 
   const total = (id) =>
-    getStock(id).reduce((a, b) => a + b.quantity, 0);
+    getStock(id).reduce((a, b) => a + b.initialQuantity, 0);
 
   const status = (id) => {
     const t = total(id);
@@ -65,7 +65,7 @@ const StockManagement = () => {
 
     setForm({
       itemId: "",
-      quantity: 0,
+      initialQuantity: 0,
       location: "",
       batchNumber: "",
       expiryDate: "",
@@ -81,7 +81,7 @@ const StockManagement = () => {
     if (actionModal.type === "receive") {
       await ItemStockApi.create({
         itemId: actionModal.itemId,
-        quantity: actionForm.quantity,
+        initialQuantity: actionForm.initialQuantity,
         location: "warehouse",
         batchNumber: "AUTO",
         expiryDate: new Date().toISOString().split("T")[0],
@@ -91,14 +91,14 @@ const StockManagement = () => {
     if (actionModal.type === "adjust") {
       await ItemStockApi.adjust({
         itemId: actionModal.itemId,
-        quantity: actionForm.quantity,
+        initialQuantity: actionForm.initialQuantity,
         reason: actionForm.reason,
       });
     }
 
     await load();
     setActionModal(null);
-    setActionForm({ quantity: 0, reason: "" });
+    setActionForm({ initialQuantity: 0, reason: "" });
   };
 
   return (
@@ -223,10 +223,10 @@ const StockManagement = () => {
               <input
                 type="number"
                 className="w-full border p-2 rounded"
-                placeholder="Quantity"
-                value={form.quantity}
+                placeholder="initialQuantity"
+                value={form.initialQuantity}
                 onChange={(e) =>
-                  setForm({ ...form, quantity: +e.target.value })
+                  setForm({ ...form, initialQuantity: +e.target.value })
                 }
               />
 
@@ -285,10 +285,10 @@ const StockManagement = () => {
             <input
               type="number"
               className="w-full border p-2 rounded mb-3"
-              placeholder="Quantity"
-              value={actionForm.quantity}
+              placeholder="initialQuantity"
+              value={actionForm.initialQuantity}
               onChange={(e) =>
-                setActionForm({ ...actionForm, quantity: +e.target.value })
+                setActionForm({ ...actionForm, initialQuantity: +e.target.value })
               }
             />
 
@@ -345,10 +345,10 @@ const StockManagement = () => {
               <div key={s.id} className="p-3 border rounded-xl bg-gray-50">
                 <div className="flex justify-between">
                   <span>{s.batchNumber}</span>
-                  <span>{s.quantity < 5 ? "🔴" : "🟢"}</span>
+                  <span>{s.initialQuantity < 5 ? "🔴" : "🟢"}</span>
                 </div>
 
-                <p>Qty: {s.quantity}</p>
+                <p>Qty: {s.initialQuantity}</p>
                 <p>Expiry: {s.expiryDate}</p>
               </div>
             ))}
