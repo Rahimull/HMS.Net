@@ -62,6 +62,7 @@ const Sidebar = () => {
             link: "/patientAppointmentUi",
             icon: Users,
           },
+          { name: "OK--->  Product", link: "/product", icon: Users },
           { name: "OK--->  Patident", link: "/patient", icon: Users },
           { name: `OK--->  Department`, link: "/department", icon: Building2 },
           {
