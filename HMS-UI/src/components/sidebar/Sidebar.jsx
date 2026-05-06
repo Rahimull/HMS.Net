@@ -48,6 +48,7 @@ const Sidebar = () => {
         title: "Overview",
         items: [
           { name: "Dashboard", link: "/", icon: LayoutDashboard },
+          { name: "Product", link: "/product", icon: LayoutDashboard },
           { name: "Units", link: "/unit", icon: LayoutDashboard },
           { name: "Category", link: "/Category", icon: LayoutDashboard },
         ],
@@ -62,7 +63,6 @@ const Sidebar = () => {
             link: "/patientAppointmentUi",
             icon: Users,
           },
-          { name: "OK--->  Product", link: "/product", icon: Users },
           { name: "OK--->  Patident", link: "/patient", icon: Users },
           { name: `OK--->  Department`, link: "/department", icon: Building2 },
           {

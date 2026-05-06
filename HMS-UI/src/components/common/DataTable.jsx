@@ -22,6 +22,7 @@ const DataTable = ({
   onDelete,
   loading,
   tableTitle= "Table",
+  actions,
 }) => {
   const pageSize = pagination.pageSize;
   const pageIndex = pagination.pageIndex;
@@ -114,7 +115,9 @@ const DataTable = ({
                       </td>
                     ))}
                   <td>
-                    <button
+                   {actions ? (actions(row)) : (<>
+                    
+                     <button
                       onClick={() => onEdit(row)}
                       className="mr-2 text-green-600"
                     >
@@ -125,7 +128,7 @@ const DataTable = ({
                       className="text-red-500"
                     >
                       Delete
-                    </button>
+                    </button></>)}
                   </td>
                 </tr>
               ))

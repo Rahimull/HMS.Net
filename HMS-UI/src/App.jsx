@@ -30,7 +30,7 @@ import StockManagement from "./Modules/Store/Pages/StockManagement";
 import CategoryPage from "./Modules/Common/Pages/CategoryPage";
 import UnitPage from "./Modules/Common/Pages/UnitPage";
 import CurrentStockPage from "./Modules/Store/Pages/CurrentStockPage"
-import Product from "./pages/Product";
+
 
 export default function App() {
   return (
@@ -44,7 +44,7 @@ export default function App() {
         <Route path="dashboard" element={<Navigate to="/" replace />} />
         <Route path="unit" element={<UnitPage />} />
         <Route path="category" element={<CategoryPage />} />
-        <Route path="product" element={<Product />} />
+
 
         {/* Reception */}
         <Route path="patient" element={<PatientPage />} />

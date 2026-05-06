@@ -4,7 +4,7 @@ import KPI from "../component/KPI";
 import Input from "@/components/common/Input";
 import Chart from "@/components/common/Chart";
 import DataTable from "@/components/common/DataTable";
-import BaseCrudPage from "@/pages/Template/BaseCrudPage";
+import Button from "@/components/common/Button";
 
 export default function StockDashboard() {
   const [stock, setStock] = useState([]);
@@ -49,14 +49,19 @@ export default function StockDashboard() {
   const columns = useMemo(()=>[
     {accessorKey: "itemName", header: "Item" },
     {accessorKey: "quantity", header: "Qty" },
-    {accessorKey: "minLevel", header: "Min", cell: ({row}) => row.original.minLevel ?? 10 },
+    {accessorKey: "minLevel", header: "Min Level", cell: ({row}) => row.original.minLevel ?? 10 },
     {accessorKey: "status", header: "Status", cell: ({row})=> {const item = row.original;
-      const status = item.quantity === 0? "OUT" : item.quantity < (item.minLevel ?? 10) ? "LOW" : "GOOD";
-      const style = status === "OUT" ? "text-red-600" : status === "LOW" ? "text-yellow-600" : "text-green-600";
+      const status = item.quantity === 0 ? "OUT" : item.quantity < (item.minLevel ?? 10) ? "LOW" : "GOOD";
+      const style = status === "OUT" ? "text-red-600" : status === "LOW" ? "text-yellow-600" : "p-2 border m-3 text-green-600 font-bold";
       return <span className={style}>{status}</span>
     } },
 
   ],[]);
+
+
+  const handleView = (row) => {
+    console.log("view", row);
+  }
 
   
 
@@ -118,6 +123,9 @@ export default function StockDashboard() {
           onEdit={(row)=> {console.log("edit", row)}}
           onDelete={(row)=> {console.log("delete", row)}}
           tableTitle="Current Stock"
+            actions={(row)=><>
+              <Button onClick={() => handleView(row)}> View </Button>
+          </>}
 
         />
      
