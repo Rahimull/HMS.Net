@@ -3,14 +3,8 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardFooter,
-} from "@/components/common/Card";
+import { Card } from "@/components/common/Card";
 import { useState } from "react";
-import Button from "./Button";
 
 const DataTable = ({
   columns,
@@ -19,8 +13,6 @@ const DataTable = ({
   totalCount,
   onPaginationChange,
   onSortingChange,
-  onEdit,
-  onDelete,
   loading,
   tableTitle = "Table",
   actions,
@@ -28,7 +20,6 @@ const DataTable = ({
   const pageSize = pagination.pageSize;
   const pageIndex = pagination.pageIndex;
 
-  // تعداد صفحات واقعی از سرور
   const pageCount = Math.max(1, Math.ceil(totalCount / pageSize));
   const maxPageIndex = pageCount - 1;
 
@@ -37,14 +28,11 @@ const DataTable = ({
   const table = useReactTable({
     data,
     columns,
-    state: {
-      sorting: tableSorting,
-      pagination,
-    },
+    state: { sorting: tableSorting, pagination },
     manualPagination: true,
     manualSorting: true,
     pageCount,
-    onPaginationChange, // کنترل در BaseCrudPage
+    onPaginationChange,
     onSortingChange: (updater) => {
       const next =
         typeof updater === "function" ? updater(tableSorting) : updater;
@@ -58,33 +46,34 @@ const DataTable = ({
               sortBy: sort.id,
               sortDir: sort.desc ? "desc" : "asc",
             }
-          : null,
+          : null
       );
     },
-
     getCoreRowModel: getCoreRowModel(),
   });
 
   return (
     <Card className="p-4 rounded-2xl shadow-md bg-white">
+
       {/* HEADER */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="ml-2 text-lg font-semibold text-gray-700">
-          {" "}
+        <h2 className="text-lg font-semibold text-gray-700">
           {tableTitle}
         </h2>
 
-        <span className="text-sm text-gray-400 mr-5"> Total: {totalCount}</span>
+        <span className="text-sm text-gray-400">
+          Total: {totalCount}
+        </span>
       </div>
 
       {/* TABLE */}
       <div className="overflow-x-auto rounded-xl border">
         <table className="w-full text-sm">
 
-          {/* TABLE HEAD */}
+          {/* THEAD */}
           <thead className="bg-gray-100 text-gray-600">
             {table.getHeaderGroups().map((hg) => (
-              <tr key={hg.id} >
+              <tr key={hg.id}>
                 {hg.headers.map((h) => (
                   <th
                     key={h.id}
@@ -92,17 +81,20 @@ const DataTable = ({
                     onClick={h.column.getToggleSortingHandler()}
                   >
                     <div className="flex items-center gap-1">
-                      {flexRender(h.column.columnDef.header, h.getContext())}
-                    {h.column.getIsSorted() === "asc" && " ▲"}
-                    {h.column.getIsSorted() === "desc" && " ▼"}
+                      {flexRender(
+                        h.column.columnDef.header,
+                        h.getContext()
+                      )}
+                      {h.column.getIsSorted() === "asc" && "▲"}
+                      {h.column.getIsSorted() === "desc" && "▼"}
                     </div>
                   </th>
-                  
                 ))}
                 <th className="p-3">Actions</th>
               </tr>
             ))}
           </thead>
+
           {/* TBODY */}
           <tbody>
             {loading ? (
@@ -133,7 +125,7 @@ const DataTable = ({
                   } hover:bg-blue-50`}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="p-2">
+                    <td key={cell.id} className="p-3">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -142,23 +134,18 @@ const DataTable = ({
                   ))}
 
                   {/* ACTIONS */}
-                  <td className="p-2">
-                    <div className="flex gap-2 justify-center">
+                  <td className="p-3">
+                    <div className="flex gap-2">
                       {actions ? (
                         actions(row.original)
                       ) : (
                         <>
-                          <Button className="px-2 py-1 text-xs rounded bg-green-300 text-green-700 hover:bg-green-400"
-                           onClick={() => onEdit(row.original)}
-                          >
+                          <button className="px-2 py-1 text-xs rounded bg-green-100 text-green-700 hover:bg-green-200">
                             Edit
-                          </Button>
-                          <Button 
-                          className="px-2 py-1 text-xs rounded bg-red-300 text-red-600 hover:bg-red-400"
-                          onClick={()=> onDelete(row.original.id)}
-                          >
+                          </button>
+                          <button className="px-2 py-1 text-xs rounded bg-red-100 text-red-600 hover:bg-red-200">
                             Delete
-                          </Button>
+                          </button>
                         </>
                       )}
                     </div>
@@ -170,8 +157,9 @@ const DataTable = ({
         </table>
       </div>
 
-      {/* Pagination */}
+      {/* PAGINATION */}
       <div className="flex justify-between items-center mt-4">
+
         <span className="text-sm text-gray-500">
           Page {pageIndex + 1} of {pageCount}
         </span>
@@ -204,6 +192,7 @@ const DataTable = ({
           </button>
         </div>
       </div>
+
     </Card>
   );
 };

@@ -99,11 +99,11 @@ const CurrentStockPage = () => {
     return "GOOD";
   };
 
-  const getStatusColor = (status) => {
+ const getStatusColor = (status) => {
     if (status === "OUT") return "text-red-600";
     if (status === "LOW") return "text-yellow-600";
     return "text-green-600";
-  };
+  }; 
 
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
