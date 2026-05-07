@@ -1,372 +1,259 @@
-import { useEffect, useState } from "react";
-import ItemApi from "@/api/store/ItemApi";
-import ItemStockApi from "@/api/store/ItemStockApi";
-import Button from "@/components/common/Button";
+import { useEffect, useMemo, useState } from "react";
 
-const StockManagement = () => {
-  const [items, setItems] = useState([]);
-  const [stocks, setStocks] = useState([]);
+import ItemStockApi from "@/api/store/ItemStockApi";
+
+import KPI from "../component/KPI";
+import Input from "@/components/common/Input";
+import DataTable from "@/components/common/DataTable";
+import Button from "@/components/common/Button";
+import Toast from "@/components/common/Toast";
+
+export default function ItemStockPage() {
+  const [itemStocks, setItemStocks] = useState([]);
+  const [search, setSearch] = useState("");
+  const [toast, setToast] = useState(null);
+
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+
+  const [sorting, setSorting] = useState(null);
+  const [totalCount, setTotalCount] = useState(0);
 
   const [selected, setSelected] = useState(null);
 
-  /* ================= MODALS ================= */
-  const [addOpen, setAddOpen] = useState(false);
-  const [actionModal, setActionModal] = useState(null);
+  /* ================= LOAD DATA ================= */
+  const loadData = async () => {
+    try {
+      const res = await ItemStockApi.getPaged({
+        page: pagination.pageIndex + 1,
+        pageSize: pagination.pageSize,
+        sortBy: sorting?.sortBy,
+        sortDir: sorting?.sortDir,
+      });
 
- 
-    // actionModal:
-    // { type: "receive" | "adjust", itemId: number }
- 
+      const data = res.data.data.data ?? res.data.data ?? [];
 
-  const [form, setForm] = useState({
-    itemId: "",
-    initialQuantity: 0,
-    location: "",
-    batchNumber: "",
-    expiryDate: "",
-  });
-
-  const [actionForm, setActionForm] = useState({
-    initialQuantity: 0,
-    reason: "",
-  });
-
-  /* ================= LOAD ================= */
-  const load = async () => {
-    const itemsRes = await ItemApi.getPaged({ page: 1, pageSize: 1000 });
-    const stockRes = await ItemStockApi.getPaged({ page: 1, pageSize: 1000 });
-
-    setItems(itemsRes.data.data.data);
-    setStocks(stockRes.data.data.data);
+      setItemStocks(Array.isArray(data) ? data : []);
+      setTotalCount(res.data.data.totalCount ?? data.length);
+    } catch (err) {
+      setToast({ message: "Failed to load batch inventory", type: "error" });
+    }
   };
 
   useEffect(() => {
-    load();
-  }, []);
+    loadData();
+  }, [pagination, sorting]);
 
-  /* ================= STOCK LOGIC ================= */
-  const getStock = (id) => stocks.filter((s) => s.itemId === id);
+  /* ================= FILTER ================= */
+  const filtered = useMemo(() => {
+    return itemStocks.filter(
+      (x) =>
+        x.itemName?.toLowerCase().includes(search.toLowerCase()) ||
+        x.batchNumber?.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [itemStocks, search]);
 
-  const total = (id) =>
-    getStock(id).reduce((a, b) => a + b.initialQuantity, 0);
+  /* ================= KPI ================= */
+  const expiredCount = useMemo(() => {
+    const today = new Date();
+    return itemStocks.filter(
+      (x) => x.expiryDate && new Date(x.expiryDate) < today
+    ).length;
+  }, [itemStocks]);
 
-  const status = (id) => {
-    const t = total(id);
-    if (t === 0) return "⚫";
-    if (t < 10) return "🔴";
-    if (t < 25) return "🟠";
-    return "🟢";
-  };
+  const lowCount = useMemo(() => {
+    return itemStocks.filter(
+      (x) => x.remainingQuantity < (x.minLevel ?? 10)
+    ).length;
+  }, [itemStocks]);
 
-  /* ================= ADD STOCK ================= */
-  const saveStock = async () => {
-    await ItemStockApi.create(form);
-    await load();
+  const nearExpiry = useMemo(() => {
+    const today = new Date();
+    const next30 = new Date();
+    next30.setDate(today.getDate() + 30);
 
-    setForm({
-      itemId: "",
-      initialQuantity: 0,
-      location: "",
-      batchNumber: "",
-      expiryDate: "",
-    });
+    return itemStocks.filter((x) => {
+      if (!x.expiryDate) return false;
+      const expiry = new Date(x.expiryDate);
+      return expiry >= today && expiry <= next30;
+    }).length;
+  }, [itemStocks]);
 
-    setAddOpen(false);
-  };
+  /* ================= STATUS ================= */
+  const getStatus = (row) => {
+    const today = new Date();
+    const expiry = row.expiryDate ? new Date(row.expiryDate) : null;
 
-  /* ================= ACTION (RECEIVE / ADJUST) ================= */
-  const applyAction = async () => {
-    if (!actionModal) return;
-
-    if (actionModal.type === "receive") {
-      await ItemStockApi.create({
-        itemId: actionModal.itemId,
-        initialQuantity: actionForm.initialQuantity,
-        location: "warehouse",
-        batchNumber: "AUTO",
-        expiryDate: new Date().toISOString().split("T")[0],
-      });
+    if (row.remainingQuantity === 0) {
+      return { label: "OUT", className: "bg-red-100 text-red-700" };
     }
 
-    if (actionModal.type === "adjust") {
-      await ItemStockApi.adjust({
-        itemId: actionModal.itemId,
-        initialQuantity: actionForm.initialQuantity,
-        reason: actionForm.reason,
-      });
+    if (expiry && expiry < today) {
+      return { label: "EXPIRED", className: "bg-red-200 text-red-800" };
     }
 
-    await load();
-    setActionModal(null);
-    setActionForm({ initialQuantity: 0, reason: "" });
+    if (row.remainingQuantity < (row.minLevel ?? 10)) {
+      return { label: "LOW", className: "bg-yellow-100 text-yellow-700" };
+    }
+
+    return { label: "GOOD", className: "bg-green-100 text-green-700" };
   };
+
+  /* ================= ACTIONS ================= */
+  const viewBatch = (row) => setSelected(row);
+
+  const viewMovement = (row) => {
+    console.log("Movement:", row);
+  };
+
+  const editBatch = (row) => {
+    console.log("Edit:", row);
+  };
+
+  const adjustStock = (row) => {
+    console.log("Adjust:", row);
+  };
+
+  /* ================= COLUMNS ================= */
+  const columns = useMemo(() => [
+    { accessorKey: "itemName", header: "Item" },
+    { accessorKey: "batchNumber", header: "Batch No" },
+    { accessorKey: "initialQuantity", header: "Initial Qty" },
+    { accessorKey: "remainingQuantity", header: "Stock" },
+    {
+      accessorKey: "buyPrice",
+      header: "Buy Price",
+      cell: ({ row }) => {
+        const value = row.original.buyPrice;
+
+        const style = value > 10000
+          ? "bg-red-100 text-red-700"
+          : "bg-blue-100 text-blue-700";
+
+        return (
+          <span className={`px-2 py-1 rounded-md text-xs font-semibold ${style}`}>
+            💰 {value?.toLocaleString()} AFG
+          </span>
+        );
+      },
+    },
+    {
+      accessorKey: "expiryDate",
+      header: "Expiry",
+      cell: ({ row }) =>
+        row.original.expiryDate
+          ? new Date(row.original.expiryDate).toLocaleDateString()
+          : "-",
+    },
+    {
+      header: "Status",
+      cell: ({ row }) => {
+        const status = getStatus(row.original);
+        return (
+          <span className={`px-2 py-1 rounded text-xs font-bold ${status.className}`}>
+            {status.label}
+          </span>
+        );
+      },
+    },
+  ], []);
 
   return (
-    <div className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
 
-      {/* ================= HEADER ================= */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">
-          📦 Inventory Control Center
-        </h1>
-
-        <Button onClick={() => setAddOpen(true)}>
-          + Add Stock
-        </Button>
+      {/* HEADER */}
+      <div>
+        <h1 className="text-2xl font-bold">ItemStock Management</h1>
+        <p className="text-gray-500">Batch Inventory System</p>
       </div>
 
-      {/* ================= KPI ================= */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
-
-        {[
-          { label: "Healthy", value: 1200, dot: "bg-green-500" },
-          { label: "Low Stock", value: 12, dot: "bg-red-500" },
-          { label: "Expiring", value: 8, dot: "bg-yellow-500" },
-          { label: "Out", value: 3, dot: "bg-gray-500" },
-        ].map((k, i) => (
-          <div
-            key={i}
-            className="relative backdrop-blur-xl bg-white/70 shadow-lg p-5 rounded-2xl border hover:scale-105 transition"
-          >
-            <div className={`w-2 h-2 rounded-full ${k.dot} absolute top-3 right-3`} />
-
-            <p className="text-sm text-gray-500">{k.label}</p>
-
-            <p className="text-3xl font-bold text-gray-800 mt-1">
-              {k.value}
-            </p>
-
-            <div className="mt-3 h-1 bg-gray-200 rounded-full">
-              <div className={`h-full ${k.dot}`} style={{ width: "70%" }} />
-            </div>
-          </div>
-        ))}
+      {/* KPI */}
+      <div className="grid md:grid-cols-4 gap-4">
+        <KPI title="Total Batches" value={itemStocks.length} color="from-blue-500 to-blue-700" />
+        <KPI title="Expired" value={expiredCount} color="from-red-500 to-red-700" />
+        <KPI title="Low Stock" value={lowCount} color="from-yellow-500 to-yellow-700" />
+        <KPI title="Near Expiry" value={nearExpiry} color="from-orange-500 to-orange-700" />
       </div>
 
-      {/* ================= ITEMS GRID ================= */}
-      <div className="grid grid-cols-4 gap-5">
+      {/* SEARCH */}
+      <Input
+        placeholder="Search item or batch..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
 
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className="bg-white rounded-2xl shadow-md p-4 hover:scale-105 transition cursor-pointer border"
-            onClick={() => setSelected(item)}
-          >
-            <div className="flex justify-between">
-              <h2 className="font-bold text-gray-700">{item.name}</h2>
-              <span className="text-xl">{status(item.id)}</span>
-            </div>
+      {/* TABLE */}
+      <DataTable
+        columns={columns}
+        data={filtered}
+        pagination={pagination}
+        totalCount={totalCount}
+        loading={false}
+        onPaginationChange={setPagination}
+        onSortingChange={setSorting}
+        tableTitle="Batch Inventory"
+        actions={(row) => (
+          <div className="flex gap-2">
 
-            <p className="text-sm text-gray-400">{item.category}</p>
-
-            <p className="text-lg font-bold mt-2">
-              {total(item.id)} units
-            </p>
-
-            {/* ACTIONS */}
-            <div className="flex gap-2 mt-4">
-
-              <Button
-                className="text-xs"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setActionModal({ type: "receive", itemId: item.id });
-                }}
-              >
-                Receive
-              </Button>
-
-              <Button
-                className="text-xs bg-yellow-500"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setActionModal({ type: "adjust", itemId: item.id });
-                }}
-              >
-                Adjust
-              </Button>
-
-            </div>
-          </div>
-        ))}
-
-      </div>
-
-      {/* ================= ADD STOCK MODAL ================= */}
-      {addOpen && (
-        <div className="fixed inset-0 bg-black/40 flex justify-end z-50">
-
-          <div className="w-[420px] bg-white h-full p-5 shadow-2xl">
-
-            <div className="flex justify-between mb-5">
-              <h2 className="text-xl font-bold">➕ Add Stock</h2>
-              <button onClick={() => setAddOpen(false)}>✖</button>
-            </div>
-
-            <div className="space-y-3">
-
-              <select
-                className="w-full border p-2 rounded"
-                value={form.itemId}
-                onChange={(e) =>
-                  setForm({ ...form, itemId: e.target.value })
-                }
-              >
-                <option value="">Select Item</option>
-                {items.map((i) => (
-                  <option key={i.id} value={i.id}>
-                    {i.name}
-                  </option>
-                ))}
-              </select>
-
-              <input
-                type="number"
-                className="w-full border p-2 rounded"
-                placeholder="initialQuantity"
-                value={form.initialQuantity}
-                onChange={(e) =>
-                  setForm({ ...form, initialQuantity: +e.target.value })
-                }
-              />
-
-              <input
-                className="w-full border p-2 rounded"
-                placeholder="Location"
-                value={form.location}
-                onChange={(e) =>
-                  setForm({ ...form, location: e.target.value })
-                }
-              />
-
-              <input
-                className="w-full border p-2 rounded"
-                placeholder="Batch Number"
-                value={form.batchNumber}
-                onChange={(e) =>
-                  setForm({ ...form, batchNumber: e.target.value })
-                }
-              />
-
-              <input
-                type="date"
-                className="w-full border p-2 rounded"
-                value={form.expiryDate}
-                onChange={(e) =>
-                  setForm({ ...form, expiryDate: e.target.value })
-                }
-              />
-
-            </div>
-
-            <button
-              onClick={saveStock}
-              className="w-full bg-green-600 text-white py-2 mt-6 rounded"
+            <Button
+              size="sm"
+              className="bg-blue-500 text-white"
+              onClick={() => viewBatch(row)}
             >
-              Save Stock
-            </button>
+              View
+            </Button>
+
+            <Button
+              size="sm"
+              className="bg-purple-500 text-white"
+              onClick={() => viewMovement(row)}
+            >
+              Movement
+            </Button>
 
           </div>
-        </div>
-      )}
+        )}
+      />
 
-      {/* ================= RECEIVE / ADJUST MODAL ================= */}
-      {actionModal && (
-        <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
-
-          <div className="bg-white w-[400px] p-5 rounded-2xl shadow-2xl">
-
-            <h2 className="text-xl font-bold mb-4">
-              {actionModal.type === "receive"
-                ? "📥 Receive Stock"
-                : "⚙ Adjust Stock"}
-            </h2>
-
-            <input
-              type="number"
-              className="w-full border p-2 rounded mb-3"
-              placeholder="initialQuantity"
-              value={actionForm.initialQuantity}
-              onChange={(e) =>
-                setActionForm({ ...actionForm, initialQuantity: +e.target.value })
-              }
-            />
-
-            {actionModal.type === "adjust" && (
-              <input
-                className="w-full border p-2 rounded mb-3"
-                placeholder="Reason"
-                value={actionForm.reason}
-                onChange={(e) =>
-                  setActionForm({ ...actionForm, reason: e.target.value })
-                }
-              />
-            )}
-
-            <button
-              onClick={applyAction}
-              className={`w-full text-white py-2 rounded ${
-                actionModal.type === "receive"
-                  ? "bg-green-600"
-                  : "bg-yellow-600"
-              }`}
-            >
-              Submit
-            </button>
-
-            <button
-              onClick={() => setActionModal(null)}
-              className="w-full bg-gray-500 text-white py-2 mt-2 rounded"
-            >
-              Cancel
-            </button>
-
-          </div>
-        </div>
-      )}
-
-      {/* ================= DETAIL PANEL ================= */}
+      {/* DRAWER */}
       {selected && (
-        <div className="fixed right-0 top-0 w-[480px] h-full bg-white shadow-2xl p-5">
+        <div className="fixed inset-0 bg-black/40 flex justify-end">
+          <div className="w-[420px] bg-white h-full p-5 shadow-xl">
 
-          <h2 className="text-xl font-bold">
-            📦 {selected.name}
-          </h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="font-bold text-lg">Batch Details</h2>
+              <button onClick={() => setSelected(null)}>✕</button>
+            </div>
 
-          <div className="mt-4 text-lg font-bold">
-            Total: {total(selected.id)}
-          </div>
+            <div className="space-y-2 text-sm">
+              <p><b>Item:</b> {selected.itemName}</p>
+              <p><b>Batch:</b> {selected.batchNumber}</p>
+              <p><b>Stock:</b> {selected.remainingQuantity}</p>
+              <p><b>Buy Price:</b> {selected.buyPrice} AFG</p>
+              <p><b>Expiry:</b> {selected.expiryDate ? new Date(selected.expiryDate).toLocaleDateString() : "-"}</p>
+            </div>
 
-          <h3 className="mt-5 font-bold">🧪 Batches</h3>
-
-          <div className="space-y-2 mt-3">
-
-            {getStock(selected.id).map((s) => (
-              <div key={s.id} className="p-3 border rounded-xl bg-gray-50">
-                <div className="flex justify-between">
-                  <span>{s.batchNumber}</span>
-                  <span>{s.initialQuantity < 5 ? "🔴" : "🟢"}</span>
-                </div>
-
-                <p>Qty: {s.initialQuantity}</p>
-                <p>Expiry: {s.expiryDate}</p>
-              </div>
-            ))}
+            <div className="mt-6 space-y-2">
+              <Button className="w-full bg-purple-500 text-white">Movement</Button>
+              <Button className="w-full bg-green-500 text-white">Edit</Button>
+              <Button className="w-full bg-yellow-500 text-white">Adjust</Button>
+            </div>
 
           </div>
-
-          <button
-            className="w-full bg-gray-500 text-white py-2 mt-6 rounded"
-            onClick={() => setSelected(null)}
-          >
-            Close
-          </button>
-
         </div>
+      )}
+
+      {/* TOAST */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
 
     </div>
   );
-};
-
-export default StockManagement;
+}

@@ -409,6 +409,7 @@ Modules/
   ItemStockController.cs
   PurchaseConroller.cs
   PurchaseDetailsController.cs
+  StockMovementController.cs
   SuplierController.cs
  Store/DTOs/
   BatchSequenceDto.cs
@@ -431,6 +432,7 @@ Modules/
   UpdateItemStockDto.cs
   UpdatePurchasesDetailsDto.cs
   UpdatePurchasesDto.cs
+  UpdateStockMovementDto.cs
   UpdateSuplierDto.cs
  Store/Entities/
   BatchSequence.cs
@@ -450,11 +452,13 @@ Modules/
    IItemStockRepository.cs
    IPurchaseDetailsRepository.cs
    IPurchaseRepository.cs
+   IStockMovementRepository.cs
    ISuplierRepository.cs
    ItemRepository.cs
    ItemStockRepository.cs
    PurchaseDetailsRepository.cs
    PurchaseRepository.cs
+   StockMovementRepository.cs
    SuplierRepository.cs
   Services/
    BatchNumberService.cs
@@ -464,11 +468,13 @@ Modules/
    IItemStockService.cs
    IPurchaseDetailsService.cs
    IPurchaseService.cs
+   IStockMovementService.cs
    ISuplierService.cs
    ItemService.cs
    ItemStockService.cs
    PurchaseDetailsService.cs
    PurchaseService.cs
+   StockMovementService.cs
    SuplierService.cs
   Specification/
    CurrentStockSpecification.cs
@@ -476,6 +482,7 @@ Modules/
    ItemStockSpecification.cs
    PurchaseDetailsSpecification.cs
    PurchaseSpecification.cs
+   StockMovementSpecification.cs
    SuplierSpecification.cs
   StoreModule.cs
  SupportServices/Entities/

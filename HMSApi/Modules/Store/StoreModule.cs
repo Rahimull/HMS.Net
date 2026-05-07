@@ -22,6 +22,7 @@ public static class StoreModule
         services.AddScoped<IItemStockRepository, ItemStockRepository>();
         services.AddScoped<ISuplierRepository, SuplierRepository>();
         services.AddScoped<ICurrentStockRepository, CurrentStockRepository>();
+        services.AddScoped<IStockMovementRepository, StockMovementRepository>();
     
         
 
@@ -34,6 +35,7 @@ public static class StoreModule
         services.AddScoped<IItemStockService, ItemStockService>();
         services.AddScoped<ISuplierService, SuplierService>();
         services.AddScoped<ICurrentStockService, CurrentStockService>();
+        services.AddScoped<IStockMovementService, StockMovementService>();
 
         // ===============================
         // Batch Sequence Service

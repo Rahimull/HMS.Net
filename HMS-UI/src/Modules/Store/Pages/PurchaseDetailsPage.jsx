@@ -1,18 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
-
-import ItemStockApi from "@/api/store/ItemStockApi";
+import StockMovementApi from "@/api/store/StockMovementApi";
 
 import KPI from "../component/KPI";
-
 import Input from "@/components/common/Input";
 import DataTable from "@/components/common/DataTable";
-import Button from "@/components/common/Button";
 import Toast from "@/components/common/Toast";
 
-export default function ItemStockPage() {
-
-  const [itemStocks, setItemStocks] = useState([]);
+export default function StockMovementPage() {
+  const [movements, setMovements] = useState([]);
   const [search, setSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
   const [toast, setToast] = useState(null);
 
   const [pagination, setPagination] = useState({
@@ -20,263 +17,163 @@ export default function ItemStockPage() {
     pageSize: 10,
   });
 
-  const [sorting, setSorting] = useState(null);
   const [totalCount, setTotalCount] = useState(0);
+  const [sorting, setSorting] = useState(null);
 
   /* ================= LOAD DATA ================= */
-
   const loadData = async () => {
     try {
-
-      const res = await ItemStockApi.getPaged({
+      const res = await StockMovementApi.getPaged({
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
         sortBy: sorting?.sortBy,
         sortDir: sorting?.sortDir,
+        type: typeFilter || undefined,
       });
 
       const data = res.data.data.data ?? res.data.data ?? [];
-
-      setItemStocks(Array.isArray(data) ? data : []);
-
+      setMovements(Array.isArray(data) ? data : []);
       setTotalCount(res.data.data.totalCount ?? data.length);
-
     } catch (err) {
-
-      setToast({
-        message: "Failed to load batch inventory",
-        type: "error",
-      });
-
+      setToast({ message: "Failed to load movements", type: "error" });
     }
   };
-
-  /* ================= INITIAL LOAD ================= */
 
   useEffect(() => {
     loadData();
-  }, [pagination, sorting]);
+  }, [pagination, sorting, typeFilter]);
 
   /* ================= FILTER ================= */
-
   const filtered = useMemo(() => {
-
-    return itemStocks.filter((x) =>
+    return movements.filter((x) =>
       x.itemName?.toLowerCase().includes(search.toLowerCase()) ||
-      x.batchNo?.toLowerCase().includes(search.toLowerCase())
+      x.batchNumber?.toLowerCase().includes(search.toLowerCase())
     );
-
-  }, [itemStocks, search]);
+  }, [movements, search]);
 
   /* ================= KPI ================= */
+  const totalIn = useMemo(
+    () => movements.filter((x) => x.quantity > 0).length,
+    [movements]
+  );
 
-  const expiredCount = useMemo(() => {
+  const totalOut = useMemo(
+    () => movements.filter((x) => x.quantity < 0).length,
+    [movements]
+  );
 
-    const today = new Date();
+  const totalValue = useMemo(() => {
+    return movements.reduce(
+      (sum, x) => sum + Math.abs(x.quantity * (x.unitPrice ?? 0)),
+      0
+    );
+  }, [movements]);
 
-    return itemStocks.filter(
-      (x) => new Date(x.expiryDate) < today
-    ).length;
-
-  }, [itemStocks]);
-
-  const lowCount = useMemo(() => {
-
-    return itemStocks.filter(
-      (x) => x.quantity < (x.minLevel ?? 10)
-    ).length;
-
-  }, [itemStocks]);
-
-  const nearExpiry = useMemo(() => {
-
-    const today = new Date();
-
-    const next30 = new Date();
-
-    next30.setDate(today.getDate() + 30);
-
-    return itemStocks.filter((x) => {
-
-      const expiry = new Date(x.expiryDate);
-
-      return expiry >= today && expiry <= next30;
-
-    }).length;
-
-  }, [itemStocks]);
-
-  /* ================= STATUS ================= */
-
-  const getStatus = (row) => {
-
-    const today = new Date();
-
-    const expiry = new Date(row.expiryDate);
-
-    if (row.quantity === 0) {
-
-      return {
-        label: "OUT",
-        className: "bg-red-100 text-red-700",
-      };
-
-    }
-
-    if (expiry < today) {
-
-      return {
-        label: "EXPIRED",
-        className: "bg-red-200 text-red-800",
-      };
-
-    }
-
-    if (row.quantity < (row.minLevel ?? 10)) {
-
-      return {
-        label: "LOW",
-        className: "bg-yellow-100 text-yellow-700",
-      };
-
-    }
-
-    return {
-      label: "GOOD",
-      className: "bg-green-100 text-green-700",
-    };
-
-  };
-
-  /* ================= TABLE COLUMNS ================= */
-
+  /* ================= COLUMNS ================= */
   const columns = useMemo(() => [
-
     {
       accessorKey: "itemName",
       header: "Item",
     },
-
     {
-      accessorKey: "batchNo",
-      header: "Batch No",
+      accessorKey: "batchNumber",
+      header: "Batch",
     },
-
     {
       accessorKey: "quantity",
       header: "Qty",
+      cell: ({ row }) => (
+        <span className={row.original.quantity > 0 ? "text-green-600" : "text-red-600"}>
+          {row.original.quantity > 0 ? "+" : ""}
+          {row.original.quantity}
+        </span>
+      ),
     },
-
     {
-      accessorKey: "purchasePrice",
-      header: "Purchase",
-    },
-
-    {
-      accessorKey: "salePrice",
-      header: "Sale",
-    },
-
-    {
-      accessorKey: "expiryDate",
-      header: "Expiry",
+      accessorKey: "unitPrice",
+      header: "Unit Price",
       cell: ({ row }) =>
-        row.original.expiryDate
-          ? new Date(row.original.expiryDate).toLocaleDateString()
-          : "-",
+        `${row.original.unitPrice?.toLocaleString()} AFG`,
     },
-
     {
-      header: "Status",
-
+      accessorKey: "type",
+      header: "Type",
       cell: ({ row }) => {
+        const type = row.original.type;
 
-        const status = getStatus(row.original);
+        const color =
+          type === "Sale"
+            ? "bg-red-100 text-red-700"
+            : type === "Purchase"
+            ? "bg-green-100 text-green-700"
+            : "bg-blue-100 text-blue-700";
 
         return (
-          <span
-            className={`px-2 py-1 rounded text-xs font-bold ${status.className}`}
-          >
-            {status.label}
+          <span className={`px-2 py-1 rounded text-xs font-bold ${color}`}>
+            {type}
           </span>
         );
       },
     },
-
+    {
+      accessorKey: "createdAt",
+      header: "Date",
+      cell: ({ row }) =>
+        row.original.createdAt
+          ? new Date(row.original.createdAt).toLocaleString()
+          : "-",
+    },
   ], []);
 
-  /* ================= ACTIONS ================= */
-
-  const viewMovement = (row) => {
-    console.log("Movement", row);
-  };
-
-  const editBatch = (row) => {
-    console.log("Edit", row);
-  };
-
   return (
-
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
 
       {/* ================= HEADER ================= */}
-
       <div>
-
-        <h1 className="text-2xl font-bold">
-          ItemStock Management
-        </h1>
-
-        <p className="text-gray-500">
-          Batch Inventory Management
-        </p>
-
+        <h1 className="text-2xl font-bold">Stock Movement History</h1>
+        <p className="text-gray-500">Audit & Tracking Center</p>
       </div>
 
       {/* ================= KPI ================= */}
-
-      <div className="grid md:grid-cols-4 gap-4">
-
+      <div className="grid md:grid-cols-3 gap-4">
         <KPI
-          title="Total Batches"
-          value={itemStocks.length}
-          color="from-blue-500 to-blue-700"
+          title="In Movements"
+          value={totalIn}
+          color="from-green-500 to-green-700"
         />
-
         <KPI
-          title="Expired"
-          value={expiredCount}
+          title="Out Movements"
+          value={totalOut}
           color="from-red-500 to-red-700"
         />
-
         <KPI
-          title="Low Stock"
-          value={lowCount}
-          color="from-yellow-500 to-yellow-700"
+          title="Total Value"
+          value={`${totalValue.toLocaleString()} AFG`}
+          color="from-blue-500 to-blue-700"
         />
-
-        <KPI
-          title="Near Expiry"
-          value={nearExpiry}
-          color="from-orange-500 to-orange-700"
-        />
-
       </div>
 
-      {/* ================= SEARCH ================= */}
-
-      <div>
-
+      {/* ================= FILTERS ================= */}
+      <div className="flex gap-3">
         <Input
           placeholder="Search item or batch..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
 
+        <select
+          className="border rounded px-3 py-2"
+          value={typeFilter}
+          onChange={(e) => setTypeFilter(e.target.value)}
+        >
+          <option value="">All Types</option>
+          <option value="Sale">Sale</option>
+          <option value="Purchase">Purchase</option>
+          <option value="Adjustment">Adjustment</option>
+        </select>
       </div>
 
       {/* ================= TABLE ================= */}
-
       <DataTable
         columns={columns}
         data={filtered}
@@ -285,45 +182,17 @@ export default function ItemStockPage() {
         loading={false}
         onPaginationChange={setPagination}
         onSortingChange={setSorting}
-        tableTitle="Batch Inventory"
-
-        actions={(row) => (
-
-          <div className="flex gap-2">
-
-            <Button
-              size="sm"
-              className="bg-blue-500 hover:bg-blue-600 text-white"
-              onClick={() => viewMovement(row)}
-            >
-              Movement
-            </Button>
-
-            <Button
-              size="sm"
-              className="bg-green-500 hover:bg-green-600 text-white"
-              onClick={() => editBatch(row)}
-            >
-              Edit
-            </Button>
-
-          </div>
-
-        )}
+        tableTitle="Movements"
       />
 
       {/* ================= TOAST ================= */}
-
       {toast && (
-
         <Toast
           message={toast.message}
           type={toast.type}
           onClose={() => setToast(null)}
         />
-
       )}
-
     </div>
   );
 }
