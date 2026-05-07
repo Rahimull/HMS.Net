@@ -1,211 +1,178 @@
-import { useEffect, useMemo, useState } from "react";
 import CurrentStockApi from "@/api/store/CurrentStockApi";
+import { useEffect, useMemo, useState } from "react";
+import KPI from "../component/KPI";
 import Input from "@/components/common/Input";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import Chart from "@/components/common/Chart";
+import DataTable from "@/components/common/DataTable";
+import Button from "@/components/common/Button";
+import StockStatus from "../component/StockStatus";
+import Toast from "@/components/common/Toast";
 
-/* ================= TOAST ================= */
-const Toast = ({ toast }) => {
-  if (!toast) return null;
-
-  const color =
-    toast.type === "success"
-      ? "bg-green-500"
-      : toast.type === "warning"
-      ? "bg-yellow-500"
-      : "bg-red-500";
-
-  return (
-    <div className={`fixed bottom-5 right-5 px-4 py-2 text-white rounded shadow ${color}`}>
-      {toast.message}
-    </div>
-  );
-};
-
-/* ================= KPI ================= */
-const KPI = ({ title, value, color }) => (
-  <div className={`p-5 rounded-xl text-white shadow bg-gradient-to-r ${color}`}>
-    <p className="text-sm opacity-80">{title}</p>
-    <h2 className="text-2xl font-bold">{value}</h2>
-  </div>
-);
-
-/* ================= MAIN ================= */
-const CurrentStockPage = () => {
-  const [stocks, setStocks] = useState([]);
+export default function StockDashboard() {
+  const [stock, setStock] = useState([]);
   const [search, setSearch] = useState("");
   const [toast, setToast] = useState(null);
 
-  useEffect(() => {
-    load();
-  }, []);
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 5,
+  });
 
-  const load = async () => {
+  const [totalCount, setTotalCount] = useState(0);
+  const [sorting, setSorting] = useState(null);
+
+  /* ================= LOAD DATA ================= */
+  const loadData = async () => {
     try {
       const res = await CurrentStockApi.getPaged({
-        page: 1,
-        pageSize: 500,
+        page: pagination.pageIndex + 1,
+        pageSize: pagination.pageSize,
+        sortBy: sorting?.sortBy,
+        sortDir: sorting?.sortDir,
       });
 
-      const data =
-        res?.data?.data?.data ??
-        res?.data?.data ??
-        res?.data ??
-        [];
+      const data = res.data.data.data ?? res.data.data ?? [];
+      setStock(Array.isArray(data) ? data : []);
+      setTotalCount(res.data.data.totalCount ?? data.length);
 
-      setStocks(Array.isArray(data) ? data : []);
-    } catch {
-      setToast({
-        message: "Failed to load stock data",
-        type: "error",
-      });
+    } catch (err) {
+      setToast({ message: "Failed to load data", type: "error" });
     }
   };
 
+  /* ================= INITIAL LOAD ================= */
+  useEffect(() => {
+    loadData();
+  }, [pagination, sorting]);
+
+  /* ================= AUTO REFRESH ================= */
+  useEffect(() => {
+    const interval = setInterval(loadData, 10000);
+    return () => clearInterval(interval);
+  }, []); // فقط یکبار
+
+  /* ================= ALERT ================= */
+  useEffect(() => {
+    if (!stock.length) return;
+
+    const hasOut = stock.some(x => x.quantity === 0);
+    const hasLow = stock.some(x => x.quantity < (x.minLevel ?? 10) && x.quantity > 0);
+
+    if (hasOut) {
+      setToast({ message: "Some items are OUT OF STOCK!", type: "error" });
+    } else if (hasLow) {
+      setToast({ message: "Some items are LOW in stock!", type: "warning" });
+    }
+  }, [stock]);
+
   /* ================= FILTER ================= */
   const filtered = useMemo(() => {
-    return stocks.filter(x =>
+    return stock.filter(x =>
       x.itemName?.toLowerCase().includes(search.toLowerCase())
     );
-  }, [stocks, search]);
+  }, [stock, search]);
 
   /* ================= KPI ================= */
   const lowStock = useMemo(
-    () => stocks.filter(x => x.quantity < (x.minLevel ?? 10)),
-    [stocks]
+    () => stock.filter(x => x.quantity < (x.minLevel ?? 10) && x.quantity > 0),
+    [stock]
   );
 
   const outStock = useMemo(
-    () => stocks.filter(x => x.quantity === 0),
-    [stocks]
+    () => stock.filter(x => x.quantity === 0),
+    [stock]
+  );
+
+  const goodStock = useMemo(
+    () => stock.filter(x => x.quantity >= (x.minLevel ?? 10)),
+    [stock]
   );
 
   /* ================= CHART ================= */
-  const chartData = useMemo(() => filtered.slice(0, 20), [filtered]);
+  const chartData = useMemo(() => {
+    return stock.map(x => ({
+      name: x.itemName,
+      quantity: x.quantity,
+      min: x.minLevel ?? 10,
+    }));
+  }, [stock]);
+
+  console.log(chartData)
+
+  /* ================= COLUMNS ================= */
+  const columns = useMemo(() => [
+    { accessorKey: "itemName", header: "Item" },
+    { accessorKey: "quantity", header: "Qty" },
+    {
+      accessorKey: "minLevel",
+      header: "Min",
+      cell: ({ row }) => row.original.minLevel ?? 10,
+    },
+    {
+      header: "Status",
+      cell: ({ row }) => <StockStatus item={row.original} />,
+    },
+  ], []);
 
   /* ================= ACTION ================= */
-  const openBatch = (item) => {
-    window.location.href = `/item-stock?itemId=${item.itemId}`;
+  const openBatch = (row) => {
+    window.location.href = `/item-stock?itemId=${row.itemId}`;
   };
-
-  const getStatus = (item) => {
-    if (item.quantity === 0) return "OUT";
-    if (item.quantity < (item.minLevel ?? 10)) return "LOW";
-    return "GOOD";
-  };
-
- const getStatusColor = (status) => {
-    if (status === "OUT") return "text-red-600";
-    if (status === "LOW") return "text-yellow-600";
-    return "text-green-600";
-  }; 
 
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
 
       {/* HEADER */}
       <div>
-        <h1 className="text-2xl font-bold">Current Stock Dashboard</h1>
-        <p className="text-gray-500">Inventory overview (read-only)</p>
+        <h1 className="text-2xl font-bold">Stock Dashboard</h1>
+        <p className="text-gray-500">Modular ERP Inventory System</p>
       </div>
 
       {/* KPI */}
-      <div className="grid md:grid-cols-4 gap-4">
-        <KPI title="Items" value={stocks.length} color="from-blue-500 to-blue-600" />
-        <KPI title="Low Stock" value={lowStock.length} color="from-yellow-500 to-yellow-600" />
-        <KPI title="Out of Stock" value={outStock.length} color="from-red-500 to-red-600" />
-        <KPI title="Active Items" value={stocks.length - outStock.length} color="from-purple-500 to-purple-600" />
+      <div className="grid md:grid-cols-5 gap-4">
+        <KPI title="Total" value={stock.length} color="from-blue-500 to-blue-700" />
+        <KPI title="Low" value={lowStock.length} color="from-yellow-500 to-yellow-700" />
+        <KPI title="Out" value={outStock.length} color="from-red-500 to-red-700" />
+        <KPI title="Good" value={goodStock.length} color="from-green-500 to-green-700" />
+        <KPI title="Active" value={stock.length - outStock.length} color="from-purple-500 to-purple-700" />
       </div>
-
-      {/* ALERT */}
-      {outStock.length > 0 && (
-        <div className="bg-red-100 border-l-4 border-red-500 p-4 rounded">
-          ⚠ {outStock.length} items are out of stock
-        </div>
-      )}
 
       {/* SEARCH */}
       <Input
-        placeholder="Search inventory..."
+        placeholder="Search items..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
 
       {/* CHART */}
-      <div className="bg-white p-4 rounded-xl shadow">
-        <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={chartData}>
-            <XAxis dataKey="itemName" hide />
-            <Tooltip />
-            <Bar dataKey="quantity" fill="#6366f1" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+      <Chart data={chartData.slice(0, 10)} />
 
       {/* TABLE */}
-      <div className="bg-white rounded-xl shadow overflow-hidden">
-
-        <table className="w-full text-sm">
-          <thead className="bg-gray-100 text-left">
-            <tr>
-              <th className="p-3">Item</th>
-              <th className="p-3">Quantity</th>
-              <th className="p-3">Min Level</th>
-              <th className="p-3">Status</th>
-              <th className="p-3">Action</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {filtered.map(item => {
-              const status = getStatus(item);
-
-              return (
-                <tr key={item.itemId} className="border-t hover:bg-gray-50">
-
-                  <td className="p-3 font-medium">
-                    {item.itemName}
-                  </td>
-
-                  <td className="p-3">
-                    {item.quantity}
-                  </td>
-
-                  <td className="p-3">
-                    {item.minLevel ?? 10}
-                  </td>
-
-                  <td className={`p-3 font-bold ${getStatusColor(status)}`}>
-                    {status}
-                  </td>
-
-                  <td className="p-3">
-                    <button
-                      onClick={() => openBatch(item)}
-                      className="px-3 py-1 bg-blue-500 text-white rounded"
-                    >
-                      Batch
-                    </button>
-                  </td>
-
-                </tr>
-              );
-            })}
-          </tbody>
-
-        </table>
-      </div>
+      <DataTable
+        columns={columns}
+        data={filtered}
+        pagination={pagination}
+        totalCount={totalCount}
+        loading={false}
+        onPaginationChange={setPagination}
+        onSortingChange={setSorting}
+        tableTitle="Current Stock"
+        actions={(row) => (
+          <Button size="sm" onClick={() => openBatch(row)}>
+            Batch
+          </Button>
+        )}
+      />
 
       {/* TOAST */}
-      <Toast toast={toast} />
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
 
     </div>
   );
-};
-
-export default CurrentStockPage;
+}
