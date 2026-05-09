@@ -133,6 +133,11 @@ const Sidebar = () => {
             link: "/store/StockManagement",
             icon: Package,
           },
+          {
+            name: "StockMovement",
+            link: "/store/StockMovement",
+            icon: Package,
+          },
           { name: "PurchasesUi", link: "/store/PurchasesUi", icon: Package },
           { name: "OK---> Items", link: "/store/items", icon: Package },
           {

@@ -116,7 +116,7 @@ export default function StockDashboard() {
 
   /* ================= ACTION ================= */
   const openBatch = (row) => {
-    window.location.href = `/item-stock?itemId=${row.itemId}`;
+    window.location.href = `/store/StockManagement?itemId=${row.itemId}&itemName=${row.itemName}`;
   };
 
   return (
@@ -124,7 +124,7 @@ export default function StockDashboard() {
 
       {/* HEADER */}
       <div>
-        <h1 className="text-2xl font-bold">Stock Dashboard</h1>
+        <h1 className="text-2xl font-bold">Current Stock</h1>
         <p className="text-gray-500">Modular ERP Inventory System</p>
       </div>
 

@@ -8,7 +8,7 @@ public class StockMovementSpecification : BaseSpecification<StockMovement>
 {
     public StockMovementSpecification(QueryParams query)
     {
-        /* ---------- SEARCH ---------- */
+        /* ---------- Navigation ---------- */
         AddInclude(u => u.ItemStock);
         AddInclude(s => s.ItemStock.Item);
         

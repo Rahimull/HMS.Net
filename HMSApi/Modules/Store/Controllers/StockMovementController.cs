@@ -12,7 +12,7 @@ namespace HMSApi.Modules.Store.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class StockMovementController: BaseController<IStockMovementService, StockMovementDto, CreateStockMovementDto, UpdateStockMovementDto>
+public class StockMovementController: BaseController<IStockMovementService,StockMovementDto, CreateStockMovementDto, UpdateStockMovementDto>
 {
     private readonly HMSDBC _context;
     public StockMovementController(IStockMovementService service, HMSDBC context) : base(service)

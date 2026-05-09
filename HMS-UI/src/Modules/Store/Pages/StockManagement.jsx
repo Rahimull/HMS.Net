@@ -7,53 +7,95 @@ import Input from "@/components/common/Input";
 import DataTable from "@/components/common/DataTable";
 import Button from "@/components/common/Button";
 import Toast from "@/components/common/Toast";
+import { useSearchParams } from "react-router-dom";
 
 export default function ItemStockPage() {
   const [itemStocks, setItemStocks] = useState([]);
   const [search, setSearch] = useState("");
   const [toast, setToast] = useState(null);
-
+  const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
-
   const [sorting, setSorting] = useState(null);
   const [totalCount, setTotalCount] = useState(0);
-
   const [selected, setSelected] = useState(null);
+  const [searchParams] = useSearchParams();
+  const [kpi, setKpi] = useState({
+    totalBatches: 0,
+    ExpiredBatches: 0,
+    LowStockBatches: 0,
+    NearExpiryBatches: 0,
+  });
+
+
+    /* ================= LOAD KPI ================= */
+    const loadKpi = async () => {
+      try {
+        const res = await ItemStockApi.getKpi();
+        setKpi(res.data);
+      } catch (err) {
+        setToast({ message: "Failed to load KPI data", type: "error" });
+      }
+    };
+
+  useEffect(() => {
+    loadKpi();
+  }, []);
+
+    /* ================= INITIAL LOAD ================= */
+    // const itemId = searchParams.get("itemId");
+    const itemName = searchParams.get("itemName"); 
+
+    // console.log("Query Params:", { itemId, itemName });
+    // setSearch(itemName);
 
   /* ================= LOAD DATA ================= */
   const loadData = async () => {
+    setLoading(true);
     try {
       const res = await ItemStockApi.getPaged({
-        page: pagination.pageIndex + 1,
-        pageSize: pagination.pageSize,
-        sortBy: sorting?.sortBy,
-        sortDir: sorting?.sortDir,
+        pagination: {
+          pageIndex: pagination.pageIndex ?? 0,
+          pageSize: pagination.pageSize || 10,
+        },
+       
+        sortBy: sorting ? {
+
+          sortBy: sorting.id,
+          isDescending: sorting.desc,
+        }: {
+          sortBy: "id",
+          isDescending: false,
+        },
+        search: {
+          searchTerm: search,
+        },
       });
 
-      const data = res.data.data.data ?? res.data.data ?? [];
+      const PagedData = res.data.data;
+      const data = PagedData.data ?? [];
 
       setItemStocks(Array.isArray(data) ? data : []);
-      setTotalCount(res.data.data.totalCount ?? data.length);
+      setTotalCount(PagedData.totalCount ?? 0);
     } catch (err) {
       setToast({ message: "Failed to load batch inventory", type: "error" });
+    }finally{
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadData();
-  }, [pagination, sorting]);
+    const delay = setTimeout(()=>{
+      loadData();
+    }, 300);
+    return () => clearTimeout(delay);
+    
+  }, [pagination.pageIndex,pagination.pageSize, sorting, search]);
 
   /* ================= FILTER ================= */
-  const filtered = useMemo(() => {
-    return itemStocks.filter(
-      (x) =>
-        x.itemName?.toLowerCase().includes(search.toLowerCase()) ||
-        x.batchNumber?.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [itemStocks, search]);
+  console.log("Search:", search);
 
   /* ================= KPI ================= */
   const expiredCount = useMemo(() => {
@@ -165,32 +207,36 @@ export default function ItemStockPage() {
 
       {/* HEADER */}
       <div>
-        <h1 className="text-2xl font-bold">ItemStock Management</h1>
-        <p className="text-gray-500">Batch Inventory System</p>
+        <h1 className="text-2xl font-bold">{itemName ? `${itemName} Batches` : 'Batch Dashboard'}</h1>
+        <p className="text-gray-500">{itemName ? `Showing all batches for ${itemName} ` : 'Batch Inventory'}</p>
       </div>
 
       {/* KPI */}
       <div className="grid md:grid-cols-4 gap-4">
-        <KPI title="Total Batches" value={itemStocks.length} color="from-blue-500 to-blue-700" />
-        <KPI title="Expired" value={expiredCount} color="from-red-500 to-red-700" />
-        <KPI title="Low Stock" value={lowCount} color="from-yellow-500 to-yellow-700" />
-        <KPI title="Near Expiry" value={nearExpiry} color="from-orange-500 to-orange-700" />
+        <KPI title="Total Batches" value={kpi.totalBatches} color="from-blue-500 to-blue-700" />
+        <KPI title="Expired" value={kpi.expiredBatches} color="from-red-500 to-red-700" />
+        <KPI title="Low Stock" value={kpi.lowStockBatches} color="from-yellow-500 to-yellow-700" />
+        <KPI title="Near Expiry" value={kpi.nearExpiryBatches} color="from-orange-500 to-orange-700" />
+        <KPI title="Expiry Rate" value={(kpi.expiryRate.toFixed(2)) + "%"} color="from-gray-500 to-gray-700" />
       </div>
 
       {/* SEARCH */}
       <Input
         placeholder="Search item or batch..."
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        onChange={(e) => {
+          setSearch(e.target.value);
+          setPagination((prev) => ({ ...prev, pageIndex: 0 })); // Reset to first page on search
+        }}
       />
 
       {/* TABLE */}
       <DataTable
         columns={columns}
-        data={filtered}
+        data={itemStocks}
         pagination={pagination}
         totalCount={totalCount}
-        loading={false}
+        loading={loading}
         onPaginationChange={setPagination}
         onSortingChange={setSorting}
         tableTitle="Batch Inventory"

@@ -18,7 +18,7 @@ import SchedulesPage from "@/Modules/Doctor/Pages/SchedulePage";
 
 import { EmployeePage, PayrollPage, ShiftPage } from "@/Modules/HR/Pages";
 import { InvoiceDetailsPage, InvoicePage, PaymentPage } from "@/Modules/Finance/Pages";
-import { ItemPage, ItemStockPage, PuchasePage, SuplierPage, PuchaseDetailsPage } from "@/Modules/Store/Pages";
+import { ItemPage, ItemStockPage, PuchasePage, SuplierPage, PuchaseDetailsPage, StockMovement } from "@/Modules/Store/Pages";
 import {SalePage, SaleDetailsPage } from "@/Modules/Pharmacy/Pages";
 
 import AppointmentsUi from "./Modules/Reception/Pages/AppointmentsUI";
@@ -77,6 +77,7 @@ export default function App() {
 
         {/* Store */}
         <Route path="store/StockManagement" element={<StockManagement />} />
+        <Route path="store/StockMovement" element={<StockMovement />} />
         <Route path="store/items/:id" element={<StockManagement />} />
         <Route path="store/PurchasesUi" element={<PurchasesUi />} />
         <Route path="store/items" element={<ItemPage />} />

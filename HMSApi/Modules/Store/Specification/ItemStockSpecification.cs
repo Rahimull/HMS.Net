@@ -16,9 +16,13 @@ public class ItemStockSpecification : BaseSpecification<ItemStock>
 
         if (!string.IsNullOrWhiteSpace(term))
         {
-            AddCriteria(d =>
-                (d.BatchNumber ?? "").Contains(term)
+            AddCriteria(d => 
+                d.BatchNumber.Contains(term) ||
+                d.Item.Name.Contains(term) ||
+                d.InitialQuantity.ToString().Contains(term) ||
+                d.ExpiryDate.HasValue && d.ExpiryDate.Value.ToString("yyyy-MM-dd").Contains(term)
             );
+            
         }
 
         /* ---------- SORTING ---------- */
