@@ -30,6 +30,8 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity>
     // 🔥 SPECIFICATION
     public async Task<List<TEntity>> ListAsync(ISpecification<TEntity> spec)
     {
+        
+
         var query = SpecificationEvaluator.GetQuery(_dbSet, spec);
         return await query.ToListAsync();
     }

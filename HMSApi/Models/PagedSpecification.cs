@@ -8,7 +8,7 @@ public abstract class PagedSpecification<T> : BaseSpecification<T>
 {
     protected PagedSpecification(QueryParams query)
     {
-        // ✅ Pagination (generic)
+        //  Pagination (generic)
         ApplyPaging(
             query.Pagination.PageIndex,
             query.Pagination.PageSize

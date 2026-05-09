@@ -5,187 +5,348 @@ import KPI from "../component/KPI";
 import Input from "@/components/common/Input";
 import DataTable from "@/components/common/DataTable";
 import Toast from "@/components/common/Toast";
+import Button from "@/components/common/Button";
+import Drawer from "@/components/common/Drawer";
+import ExportButtons from "@/components/export/ExportButtons";
 
 export default function StockMovementPage() {
   const [movements, setMovements] = useState([]);
   const [search, setSearch] = useState("");
-  const [typeFilter, setTypeFilter] = useState("");
   const [toast, setToast] = useState(null);
-
+  const [selectedMovement, setSelectedMovement] = useState(null);
+  const [totalCount, setTotalCount] = useState(0);
+  const [sorting, setSorting] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [kpi, setKpi] = useState({
+    totalIn: 0,
+    totalOut: 0,
+    netMovement: 0,
+  });
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
 
-  const [totalCount, setTotalCount] = useState(0);
-  const [sorting, setSorting] = useState(null);
+  
+
+  /* ================= LOAD KPI ================= */
+  const loadKpi = async () => {
+    try {
+      const res = await StockMovementApi.getKpi();
+      setKpi(res.data);
+    } catch (err) {
+      setToast({
+        message: "Failed to load KPI data",
+        type: "error",
+      });
+    }
+  };
+  useEffect(() => {
+    loadKpi();
+  }, []);
 
   /* ================= LOAD DATA ================= */
   const loadData = async () => {
+    setLoading(true);
     try {
       const res = await StockMovementApi.getPaged({
-        page: pagination.pageIndex + 1,
-        pageSize: pagination.pageSize,
-        sortBy: sorting?.sortBy,
-        sortDir: sorting?.sortDir,
-        type: typeFilter || undefined,
+        pagination: {
+          pageIndex: pagination.pageIndex ?? 0,
+          pageSize: pagination.pageSize || 10,
+        },
+
+        sorting: sorting
+          ? {
+              sortBy: sorting.id,
+              isDescending: sorting.desc,
+            }
+          : {
+              sortBy: "id",
+              isDescending: false,
+            },
+
+        search: {
+          searchTerm: search,
+        },
       });
 
-      const data = res.data.data.data ?? res.data.data ?? [];
+      const Pagedata = res.data.data;
+      const data = Pagedata.data ?? [];
+
       setMovements(Array.isArray(data) ? data : []);
-      setTotalCount(res.data.data.totalCount ?? data.length);
+      setTotalCount(Pagedata.totalCount ?? 0);
     } catch (err) {
-      setToast({ message: "Failed to load movements", type: "error" });
+      setToast({
+        message: "Failed to load movements",
+        type: "error",
+      });
+    }finally {
+      setLoading(false);
     }
+
   };
 
   useEffect(() => {
-    loadData();
-  }, [pagination, sorting, typeFilter]);
+    const delay = setTimeout(() => {
+      loadData();
+    }, 300);
+    return () => clearTimeout(delay); // Debounce by 500ms
+  }, [pagination.pageIndex, pagination.pageSize, sorting, search]);
 
-  /* ================= FILTER ================= */
-  const filtered = useMemo(() => {
-    return movements.filter((x) =>
-      x.itemName?.toLowerCase().includes(search.toLowerCase()) ||
-      x.batchNumber?.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [movements, search]);
+  /* ================= ACTIONS ================= */
 
-  /* ================= KPI ================= */
-  const totalIn = useMemo(
-    () => movements.filter((x) => x.quantity > 0).length,
-    [movements]
-  );
+  const openDetails = (row) => {
+    setSelectedMovement(row);
+  };
 
-  const totalOut = useMemo(
-    () => movements.filter((x) => x.quantity < 0).length,
-    [movements]
-  );
-
-  const totalValue = useMemo(() => {
-    return movements.reduce(
-      (sum, x) => sum + Math.abs(x.quantity * (x.unitPrice ?? 0)),
-      0
-    );
-  }, [movements]);
 
   /* ================= COLUMNS ================= */
-  const columns = useMemo(() => [
-    {
-      accessorKey: "itemName",
-      header: "Item",
-    },
-    {
-      accessorKey: "batchNumber",
-      header: "Batch",
-    },
-    {
-      accessorKey: "quantity",
-      header: "Qty",
-      cell: ({ row }) => (
-        <span className={row.original.quantity > 0 ? "text-green-600" : "text-red-600"}>
-          {row.original.quantity > 0 ? "+" : ""}
-          {row.original.quantity}
-        </span>
-      ),
-    },
-    {
-      accessorKey: "unitPrice",
-      header: "Unit Price",
-      cell: ({ row }) =>
-        `${row.original.unitPrice?.toLocaleString()} AFG`,
-    },
-    {
-      accessorKey: "type",
-      header: "Type",
-      cell: ({ row }) => {
-        const type = row.original.type;
 
-        const color =
-          type === "Sale"
-            ? "bg-red-100 text-red-700"
-            : type === "Purchase"
-            ? "bg-green-100 text-green-700"
-            : "bg-blue-100 text-blue-700";
-
-        return (
-          <span className={`px-2 py-1 rounded text-xs font-bold ${color}`}>
-            {type}
-          </span>
-        );
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "itemName",
+        header: "Item",
       },
-    },
-    {
-      accessorKey: "createdAt",
-      header: "Date",
-      cell: ({ row }) =>
-        row.original.createdAt
-          ? new Date(row.original.createdAt).toLocaleString()
-          : "-",
-    },
-  ], []);
+
+      {
+        accessorKey: "batchNumber",
+        header: "Batch",
+        cell: ({ row }) => (
+          <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">
+            {row.original.batchNumber}
+          </span>
+        ),
+      },
+
+      {
+        accessorKey: "quantity",
+        header: "Qty",
+        cell: ({ row }) => (
+          <span
+            className={`font-bold ${
+              row.original.quantity > 0 ? "text-green-600" : "text-red-600"
+            }`}
+          >
+            {row.original.quantity > 0 ? "+" : ""}
+            {row.original.quantity}
+          </span>
+        ),
+      },
+
+      {
+        accessorKey: "unitPrice",
+        header: "Unit Price",
+        cell: ({ row }) => (
+          <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">
+            {row.original.unitPrice?.toLocaleString()} AFG
+          </span>
+        ),
+      },
+
+      {
+        header: "Total",
+        cell: ({ row }) => {
+          const total =
+            Math.abs(row.original.quantity || 0) * (row.original.unitPrice || 0);
+
+          return (
+            <span className="font-semibold">{total.toLocaleString()} AFG</span>
+          );
+        },
+      },
+
+      {
+        accessorKey: "type",
+        header: "Type",
+        cell: ({ row }) => {
+          const type = row.original.type;
+
+          const style =
+            type === "Sale"
+              ? "bg-red-100 text-red-700"
+              : type === "Purchase"
+                ? "bg-green-100 text-green-700"
+                : "bg-yellow-100 text-yellow-700";
+
+          return (
+            <span className={`px-2 py-1 rounded text-xs font-bold ${style}`}>
+              {type}
+            </span>
+          );
+        },
+      },
+
+      {
+        accessorKey: "createdAt",
+        header: "Date",
+        cell: ({ row }) =>
+          row.original.createdAt
+            ? new Date(row.original.createdAt).toLocaleString()
+            : "-",
+      },
+    ],
+    [],
+  );
 
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
-
       {/* ================= HEADER ================= */}
+
       <div>
         <h1 className="text-2xl font-bold">Stock Movement History</h1>
+
         <p className="text-gray-500">Audit & Tracking Center</p>
       </div>
 
       {/* ================= KPI ================= */}
+
       <div className="grid md:grid-cols-3 gap-4">
         <KPI
           title="In Movements"
-          value={totalIn}
+          value={kpi.totalIn}
           color="from-green-500 to-green-700"
         />
+
         <KPI
           title="Out Movements"
-          value={totalOut}
+          value={kpi.totalOut}
           color="from-red-500 to-red-700"
         />
+
         <KPI
-          title="Total Value"
-          value={`${totalValue.toLocaleString()} AFG`}
+          title="Total Movements"
+          value={kpi.netMovement}
           color="from-blue-500 to-blue-700"
         />
       </div>
 
-      {/* ================= FILTERS ================= */}
+      {/* ================= FILTER ================= */}
+
       <div className="flex gap-3">
         <Input
-          placeholder="Search item or batch..."
+          placeholder="Search item or type..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPagination((prev)=>({
+              ...prev, pageIndex: 0
+            }));
+          }
+
+          }
         />
 
-        <select
-          className="border rounded px-3 py-2"
-          value={typeFilter}
-          onChange={(e) => setTypeFilter(e.target.value)}
-        >
-          <option value="">All Types</option>
-          <option value="Sale">Sale</option>
-          <option value="Purchase">Purchase</option>
-          <option value="Adjustment">Adjustment</option>
-        </select>
+        <ExportButtons 
+          data={movements}
+          fileName="stock-movements"
+          pdfColumns={["Item", "Batch", "Quantity", "Type"]}
+          pdfRows={movements.map((x)=> [x.itemName, x.batchNumber,x.quantity,x.type])}
+          >
+        </ExportButtons>
       </div>
 
       {/* ================= TABLE ================= */}
+
       <DataTable
         columns={columns}
-        data={filtered}
+        data={movements}
         pagination={pagination}
         totalCount={totalCount}
-        loading={false}
+        loading={loading}
         onPaginationChange={setPagination}
         onSortingChange={setSorting}
-        tableTitle="Movements"
+        tableTitle="Stock Movements"
+        actions={(row) => (
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              className="bg-blue-500 hover:bg-blue-600 text-white"
+              onClick={() => openDetails(row)}
+            >
+              View
+            </Button>
+          </div>
+        )}
       />
 
+      {/* ================= DRAWER ================= */}
+
+      {selectedMovement && (
+        <Drawer
+          isOpen={!!selectedMovement}
+          onClose={() => setSelectedMovement(null)}
+          title="Movement Details"
+          subtitle="Audit Information"
+        >
+          {/* CONTENT */}
+          <div className="space-y-4 text-sm">
+            <div>
+              <p className="text-gray-500">Item</p>
+              <p className="font-semibold">{selectedMovement?.itemName}</p>
+            </div>
+
+            <div>
+              <p className="text-gray-500">Batch Number</p>
+              <span className="font-mono bg-gray-100 px-2 py-1 rounded text-xs">
+                {selectedMovement?.batchNumber}
+              </span>
+            </div>
+
+            <div>
+              <p className="text-gray-500">Quantity</p>
+              <p
+                className={`font-bold ${
+                  selectedMovement?.quantity > 0
+                    ? "text-green-600"
+                    : "text-red-600"
+                }`}
+              >
+                {selectedMovement?.quantity > 0 ? "+" : ""}
+                {selectedMovement?.quantity}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-gray-500">Unit Price</p>
+              <p className="font-semibold">
+                {selectedMovement?.unitPrice?.toLocaleString()} AFG
+              </p>
+            </div>
+            <div>
+              <p className="text-gray-500">Movement Type</p>
+              <p className="font-semibold">
+                {selectedMovement?.type}
+              </p>
+            </div>
+            <div>
+              <p className="text-gray-500">Reference</p>
+              <p className="font-semibold">
+                {selectedMovement?.referenceType || "-"} #
+                {selectedMovement?.referenceId || "-"}
+              </p>
+            </div>
+            <div>
+              <p className="text-gray-500">Created At</p>
+              <p className="font-semibold">
+                {selectedMovement?.createdAt
+                  ? new Date(selectedMovement.createdAt).toLocaleString()
+                  : "-"}
+              </p>
+            </div>  
+            <div>
+              <p className="text-gray-500">Notes</p>
+              <p className="font-semibold">
+                {selectedMovement.notes || "No notes"}
+              </p>
+            </div>  
+              
+          </div>
+        </Drawer>
+      )}
+
       {/* ================= TOAST ================= */}
+
       {toast && (
         <Toast
           message={toast.message}

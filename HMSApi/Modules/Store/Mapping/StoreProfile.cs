@@ -41,7 +41,8 @@ public class StoreProfile : Profile
 
         CreateMap<StockMovement, StockMovementDto>()
             .ForMember(dest => dest.ItemName,
-                opt => opt.MapFrom(src => src.ItemStock.Item.Name));
+                opt => opt.MapFrom(src => src.ItemStock.Item.Name))
+            .ForMember(dest => dest.BatchNumber, opt => opt.MapFrom(src => src.ItemStock.BatchNumber));
 
         // ================= PURCHASE DETAILS =================
         CreateMap<CreatePurchaseDetailDto, PurchaseDetail>();

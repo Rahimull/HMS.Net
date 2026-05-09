@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using HMSApi.Models;
 using HMSApi.Modules.Store.Entities;
 
@@ -9,6 +10,8 @@ public class StockMovementSpecification : BaseSpecification<StockMovement>
     {
         /* ---------- SEARCH ---------- */
         AddInclude(u => u.ItemStock);
+        AddInclude(s => s.ItemStock.Item);
+        
         
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
@@ -16,7 +19,9 @@ public class StockMovementSpecification : BaseSpecification<StockMovement>
         if (!string.IsNullOrWhiteSpace(term))
         {
             AddCriteria(d =>
-                d.Quantity.ToString().Contains(term)
+                d.Quantity.ToString().Contains(term) || 
+                d.ItemStock.Item.Name.Contains(term) ||
+                d.ItemStock.BatchNumber.Contains(term)
             );
         }
 

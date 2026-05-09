@@ -59,6 +59,8 @@ public abstract class BaseService<TEntity, TDto, TCreateDto, TUpdateDto>
         var data  = await _repo.ListAsync(spec);
         var count = await _repo.CountAsync(spec.Criteria);
 
+        Console.WriteLine($"PAGE => {query.Pagination.PageIndex}, SIZE => {query.Pagination.PageSize}");
+
         return new PagedResult<TDto>
         {
             PageIndex = query.Pagination.PageIndex,

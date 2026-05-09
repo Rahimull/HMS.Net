@@ -15,7 +15,7 @@ public class BaseSpecification<T> : ISpecification<T>
     public Expression<Func<T, object>>? OrderBy { get; private set; }
     public Expression<Func<T, object>>? OrderByDescending { get; private set; }
 
-    // ✅ Always exclude soft-deleted records
+    //  Always exclude soft-deleted records
     protected BaseSpecification()
     {
         Criteria = x => !x.IsDeleted;
