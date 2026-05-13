@@ -4,9 +4,7 @@ const endpoint = "/pharmacy/sales";
 
 const SaleApi = {
   getPaged: (queryParams) =>
-    Api.get(endpoint, {
-      params: queryParams,
-    }),
+    Api.get(`${endpoint}/paged`,queryParams),
 
   create: (data) => Api.post(endpoint, data),
   update: (id, data) => Api.put(`${endpoint}/${id}`, data),

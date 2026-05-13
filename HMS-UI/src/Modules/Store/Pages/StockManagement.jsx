@@ -93,7 +93,7 @@ export default function ItemStockPage() {
   useEffect(() => {
     const delay = setTimeout(() => {
       loadData();
-    }, 100);
+    }, 300);
     return () => clearTimeout(delay);
   }, [pagination.pageIndex, pagination.pageSize, sorting, search]);
 

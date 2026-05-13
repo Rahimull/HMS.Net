@@ -19,13 +19,16 @@ const PharmacyPOS = () => {
   const [search, setSearch] = useState("");
   const [showInvoice, setShowInvoice] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [discount, setDiscount] = useState();
 
   /* ================= LOAD ITEM STOCK ================= */
   useEffect(() => {
     ItemStockApi.getPaged({ page: 1, pageSize: 1000 }).then((res) =>
-      setStocks(res?.data?.data?.data || [])
+      setStocks(res?.data?.data?.data || []),
     );
   }, []);
+
+ 
 
   /* ================= GROUP BY ITEM ================= */
   const items = useMemo(() => {
@@ -58,7 +61,7 @@ const PharmacyPOS = () => {
   /* ================= FILTER ================= */
   const filtered = useMemo(() => {
     return items.filter((x) =>
-      x.itemName?.toLowerCase().includes(search.toLowerCase())
+      x.itemName?.toLowerCase().includes(search.toLowerCase()),
     );
   }, [items, search]);
 
@@ -70,14 +73,14 @@ const PharmacyPOS = () => {
 
     setCart((prev) => {
       const exist = prev.find(
-        (c) => c.itemId === item.itemId && c.batchId === batch.id
+        (c) => c.itemId === item.itemId && c.batchId === batch.id,
       );
 
       if (exist) {
         return prev.map((c) =>
           c.itemId === item.itemId && c.batchId === batch.id
             ? { ...c, qty: Math.min(c.qty + 1, c.max) }
-            : c
+            : c,
         );
       }
 
@@ -118,20 +121,17 @@ const PharmacyPOS = () => {
               salePrice: batch.buyPrice,
               max: batch.qty,
             }
-          : c
-      )
+          : c,
+      ),
     );
   };
 
   /* ================= UPDATE QTY ================= */
   const updateQty = (line, qty) => {
     setCart((prev) =>
-      prev
-        .map((c) =>
-          c === line
-            ? { ...c, qty: Math.max(1, Math.min(qty, c.max)) }
-            : c
-        )
+      prev.map((c) =>
+        c === line ? { ...c, qty: Math.max(1, Math.min(qty, c.max)) } : c,
+      ),
     );
   };
 
@@ -140,7 +140,7 @@ const PharmacyPOS = () => {
 
   const totalProfit = cart.reduce(
     (s, i) => s + (i.salePrice - i.buyPrice) * i.qty,
-    0
+    0,
   );
 
   /* ================= CONFIRM ================= */
@@ -174,10 +174,8 @@ const PharmacyPOS = () => {
 
   return (
     <div className="h-screen flex bg-gray-100">
-
       {/* ================= LEFT ================= */}
       <div className="flex-1 flex flex-col">
-
         <div className="bg-white border-b px-6 py-4 flex justify-between items-center">
           <div>
             <h1 className="text-lg font-bold">🏥 Pharmacy POS</h1>
@@ -194,7 +192,6 @@ const PharmacyPOS = () => {
         </div>
 
         <div className="p-6 grid grid-cols-3 gap-4 overflow-auto">
-
           {filtered.map((item) => (
             <Card
               key={item.itemId}
@@ -214,7 +211,7 @@ const PharmacyPOS = () => {
 
                 <span
                   className={`w-2.5 h-2.5 rounded-full ${getStatus(
-                    item.quantity
+                    item.quantity,
                   )}`}
                 />
               </div>
@@ -228,35 +225,27 @@ const PharmacyPOS = () => {
               </p>
             </Card>
           ))}
-
         </div>
       </div>
 
       {/* ================= CART ================= */}
       <div className="w-[350px] bg-white border-l flex flex-col">
-
         <div className="p-4 border-b flex justify-between">
           <h2 className="font-bold">🛒 Cart</h2>
           <span className="text-xs">{cart.length} items</span>
         </div>
 
         <div className="flex-1 overflow-auto p-3 space-y-2">
-
           {cart.map((line, idx) => {
             const item = items.find((i) => i.itemId === line.itemId);
 
             return (
               <div key={idx} className="border rounded-xl p-3">
-
                 <div className="flex justify-between">
-                  <span className="text-sm font-semibold">
-                    {line.itemName}
-                  </span>
+                  <span className="text-sm font-semibold">{line.itemName}</span>
 
                   <button
-                    onClick={() =>
-                      setCart((p) => p.filter((x) => x !== line))
-                    }
+                    onClick={() => setCart((p) => p.filter((x) => x !== line))}
                     className="text-red-500 text-xs"
                   >
                     ✕
@@ -285,8 +274,8 @@ const PharmacyPOS = () => {
                       p.map((c) =>
                         c === line
                           ? { ...c, salePrice: Number(e.target.value) }
-                          : c
-                      )
+                          : c,
+                      ),
                     )
                   }
                   className="w-full border mt-2 px-2 py-1 text-xs"
@@ -294,7 +283,6 @@ const PharmacyPOS = () => {
 
                 {/* QTY */}
                 <div className="flex justify-between mt-2">
-
                   <div className="flex gap-2">
                     <button
                       onClick={() => updateQty(line, line.qty - 1)}
@@ -322,13 +310,9 @@ const PharmacyPOS = () => {
                 <div className="text-xs text-gray-500 mt-1">
                   Profit:{" "}
                   <span className="text-emerald-600">
-                    {(
-                      (line.salePrice - line.buyPrice) *
-                      line.qty
-                    ).toFixed(2)}
+                    {((line.salePrice - line.buyPrice) * line.qty).toFixed(2)}
                   </span>
                 </div>
-
               </div>
             );
           })}
@@ -336,8 +320,17 @@ const PharmacyPOS = () => {
 
         {/* FOOTER */}
         <div className="p-4 border-t">
-
+          <div className="flex">
+              <input 
+                className="w-full border mt-2 px-2 py-1 text-xs" 
+                type="number" 
+                placeholder="Discount"
+                value={discount}
+                onChange={(e)=> setDiscount(+e.target.value)}
+                />
+            </div>
           <div className="flex justify-between">
+            
             <span>Total</span>
             <span>{subtotal.toFixed(2)}</span>
           </div>
@@ -354,15 +347,15 @@ const PharmacyPOS = () => {
           >
             Checkout
           </button>
-
         </div>
       </div>
 
       {/* INVOICE */}
+      {subtotal}
       {showInvoice && (
         <InvoiceModel
           cart={cart}
-          total={line.qty }
+          total={subtotal}
           onClose={() => setShowInvoice(false)}
           onConfirm={confirmSale}
           loading={loading}
