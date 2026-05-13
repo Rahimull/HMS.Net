@@ -7,6 +7,7 @@ import DataTable from "@/components/common/DataTable";
 import Button from "@/components/common/Button";
 import StockStatus from "../component/StockStatus";
 import Toast from "@/components/common/Toast";
+import { useNavigate } from "react-router-dom";
 
 export default function StockDashboard() {
   const [stock, setStock] = useState([]);
@@ -97,7 +98,6 @@ export default function StockDashboard() {
     }));
   }, [stock]);
 
-  console.log(chartData)
 
   /* ================= COLUMNS ================= */
   const columns = useMemo(() => [
@@ -115,9 +115,12 @@ export default function StockDashboard() {
   ], []);
 
   /* ================= ACTION ================= */
+  const navigate = useNavigate();
   const openBatch = (row) => {
-    window.location.href = `/store/StockManagement?itemId=${row.itemId}&itemName=${row.itemName}`;
+    navigate(`/store/stockManagement?itemId=${row.itemId}&itemName=${row.itemName}`);
   };
+
+  
 
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">

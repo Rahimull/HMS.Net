@@ -233,7 +233,7 @@ const PharmacyPOS = () => {
       </div>
 
       {/* ================= CART ================= */}
-      <div className="w-[320px] bg-white border-l flex flex-col">
+      <div className="w-[350px] bg-white border-l flex flex-col">
 
         <div className="p-4 border-b flex justify-between">
           <h2 className="font-bold">🛒 Cart</h2>
@@ -362,7 +362,7 @@ const PharmacyPOS = () => {
       {showInvoice && (
         <InvoiceModel
           cart={cart}
-          total={subtotal}
+          total={line.qty }
           onClose={() => setShowInvoice(false)}
           onConfirm={confirmSale}
           loading={loading}

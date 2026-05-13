@@ -16,12 +16,22 @@ public class ItemStockSpecification : BaseSpecification<ItemStock>
 
         if (!string.IsNullOrWhiteSpace(term))
         {
-            AddCriteria(d => 
-                d.BatchNumber.Contains(term) ||
-                d.Item.Name.Contains(term) ||
-                d.InitialQuantity.ToString().Contains(term) ||
-                d.ExpiryDate.HasValue && d.ExpiryDate.Value.ToString("yyyy-MM-dd").Contains(term)
+             AddCriteria(d =>
+                !d.IsDeleted &&
+                (
+                    d.BatchNumber.Contains(term) ||
+                    d.Item.Name.Contains(term) ||
+                    d.InitialQuantity.ToString().Contains(term)
+                )
             );
+
+            if (DateOnly.TryParse(term, out var date))
+            {
+                AddCriteria(d =>
+                    d.ExpiryDate.HasValue &&
+                    d.ExpiryDate.Value == date
+                );
+            }
             
         }
 

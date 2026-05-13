@@ -11,18 +11,29 @@ public class StockMovementSpecification : BaseSpecification<StockMovement>
         /* ---------- Navigation ---------- */
         AddInclude(u => u.ItemStock);
         AddInclude(s => s.ItemStock.Item);
-        
-        
+
+
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
 
         if (!string.IsNullOrWhiteSpace(term))
         {
             AddCriteria(d =>
-                d.Quantity.ToString().Contains(term) || 
-                d.ItemStock.Item.Name.Contains(term) ||
-                d.ItemStock.BatchNumber.Contains(term)
+                !d.IsDeleted &&
+                (
+                    d.ItemStock.BatchNumber.Contains(term) ||
+                    d.ItemStock.Item.Name.Contains(term) ||
+                    d.ItemStock.InitialQuantity.ToString().Contains(term)
+                )
             );
+
+            if (DateOnly.TryParse(term, out var date))
+            {
+                AddCriteria(d =>
+                    d.ItemStock.ExpiryDate.HasValue &&
+                    d.ItemStock.ExpiryDate.Value == date
+                );
+            }
         }
 
         /* ---------- SORTING ---------- */

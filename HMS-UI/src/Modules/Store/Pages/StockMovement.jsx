@@ -8,6 +8,7 @@ import Toast from "@/components/common/Toast";
 import Button from "@/components/common/Button";
 import Drawer from "@/components/common/Drawer";
 import ExportButtons from "@/components/export/ExportButtons";
+import { useSearchParams } from "react-router-dom";
 
 export default function StockMovementPage() {
   const [movements, setMovements] = useState([]);
@@ -17,6 +18,7 @@ export default function StockMovementPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [sorting, setSorting] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [kpi, setKpi] = useState({
     totalIn: 0,
     totalOut: 0,
@@ -28,6 +30,17 @@ export default function StockMovementPage() {
   });
 
   
+
+
+  /* ================= LOAD NAVIGATION ================= */
+  const batchNumber = searchParams.get("batchNumber");
+  useEffect(() => {
+    if (batchNumber) {
+      setSearch(batchNumber);
+      setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+    } 
+  }, [batchNumber]);
+
 
   /* ================= LOAD KPI ================= */
   const loadKpi = async () => {
