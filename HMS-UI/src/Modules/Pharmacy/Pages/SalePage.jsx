@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import SaleApi from "@/api/pharmacy/SaleApi";
 import Input from "@/components/common/Input";
+import FilterCard from "@/components/filter/FilterCard";
+import Label from "@/components/common/Label";
 
 /* ================= STATUS ================= */
 const getStatus = (isPaid) =>
@@ -63,6 +65,66 @@ const SalesList = () => {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
+       
+
+    {/* Search  and Filter */}
+    <FilterCard
+      title="Sales Filters"
+      subtitle="Filter pharmacy sales"
+      onApply={() => console.log("Apply")}
+      onReset={() => console.log("Reset")}
+    >
+    
+      {/* SEARCH */}
+      <div>
+
+        <Label name="search"/> 
+        <Input
+          type="text"
+          placeholder="Invoice / Patient"
+         className="border-white/40 bg-white/60 text-sm backdrop-blur-xl"
+        />
+      </div>
+    
+      {/* STATUS */}
+      <div>
+        <Label name="status" />
+        <select
+          className="w-full rounded border border-white/40 bg-white/60 backdrop-blur-xl px-3 py-2 text-sm text-gray-800 shadow-lg outline-none"
+        >
+          <option>All</option>
+          <option>Paid</option>
+          <option>Unpaid</option>
+        </select>
+      </div>
+    
+      {/* FROM DATE */}
+      <div>
+        <label className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-3 block">
+          From Date
+        </label>
+    
+        <input
+          type="date"
+          className="w-full rounded border border-white/40 bg-white/60 backdrop-blur-xl px-3 py-2 text-sm text-gray-800 shadow-lg outline-none"
+        />
+      </div>
+    
+      {/* TO DATE */}
+      <div>
+        <label className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-3 block">
+          To Date
+        </label>
+    
+        <input
+          type="date"
+          className="w-full rounded border border-white/40 bg-white/60 backdrop-blur-xl px-3 py-2 text-sm text-gray-800 shadow-lg outline-none"
+        />
+      </div>
+    
+    </FilterCard>
+    
+
 
       {/* ================= HEADER ================= */}
       <div className="bg-white p-4 rounded-xl shadow flex justify-between items-center">
@@ -261,7 +323,27 @@ const SalesList = () => {
         `}
       </style>
 
+
+
+
+         
+      
+
     </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   );
 };
 

@@ -175,7 +175,6 @@ const SalesList = () => {
     []
   );
 
-  console.log(sales)
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
