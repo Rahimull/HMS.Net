@@ -11,8 +11,8 @@ const Input = ({
   disabled = false,
 }) => {
   const baseClass = `
-    border border-gray-200 bg-white/60 backdrop-blur-xl rounded focus:ring-2 focus:ring-blue-500 outline-none px-3 py-2
-    ${error ? "border-red-500" : "border-gray-300"}
+    w-full border border-gray-200 border bg-white/100 backdrop-blur-xl rounded focus:ring-2 focus:ring-cyan-200 outline-none px-3 py-2 text-sm text-gray-800 shadow-lg
+    ${error ? "border-red-300" : "border-gray-300"}
     ${className}
   `;
 

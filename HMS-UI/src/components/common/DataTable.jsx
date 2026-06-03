@@ -11,6 +11,7 @@ import {
 } from "@/components/common/Card";
 import { useState } from "react";
 import Button from "./Button";
+import FilterCard from "../filter/FilterCard";
 
 const DataTable = ({
   columns,
@@ -66,6 +67,8 @@ const DataTable = ({
   });
 
   return (
+
+   
     <Card className="p-4 rounded-2xl shadow-md bg-white">
       {/* HEADER */}
       <div className="flex justify-between items-center mb-4">
@@ -78,10 +81,10 @@ const DataTable = ({
       </div>
 
       {/* TABLE */}
-      <div className="overflow-x-auto rounded-xl border">
+      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm mt-4 overflow-x-auto">
         <table className="w-full text-sm">
 
-          {/* TABLE HEAD */}
+          {/* TABLE header */}
           <thead className="bg-gray-100 text-gray-600">
             {table.getHeaderGroups().map((hg) => (
               <tr key={hg.id} >

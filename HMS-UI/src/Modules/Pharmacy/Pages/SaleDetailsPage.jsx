@@ -2,12 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import SaleApi from "@/api/pharmacy/SaleApi";
 import Input from "@/components/common/Input";
 import DataTable from "@/components/common/DataTable";
+import FilterCard from "@/components/filter/FilterCard";
+import Label from "@/components/common/Label";
 
 /* ================= STATUS ================= */
 const getStatus = (isPaid) =>
-  isPaid
-    ? "bg-emerald-100 text-emerald-700"
-    : "bg-red-100 text-red-700";
+  isPaid ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700";
 
 /* ================= MAIN COMPONENT ================= */
 const SalesList = () => {
@@ -113,16 +113,18 @@ const SalesList = () => {
       {
         accessorKey: "doctorName",
         header: "Doctor",
-        cell: ({row})=> {
-          return row.original.doctorName ? row.doctorName : "No Doctor" 
-        }
+        cell: ({ row }) => {
+          return row.original.doctorName ? row.doctorName : "No Doctor";
+        },
       },
       {
         accessorKey: "patientName",
         header: "Patient",
-        cell: ({row})=> {
-          return row.original.patientName ? row.patientName : "Walk-in-customer" 
-        }
+        cell: ({ row }) => {
+          return row.original.patientName
+            ? row.patientName
+            : "Walk-in-customer";
+        },
       },
 
       {
@@ -146,9 +148,7 @@ const SalesList = () => {
 
         cell: ({ row }) => {
           return (
-            <span>
-              {new Date(row.original.saleDate).toLocaleString()}
-            </span>
+            <span>{new Date(row.original.saleDate).toLocaleString()}</span>
           );
         },
       },
@@ -163,7 +163,7 @@ const SalesList = () => {
           return (
             <span
               className={`px-3 py-1 rounded-full text-xs font-medium ${getStatus(
-                isPaid
+                isPaid,
               )}`}
             >
               {isPaid ? "Paid" : "Unpaid"}
@@ -172,44 +172,52 @@ const SalesList = () => {
         },
       },
     ],
-    []
+    [],
   );
-
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      {/* ================= HEADER ================= */}
-      <div className="bg-white p-4 rounded-xl shadow flex flex-col md:flex-row justify-between gap-4 md:items-center">
+      {/* ================= Filter ================= */}
+
+      <FilterCard
+        title="Sales Filters"
+        subtitle="Filter Pharmacy Sales"
+        onApply={() => console.log("Apply")}
+        onReset={() => console.log("Reset")}
+      >
         <div>
-          <h1 className="text-xl font-bold">
-            🏥 Sales Management
-          </h1>
-
-          <p className="text-sm text-gray-500">
-            Hospital ERP - Pharmacy Module
-          </p>
-        </div>
-
-        <div className="flex flex-col md:flex-row gap-3">
+          <Label name="search" />
           <Input
-            placeholder="Search invoice / patient..."
+            type="text"
+            placeholder="Invoice / Patient"
+            className="border-white/40"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {setSearch(e.target.value)}}
           />
-
-          <select
-            className="border p-2 rounded-lg"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="all">All</option>
-
-            <option value="paid">Paid</option>
-
-            <option value="unpaid">Unpaid</option>
-          </select>
         </div>
-      </div>
+        <div>
+          <Label name="Status" />
+          <Input
+            className="border-white/40"
+            value={statusFilter}
+            onChange={(e)=> setStatusFilter(e.target.value)}
+            type="select"
+            options={[
+              { label: "All", value: "all" },
+              { label: "Paid", value: "paid" },
+              { label: "Unpaid", value: "unpaid" },
+            ]}
+          />
+        </div>
+        <div>
+          <Label name="from date" />
+          <Input type="date" className="border-white/40" />
+        </div>
+        <div>
+          <Label name="to date" />
+          <Input type="date" className="border-white/40" />
+        </div>
+      </FilterCard>
 
       {/* ================= TABLE ================= */}
       <div className="mt-6">

@@ -10,6 +10,7 @@ const FilterCard = ({
 }) => {
   const [collapsed, setCollapsed] = useState(false);
 
+ 
   return (
     <div className="relative overflow-hidden rounded-xl border border-white/20 bg-white/10 backdrop-blur-2xl shadow-[0_20px_80px_rgba(0,0,0,0.15)] p-7 mb-6">
 
@@ -70,6 +71,7 @@ const FilterCard = ({
               className="px-3 py-2 rounded bg-gray-900 text-white text-sm font-semibold hover:bg-black hover:scale-105 transition-all duration-300 shadow-xl"
             >
               {collapsed ? "⬇ Expand" : "⬆ Collapse"}
+
             </button>
           </div>
         </div>
