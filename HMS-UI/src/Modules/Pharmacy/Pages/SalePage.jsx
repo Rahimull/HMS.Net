@@ -3,46 +3,44 @@ import SaleApi from "@/api/pharmacy/SaleApi";
 import Input from "@/components/common/Input";
 import FilterCard from "@/components/filter/FilterCard";
 import Label from "@/components/common/Label";
-
-
-
-/* ================= STATUS ================= */
-const getStatus = (isPaid) =>
-  isPaid ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700";
+import DataTable from "@/components/common/DataTable";
+import useCrud from "@/hooks/useCurd";
 
 /* ================= MAIN COMPONENT ================= */
 const SalesList = () => {
-  const [sales, setSales] = useState([]);
-  const [search, setSearch] = useState("");
+  const [toast, setToast] = useState(null);
   const [statusFilter, setStatusFilter] = useState("all");
+
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
 
   const [selectedSale, setSelectedSale] = useState(null);
   const [showView, setShowView] = useState(false);
+  
 
-  /* LOAD */
-  useEffect(() => {
-    SaleApi.getPaged({ page: 1, pageSize: 100 }).then((res) =>
-      setSales(res?.data?.data?.data || []),
-    );
-  }, []);
+  /* ================= FILTER DATA ================= */
+  const filters = useMemo(()=>({
+    status: statusFilter,
+    fromDate,
+    toDate
+  }),[statusFilter, fromDate, toDate]);
 
-  /* FILTER */
-  const filtered = useMemo(() => {
-    return sales.filter((s) => {
-      const matchSearch =
-        s.id?.toString().includes(search) ||
-        s.patientName?.toLowerCase().includes(search.toLowerCase());
+  /* ================= LOAD DATA ================= */
 
-      const matchStatus =
-        statusFilter === "all"
-          ? true
-          : statusFilter === "paid"
-            ? s.isPaid
-            : !s.isPaid;
+  const {
+    data,
+    totalCount,
+    pagination,
+    setPagination,
+    sorting,
+    setSorting,
+    search,
+    setSearch,
+    loading,
+    deleteItem,
+  } = useCrud(SaleApi, {filters});
 
-      return matchSearch && matchStatus;
-    });
-  }, [sales, search, statusFilter]);
+
 
   /* VIEW */
   const handleView = (sale) => {
@@ -56,13 +54,80 @@ const SalesList = () => {
     setTimeout(() => window.print(), 300);
   };
 
-  /* DELETE */
-  const handleDelete = async (id) => {
-    if (!confirm("Delete this invoice?")) return;
+  // TABLE DATA AND COLUMNS
+  const columns = useMemo (()=>
+    [
+    {
+      accessorKey: "id",
+      header: "invoice",
+      enableSorting: true,
+      cell: ({ row }) => <span>INV-{row.original.id}</span>,
+    },
+    {
+      accessorKey: "saleDate",
+      header: "Date",
+      cell: ({ row }) => (
+        <span>{new Date(row.original.saleDate).toLocaleDateString()}</span>
+      ),
+    },
+    {
+      accessorKey: "patient",
+      header: "patient",
+      cell: ({ row }) => row.original.patient || "Walk-in",
+    },
+    {
+      accessorKey: "doctor",
+      header: "doctor",
+      cell: ({ row }) => row.original.doctor || "-",
+    },
+    {
+      accessorKey: "totalAmount",
+      header: "total",
+      cell: ({ row }) => (
+        <span className="font-semibold text-emerald-600">
+          {row.original.totalAmount} AFN
+        </span>
+      ),
+    },
+    {
+      accessorKey: "status",
+      header: "status",
+      cell: ({ row }) => (
+        <span
+          className={`px-3 py-1 rounded-full text-xs font-medium ${
+            row.original.isPaid
+              ? "bg-emerald-100 text-emerald-700"
+              : "bg-red-100 text-red-700"
+          }`}
+        >
+          {row.original.isPaid ? "Paid" : "Unpaid"}
+        </span>
+      ),
+    },
+  ]
+  , []);
 
-    await SaleApi.delete(id);
-    setSales((prev) => prev.filter((x) => x.id !== id));
-  };
+  // ACTIONS
+  const actions = useMemo(()=> [
+    {
+      label: "View",
+      className: "text-blue-400",
+      icon: "👁",
+      onClick: (row) => handleView(row),
+    },
+    {
+      label: "Print",
+      className: "text-green-400",
+      icon: "✏️",
+      onClick: (row) => handlePrint(row.id),
+    },
+    {
+      label: "Delete",
+      icon: "🗑",
+      danger: true,
+      onClick: (row) => deleteItem(row.id),
+    },
+  ],[deleteItem]);
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -71,7 +136,17 @@ const SalesList = () => {
         title="Sales Filters"
         subtitle="Filter pharmacy sales"
         onApply={() => console.log("Apply")}
-        onReset={() => console.log("Reset")}
+        onReset={() => {
+          setSearch("");
+          setStatusFilter("all");
+          setFromDate("");
+          setToDate("");
+
+          setPagination((p) => ({
+            ...p,
+            pageIndex: 0,
+          }));
+        }}
       >
         {/* SEARCH */}
         <div>
@@ -81,7 +156,9 @@ const SalesList = () => {
             placeholder="Invoice / Patient"
             className="border-white/40"
             value={search}
-            onChange={(e)=>{setSearch(e.target.value)}}
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
           />
         </div>
 
@@ -91,7 +168,11 @@ const SalesList = () => {
           <Input
             type="select"
             className="border-white/40"
-            options={[{ label: "All", value:"all"}, { label: "Paid", value:"paid" }, { label: "Unpaid", value:"unpaid" }]}
+            options={[
+              { label: "All", value: "all" },
+              { label: "Paid", value: "paid" },
+              { label: "Unpaid", value: "unpaid" },
+            ]}
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           />
@@ -100,285 +181,46 @@ const SalesList = () => {
         {/* FROM DATE */}
         <div>
           <Label name="From date" />
-          <Input type="date" className="border-white/40" />
+          <Input
+            type="date"
+            className="border-white/40"
+            value={fromDate}
+            onChange={(e) => setFromDate(e.target.value)}
+          />
         </div>
 
         {/* TO DATE */}
         <div>
           <Label name="to date" />
-          <Input type="date" className="border-white/40" />
+          <Input
+            type="date"
+            className="border-white/40"
+            value={toDate}
+            onChange={(e) => setToDate(e.target.value)}
+          />
         </div>
       </FilterCard>
 
       {/* ================= TABLE ================= */}
-      {/* <div className="bg-white mt-4 rounded-xl shadow overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50 text-gray-600">
-            <tr>
-              <th className="p-3 text-left">Invoice</th>
-              <th className="p-3 text-left">Date</th>
-              <th className="p-3 text-left">Patient</th>
-              <th className="p-3 text-left">Doctor</th>
-              <th className="p-3 text-left">Total</th>
-              <th className="p-3 text-left">Status</th>
-              <th className="p-3 text-right">Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {filtered.map((sale) => (
-              <tr key={sale.id} className="border-b hover:bg-gray-50">
-                <td className="p-3 font-medium">INV-{sale.id}</td>
-
-                <td className="p-3">
-                  {new Date(sale.saleDate).toLocaleDateString()}
-                </td>
-
-                <td className="p-3">{sale.patientName || "Walk-in"}</td>
-
-                <td className="p-3">{sale.doctorName || "-"}</td>
-
-                <td className="p-3 font-semibold text-emerald-600">
-                  {sale.totalAmount} AFN
-                </td>
-
-                <td className="p-3">
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs ${getStatus(sale.isPaid)}`}
-                  >
-                    {sale.isPaid ? "Paid" : "Unpaid"}
-                  </span>
-                </td>
-
-                <td className="p-3 flex justify-end gap-2">
-                  <button
-                    onClick={() => handleView(sale)}
-                    className="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg"
-                  >
-                    View
-                  </button>
-
-                  <button
-                    onClick={() => handlePrint(sale)}
-                    className="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg"
-                  >
-                    Print
-                  </button>
-
-                  <button
-                    onClick={() => handleDelete(sale.id)}
-                    className="px-3 py-1 bg-red-100 text-red-700 rounded-lg"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div> */}
-
-
-      {/* ================= TABLE ================= */}
-<div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mt-4">
-
-  {/* TABLE HEADER */}
-  <div className="flex items-center justify-between p-5 border-b border-gray-100">
-
-    <div>
-      <h2 className="text-lg font-semibold text-gray-800">
-        Sales List
-      </h2>
-
-      <p className="text-sm text-gray-500 mt-1">
-        Pharmacy sales records
-      </p>
-    </div>
-
-    <button className="px-4 py-2 rounded-xl bg-blue-600 text-white text-sm hover:bg-blue-700 transition-all">
-      Export
-    </button>
-
-  </div>
-
-  {/* TABLE */}
-  <div className="overflow-x-auto">
-
-    <table className="w-full">
-
-      {/* HEAD */}
-      <thead className="bg-gray-50 border-b border-gray-100">
-
-        <tr>
-
-          <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-            Invoice
-          </th>
-
-          <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-            Date
-          </th>
-
-          <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-            Patient
-          </th>
-
-          <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-            Doctor
-          </th>
-
-          <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-            Total
-          </th>
-
-          <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-            Status
-          </th>
-
-          <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">
-            Actions
-          </th>
-
-        </tr>
-
-      </thead>
-
-      {/* BODY */}
-      <tbody>
-
-        {filtered.map((sale) => (
-
-          <tr
-            key={sale.id}
-            className="border-b border-gray-100 hover:bg-gray-50 transition-all"
-          >
-
-            {/* INVOICE */}
-            <td className="px-6 py-4">
-
-              <div className="font-medium text-gray-800">
-                INV-{sale.id}
-              </div>
-
-            </td>
-
-            {/* DATE */}
-            <td className="px-6 py-4 text-sm text-gray-600">
-
-              {new Date(sale.saleDate).toLocaleDateString()}
-
-            </td>
-
-            {/* PATIENT */}
-            <td className="px-6 py-4 text-sm text-gray-700">
-
-              {sale.patientName || "Walk-in"}
-
-            </td>
-
-            {/* DOCTOR */}
-            <td className="px-6 py-4 text-sm text-gray-700">
-
-              {sale.doctorName || "-"}
-
-            </td>
-
-            {/* TOTAL */}
-            <td className="px-6 py-4">
-
-              <span className="font-semibold text-emerald-600">
-                {sale.totalAmount} AFN
-              </span>
-
-            </td>
-
-            {/* STATUS */}
-            <td className="px-6 py-4">
-
-              <span
-                className={`px-3 py-1 rounded-full text-xs font-medium ${
-                  sale.isPaid
-                    ? "bg-emerald-100 text-emerald-700"
-                    : "bg-red-100 text-red-700"
-                }`}
-              >
-                {sale.isPaid ? "Paid" : "Unpaid"}
-              </span>
-
-            </td>
-
-            {/* ACTIONS */}
-            <td className="px-6 py-4">
-
-              <div className="flex justify-end gap-2">
-
-                <button
-                  onClick={() => handleView(sale)}
-                  className="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition-all text-sm"
-                >
-                  View
-                </button>
-
-                <button
-                  onClick={() => handlePrint(sale)}
-                  className="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all text-sm"
-                >
-                  Print
-                </button>
-
-                <button
-                  onClick={() => handleDelete(sale.id)}
-                  className="px-3 py-1.5 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 transition-all text-sm"
-                >
-                  Delete
-                </button>
-
-              </div>
-
-            </td>
-
-          </tr>
-
-        ))}
-
-      </tbody>
-
-    </table>
-
-  </div>
-
-  {/* FOOTER */}
-  <div className="flex items-center justify-between p-4 border-t border-gray-100 bg-gray-50">
-
-    <p className="text-sm text-gray-500">
-      Total Records:{" "}
-      <span className="font-medium text-gray-700">
-        {filtered.length}
-      </span>
-    </p>
-
-    <div className="flex items-center gap-2">
-
-      <button className="px-4 py-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-100 text-sm transition-all">
-        Previous
-      </button>
-
-      <button className="w-9 h-9 rounded-lg bg-blue-600 text-white text-sm font-medium">
-        1
-      </button>
-
-      <button className="px-4 py-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-100 text-sm transition-all">
-        Next
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-     
+      <DataTable
+        columns={columns}
+        actions={actions}
+        data={data}
+        title="Sales List"
+        subTitle="Pharmacy sales record"
+        pagination={pagination}
+        totalCount={totalCount}
+        onPaginationChange={setPagination}
+        onSortingChange={setSorting}
+        loading={loading}
+      />
+
+      {/* ================= TOAST ================= */}
+      {toast && (
+        <div className="fixed top-5 right-5 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg">
+          {toast.message}
+        </div>
+      )}
 
       {/* ================= VIEW MODAL ================= */}
       {showView && selectedSale && (
@@ -461,19 +303,6 @@ const SalesList = () => {
           }
         `}
       </style>
-
-
-
-
-
-
-
-
-
-
-
-
-
     </div>
   );
 };

@@ -3,6 +3,7 @@ import Loader from "../../components/common/Loader";
 import DataTable from "../../components/common/DataTable";
 import ReusableForm from "../../components/form/ResusableForm";
 import useCrud from "../../hooks/useCurd";
+import { Pencil, Trash2 } from "lucide-react";
 
 const BaseCrudPage = ({
   title,
@@ -11,6 +12,7 @@ const BaseCrudPage = ({
   fields,
   columns,
   mapFormToPayload,
+  actions = [],
   mapEntityToForm = (x) => x,
 }) => {
   const [editing, setEditing] = useState(null);
@@ -31,9 +33,8 @@ const BaseCrudPage = ({
     deleteItem,
   } = useCrud(service);
 
-  // 🧠 FIX: normalize entity for EDIT (important for enums/selects)
+  //  FIX: normalize entity for EDIT (important for enums/selects)
   const normalizeEntity = (entity) => {
-    console.log("Edit Data: ", editing);
     if (!entity) return null;
 
     const result = mapEntityToForm(entity);
@@ -46,8 +47,8 @@ const BaseCrudPage = ({
       }
     });
     if (normalized.type !== undefined) {
-    normalized.type = Number(normalized.type);
-  }
+      normalized.type = Number(normalized.type);
+    }
 
     return normalized;
   };
@@ -65,9 +66,25 @@ const BaseCrudPage = ({
 
   const handlePaginationChange = (updater) => {
     setPagination((prev) =>
-      typeof updater === "function" ? updater(prev) : updater
+      typeof updater === "function" ? updater(prev) : updater,
     );
   };
+
+  // Default actions
+  const defaultActions = [
+    {
+      label: "Edit",
+      className:"text-blue-600",
+      icon: <Pencil size={14} />,
+      onClick: (row) => setEditing(row),
+    },
+    {
+      label: "Delete",
+      icon: <Trash2 size={14} />,
+      danger: true,
+      onClick: (row) => deleteItem(row.id),
+    },
+  ];
 
   return (
     <div className="space-y-4">
@@ -91,27 +108,6 @@ const BaseCrudPage = ({
 
       {error && <p className="text-red-500">{error}</p>}
 
-      {/* Page size */}
-      <div className="flex justify-between items-center">
-        <div>
-          <label className="mr-2 font-medium">Rows per page:</label>
-          <select
-            value={pagination.pageSize}
-            onChange={(e) =>
-              setPagination({
-                pageIndex: 0,
-                pageSize: Number(e.target.value),
-              })
-            }
-            className="border rounded px-2 py-1"
-          >
-            <option value={5}>5</option>
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={50}>50</option>
-          </select>
-        </div>
-      </div>
 
       {/* Table */}
       {loading ? (
@@ -126,8 +122,7 @@ const BaseCrudPage = ({
           onSortingChange={(sort) =>
             setSorting(sort ?? { sortBy: null, sortDir: "asc" })
           }
-          onEdit={setEditing}
-          onDelete={deleteItem}
+          actions={actions.length ? actions : defaultActions}
           loading={loading}
         />
       )}

@@ -6,7 +6,6 @@ import ItemApi from "@/api/store/ItemApi";
 const ItemStockPage = () => {
   const [items, setItems] = useState([]);
 
-  console.log("Item Stock Data: ")
   useEffect(() => {
     ItemApi.getPaged({ page: 1, pageSize: 2000 })
       .then(res => setItems(res.data.data.data));

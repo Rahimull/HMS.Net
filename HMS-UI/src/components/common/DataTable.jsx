@@ -3,15 +3,10 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardFooter,
-} from "@/components/common/Card";
 import { useState } from "react";
-import Button from "./Button";
-import FilterCard from "../filter/FilterCard";
+
+import RowActions from "../rowAction/RowAction";
+import Pagination from "../pagination/Pagination";
 
 const DataTable = ({
   columns,
@@ -20,18 +15,11 @@ const DataTable = ({
   totalCount,
   onPaginationChange,
   onSortingChange,
-  onEdit,
-  onDelete,
   loading,
-  tableTitle = "Table",
+  title = "Table",
+  subTitle = "subTitle",
   actions,
 }) => {
-  const pageSize = pagination.pageSize;
-  const pageIndex = pagination.pageIndex;
-
-  // تعداد صفحات واقعی از سرور
-  const pageCount = Math.max(1, Math.ceil(totalCount / pageSize));
-  const maxPageIndex = pageCount - 1;
 
   const [tableSorting, setTableSorting] = useState([]);
 
@@ -44,8 +32,7 @@ const DataTable = ({
     },
     manualPagination: true,
     manualSorting: true,
-    pageCount,
-    onPaginationChange, // کنترل در BaseCrudPage
+    onPaginationChange,
     onSortingChange: (updater) => {
       const next =
         typeof updater === "function" ? updater(tableSorting) : updater;
@@ -53,7 +40,7 @@ const DataTable = ({
       setTableSorting(next);
 
       const sort = next[0];
-      onSortingChange(
+      onSortingChange?.(
         sort
           ? {
               sortBy: sort.id,
@@ -67,51 +54,58 @@ const DataTable = ({
   });
 
   return (
-
-   
-    <Card className="p-4 rounded-2xl shadow-md bg-white">
-      {/* HEADER */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="ml-2 text-lg font-semibold text-gray-700">
-          {" "}
-          {tableTitle}
-        </h2>
-
-        <span className="text-sm text-gray-400 mr-5"> Total: {totalCount}</span>
+    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mt-4">
+      {/* TABLE HEADER */}
+      <div className="flex items-center justify-between p-5 border-b border-gray-100">
+        <div>
+          <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
+          <p className="text-sm text-gray-500 mt-1">{subTitle}</p>
+        </div>
+        <div className="flex flex-col">
+          <button className="px-3 py-1 rounded bg-blue-600 text-white text-sm hover:bg-blue-700 transition-all">
+            Export
+          </button>
+          <span className="px-3 py-1 text-sm text-gray-400">
+            Total: {totalCount}
+          </span>
+        </div>
       </div>
 
-      {/* TABLE */}
-      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm mt-4 overflow-x-auto">
+      {/* TABLE  Body*/}
+      <div className="overflow-x-auto">
         <table className="w-full text-sm">
-
-          {/* TABLE header */}
-          <thead className="bg-gray-100 text-gray-600">
+          {/* TABLE HEADER */}
+          <thead className="bg-gray-50 border-b border-gray-100">
             {table.getHeaderGroups().map((hg) => (
-              <tr key={hg.id} >
+              <tr key={hg.id}>
                 {hg.headers.map((h) => (
                   <th
                     key={h.id}
-                    className="p-3 text-left cursor-pointer select-none"
+                    className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-gray-500"
                     onClick={h.column.getToggleSortingHandler()}
                   >
                     <div className="flex items-center gap-1">
                       {flexRender(h.column.columnDef.header, h.getContext())}
-                    {h.column.getIsSorted() === "asc" && " ▲"}
-                    {h.column.getIsSorted() === "desc" && " ▼"}
+                      {h.column.getIsSorted() === "asc" && " ▲"}
+                      {h.column.getIsSorted() === "desc" && " ▼"}
                     </div>
                   </th>
-                  
                 ))}
-                <th className="p-3">Actions</th>
+                {actions?.length > 0 && (
+                  <th className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                    Actions
+                  </th>
+                )}
               </tr>
             ))}
           </thead>
+
           {/* TBODY */}
           <tbody>
             {loading ? (
               [...Array(5)].map((_, i) => (
                 <tr key={i} className="animate-pulse">
-                  <td colSpan={columns.length + 1} className="p-4">
+                  <td colSpan={columns.length + (actions?.length > 0 ? 1 : 0)} className="p-4">
                     <div className="h-4 bg-gray-200 rounded w-full"></div>
                   </td>
                 </tr>
@@ -119,53 +113,37 @@ const DataTable = ({
             ) : data.length === 0 ? (
               <tr>
                 <td
-                  colSpan={columns.length + 1}
+                  colSpan={columns.length + (actions?.length > 0 ? 1 : 0)}
                   className="text-center p-6 text-gray-400"
                 >
                   No data found
                 </td>
               </tr>
             ) : (
-              table.getRowModel().rows.map((row, index) => (
+              table.getRowModel().rows.map((row) => (
                 <tr
                   key={row.id}
-                  className={`border-b transition ${
-                    index % 2 === 0
-                      ? "bg-white"
-                      : "bg-gray-50"
-                  } hover:bg-blue-50`}
+                  className="border-b border-gray-100 hover:bg-gray-50 transition-all"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="p-2">
+                    <td
+                      key={cell.id}
+                      className={`${cell.column.id == "id" ? "font-medium text-gray-900" : "text-sm text-gray-700"} px-4 py-2`}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </td>
                   ))}
 
                   {/* ACTIONS */}
-                  <td className="p-2">
-                    <div className="flex gap-2 justify-center">
-                      {actions ? (
-                        actions(row.original)
-                      ) : (
-                        <>
-                          <Button className="px-2 py-1 text-xs rounded bg-green-300 text-green-700 hover:bg-green-400"
-                           onClick={() => onEdit(row.original)}
-                          >
-                            Edit
-                          </Button>
-                          <Button 
-                          className="px-2 py-1 text-xs rounded bg-red-300 text-red-600 hover:bg-red-400"
-                          onClick={()=> onDelete(row.original.id)}
-                          >
-                            Delete
-                          </Button>
-                        </>
-                      )}
-                    </div>
-                  </td>
+
+                  {actions?.length > 0 && (
+                    <td className="px-4 py-2 text-center">
+                      <RowActions row={row.original} actions={actions} />
+                    </td>
+                  )}
                 </tr>
               ))
             )}
@@ -174,40 +152,15 @@ const DataTable = ({
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-between items-center mt-4">
-        <span className="text-sm text-gray-500">
-          Page {pageIndex + 1} of {pageCount}
-        </span>
-
-        <div className="flex gap-2">
-          <button
-            disabled={pageIndex <= 0}
-            onClick={() =>
-              onPaginationChange((p) => ({
-                ...p,
-                pageIndex: Math.max(0, p.pageIndex - 1),
-              }))
-            }
-            className="px-3 py-1 text-sm border rounded hover:bg-gray-100 disabled:opacity-40"
-          >
-            Prev
-          </button>
-
-          <button
-            disabled={pageIndex >= maxPageIndex}
-            onClick={() =>
-              onPaginationChange((p) => ({
-                ...p,
-                pageIndex: Math.min(maxPageIndex, p.pageIndex + 1),
-              }))
-            }
-            className="px-3 py-1 text-sm border rounded hover:bg-gray-100 disabled:opacity-40"
-          >
-            Next
-          </button>
-        </div>
-      </div>
-    </Card>
+      {console.log("Pagination: ", pagination)}
+      {pagination && onPaginationChange && (
+        <Pagination
+        pagination={pagination}
+        totalCount={totalCount}
+        onPaginationChange={onPaginationChange}
+      />
+      )}
+    </div>
   );
 };
 

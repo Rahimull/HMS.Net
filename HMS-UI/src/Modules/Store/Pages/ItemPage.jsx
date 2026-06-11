@@ -4,12 +4,17 @@ import ItemApi from "../../../api/store/ItemApi";
 import { useEffect, useState } from "react";
 import UnitApi from "@/api/Common/UnitApi";
 import CategoryApi from "@/api/Common/Category";
+import { Eye, Printer } from "lucide-react";
 
 
 const ItemPage = () => {
 
   const [units, setUnits] = useState([]);
   const [category, setCategory] = useState([]);
+
+  // for filtering
+  const [search, setSearch]= useState("");
+
 
   useEffect(()=>{
       UnitApi.getPaged({page: 1, pageSize:1000}).then(res=> setUnits(res.data.data.data))
@@ -71,6 +76,7 @@ const mapEntityToForm = (item) => ({
     { accessorKey: "isActive", header: "isActive" },
     { accessorKey: "description", header: "Description" },
   ]}
+  
 
   mapEntityToForm={mapEntityToForm}  
 

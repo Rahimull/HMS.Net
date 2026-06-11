@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import useDebounce from "./useDebounce";
 
-const useCrud = (service, { pageSize = 10, filters = {} } = {}) => {
+const useCrud = (service, pageSize = 10) => {
   const [data, setData] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -17,28 +17,8 @@ const useCrud = (service, { pageSize = 10, filters = {} } = {}) => {
     sortDir: "asc",
   });
 
-
-
-
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 300);
-
-
-  const payload = {
-  pagination,
-  sorting: {
-    sortBy: sorting.sortBy,
-    isDescending: sorting.sortDir === "desc",
-  },
-  search: {
-    searchTerm: debouncedSearch,
-  },
-  filters,
-};
-
-console.log("REQUEST =>", payload);
-
-
 
   /* ---------------- FETCH DATA ---------------- */
   const fetchData = useCallback(async () => {
@@ -57,12 +37,13 @@ console.log("REQUEST =>", payload);
 
       const res = await service.getPaged({
         pagination,
-        sorting: {
-          sortBy: sorting.sortBy,
-          isDescending: sorting.sortDir === "desc",
-        },
+        sorting: sorting
+          ? {
+              sortBy: sorting.sortBy,
+              isDescending: sorting.sortDir === "desc",
+            }
+          : null,
         search: { searchTerm: debouncedSearch },
-        filters,
       });
 
       const result = res.data.data;
@@ -74,7 +55,7 @@ console.log("REQUEST =>", payload);
     } finally {
       setLoading(false);
     }
-  }, [service, pagination, sorting, debouncedSearch, filters]);
+  }, [service, pagination, sorting, debouncedSearch]);
 
   // هر بار pagination / sorting / search عوض شود → fetch
   useEffect(() => {
