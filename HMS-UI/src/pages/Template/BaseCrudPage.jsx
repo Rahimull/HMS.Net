@@ -12,7 +12,7 @@ const BaseCrudPage = ({
   tableTitle,
   tableSubTitle,
   service,
-  filters,
+  filters="",
   fields,
   columns,
   mapFormToPayload,

@@ -63,11 +63,12 @@ const ItemPage = () => {
       filters={filters}
       service={ItemApi}
       fields={[
+        { name: "barcode", label: "Barcode", type: "text", placeholder:"Scan Barcode...", autoFocus: true },
         { name: "name", label: "Name", type: "text", required: true },
         { name: "genericName", label: "Generic Name", type: "text" },
         { name: "brandName", label: "Brand Name", type: "text" },
         { name: "code", label: "code", type: "text" },
-        { name: "barcode", label: "Barcode", type: "text" },
+        
         {
           name: "categoryId",
           label: "Category",

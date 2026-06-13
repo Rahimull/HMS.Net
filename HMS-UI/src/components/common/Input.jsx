@@ -8,6 +8,8 @@ const Input = ({
   className = "",
   options = [],
   maxLength,
+  autoFocus,
+  onKeyDown,
   error,
   disabled = false,
 }) => {
@@ -76,6 +78,8 @@ const Input = ({
           onChange={onChange}
           disabled={disabled}
           maxLength={maxLength}
+          autoFocus={autoFocus}
+          onKeyDown={onKeyDown}
         />
       )}
 

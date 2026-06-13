@@ -43,7 +43,7 @@ const mapEntityToForm = (item) => ({
     <BaseCrudPage
       title="Item Stock"
       service={ItemStockApi}
-
+      filters={{}}
       // 🧾 FORM FIELDS
       fields={[
         {

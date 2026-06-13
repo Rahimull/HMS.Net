@@ -21,4 +21,7 @@ public class ItemStockDto
     public bool IsExpired { get; set; }
 
     public string? Notes { get; set; }
+
+    // for barcode
+    public string? Barcode { get; set; }
 }

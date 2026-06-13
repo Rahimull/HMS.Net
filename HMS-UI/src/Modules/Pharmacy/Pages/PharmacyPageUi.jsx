@@ -41,8 +41,11 @@ const PharmacyPOS = () => {
           itemName: s.itemName,
           quantity: 0,
           batches: [],
+          barcode: s.barcode,
         };
       }
+
+      
 
       map[s.itemId].quantity += s.remainingQuantity;
 
@@ -58,10 +61,16 @@ const PharmacyPOS = () => {
     return Object.values(map);
   }, [stocks]);
 
+
   /* ================= FILTER ================= */
   const filtered = useMemo(() => {
-    return items.filter((x) =>
-      x.itemName?.toLowerCase().includes(search.toLowerCase()),
+    const term = search.toLowerCase();
+    return items.filter(
+      (x) =>
+        x.barcode?.toString() === term ||
+        x.itemName?.toLowerCase().includes(search.toLowerCase(term)
+        
+  ),
     );
   }, [items, search]);
 
@@ -172,6 +181,35 @@ const PharmacyPOS = () => {
     }
   };
 
+  // Barcode handler
+  // const handleBarcodeScan = (barcode)=>{
+  //   const item = item.find(
+  //     (x)=> x.barcode?.toString() === barcode.toString()
+  //   );
+  //   if(!item){
+  //     alert("Barcode Not Found")
+  //     return;
+  //   }
+  //   addToCart(item);
+  //   setSearch("");
+  // }
+
+  const handleBarcodeScan = (barcode) => {
+  const clean = String(barcode).trim();
+
+  const item = items.find(
+    (x) => String(x.barcode).trim() === clean
+  );
+
+  if (!item) {
+    alert("Barcode Not Found");
+    return;
+  }
+
+  addToCart(item);
+  setSearch("");
+};
+
   return (
     <div className="h-screen flex bg-gray-100">
       {/* ================= LEFT ================= */}
@@ -183,10 +221,22 @@ const PharmacyPOS = () => {
           </div>
 
           <div className="w-[300px]">
-            <Input
+            {/* <Input
               placeholder="Search medicine..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+            /> */}
+            <Input
+              placeholder="Scan Barcode..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e)=> {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleBarcodeScan(e.target.value);
+                  e.target.value = "";
+                }
+              }}
             />
           </div>
         </div>
@@ -220,6 +270,9 @@ const PharmacyPOS = () => {
                 Stock: {item.quantity}
               </p>
 
+              <p className="text-xs text-gray-400">
+                Barcode: {item.barcode}
+              </p>
               <p className="text-xs text-gray-400">
                 Batches: {item.batches.length}
               </p>

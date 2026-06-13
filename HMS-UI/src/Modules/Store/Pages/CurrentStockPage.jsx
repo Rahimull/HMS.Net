@@ -8,6 +8,7 @@ import Button from "@/components/common/Button";
 import StockStatus from "../component/StockStatus";
 import Toast from "@/components/common/Toast";
 import { useNavigate } from "react-router-dom";
+import { Icon } from "lucide-react";
 
 export default function StockDashboard() {
   const [stock, setStock] = useState([]);
@@ -120,6 +121,16 @@ export default function StockDashboard() {
     navigate(`/store/stockManagement?itemId=${row.itemId}&itemName=${row.itemName}`);
   };
 
+ 
+  const actions = useMemo(()=>[
+    {
+      label: "Batch",
+      className: "text-blue-500",
+      icon:"👁",
+      onclick: (row)=> openBatch(row)
+    }
+  ], );
+
   
 
   return (
@@ -160,11 +171,9 @@ export default function StockDashboard() {
         onPaginationChange={setPagination}
         onSortingChange={setSorting}
         tableTitle="Current Stock"
-        actions={(row) => (
-          <Button size="sm" onClick={() => openBatch(row)}>
-            Batch
-          </Button>
-        )}
+        subTitle="Pharmacy Current Stock"
+       actions={actions}
+        
       />
 
       {/* TOAST */}

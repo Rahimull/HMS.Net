@@ -5,7 +5,7 @@ import Input from "../common/Input";
 const ReusableForm = ({
   fields,
   onSubmit,
-  onSuccess,
+  // onSuccess,
   initialValues = null,
   submitText = "Submit",
 }) => {
@@ -99,8 +99,6 @@ const ReusableForm = ({
 
       await onSubmit(formData);
 
-      onSuccess?.("Saved successfully");
-
       if (!initialValues) {
         setFormData(initialState);
       }
@@ -130,6 +128,7 @@ const ReusableForm = ({
               label={field.label}
               name={field.name}
               type={field.type || "text"}
+              autoFocus={field.autoFocus || false}
               value={formData[field.name] || ""}
               onChange={handleChange}
               options={field.options || []}

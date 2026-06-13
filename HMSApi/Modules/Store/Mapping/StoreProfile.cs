@@ -25,7 +25,8 @@ public class StoreProfile : Profile
         CreateMap<ItemStock, ItemStockDto>()
             .ForMember(dest => dest.ItemName,
                 opt => opt.MapFrom(src => src.Item.Name))
-            .ForMember(d => d.IsExpired, opt => opt.MapFrom(s => s.ExpiryDate.HasValue && s.ExpiryDate < DateOnly.FromDateTime(DateTime.UtcNow)));
+            .ForMember(d => d.IsExpired, opt => opt.MapFrom(s => s.ExpiryDate.HasValue && s.ExpiryDate < DateOnly.FromDateTime(DateTime.UtcNow)))
+            .ForMember(dest => dest.Barcode, opt => opt.MapFrom(src => src.Item.Barcode));
 
         // ================= ITEM CURRENT STOCK =================
         CreateMap<CreateCurrentStockDto, CurrentStock>();

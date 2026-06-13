@@ -21,6 +21,7 @@ public class ItemStockSpecification : BaseSpecification<ItemStock>
                 (
                     d.BatchNumber.Contains(term) ||
                     d.Item.Name.Contains(term) ||
+                    (d.Item.Barcode != null && d.Item.Barcode.Contains(term)) ||
                     d.InitialQuantity.ToString().Contains(term)
                 )
             );
