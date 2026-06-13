@@ -4,24 +4,25 @@ import { useEffect, useMemo, useState } from "react";
 import UnitApi from "@/api/Common/UnitApi";
 import CategoryApi from "@/api/Common/Category";
 
-
 const ItemPage = () => {
   const [units, setUnits] = useState([]);
   const [category, setCategory] = useState([]);
 
- /* =========== SEARCH AND FILTERING ======= */
+  /* =========== SEARCH AND FILTERING ======= */
   const [statusFilter, setStatusFilter] = useState("all");
-  
-    const [fromDate, setFromDate] = useState("");
-    const [toDate, setToDate] = useState("");
-  
-    /* ================= FILTER DATA ================= */
-    const filters = useMemo(()=>({
+
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+
+  /* ================= FILTER DATA ================= */
+  const filters = useMemo(
+    () => ({
       status: statusFilter,
       fromDate,
-      toDate
-    }),[statusFilter, fromDate, toDate]);
-
+      toDate,
+    }),
+    [statusFilter, fromDate, toDate],
+  );
 
   useEffect(() => {
     UnitApi.getPaged({ page: 1, pageSize: 1000 }).then((res) =>
@@ -55,71 +56,79 @@ const ItemPage = () => {
   });
 
   return (
-
     <div className="p-6 bg-gray-100 min-h-screen">
-      
       <BaseCrudPage
-      title="Item"
-      filters={filters}
-      service={ItemApi}
-      fields={[
-        { name: "barcode", label: "Barcode", type: "text", placeholder:"Scan Barcode...", autoFocus: true },
-        { name: "name", label: "Name", type: "text", required: true },
-        { name: "genericName", label: "Generic Name", type: "text" },
-        { name: "brandName", label: "Brand Name", type: "text" },
-        { name: "code", label: "code", type: "text" },
-        
-        {
-          name: "categoryId",
-          label: "Category",
-          type: "select",
-          options: categoryOptions,
-        },
-        {
-          name: "unitId",
-          label: "Unit",
-          type: "select",
-          options: unitsOptions,
-        },
-        {
-          name: "type",
-          label: "type",
-          type: "select",
-          options: itemTypeOptions,
-        },
-        { name: "isActive", label: "Is Active", type: "checkbox" },
+        title="Item"
+        filters={filters}
+        service={ItemApi}
+        fields={[
+          {
+            name: "barcode",
+            label: "Barcode",
+            type: "text",
+            placeholder: "Scan Barcode...",
+            autoFocus: true,
+          },
+          { name: "name", label: "Name", type: "text", required: true },
+          { name: "genericName", label: "Generic Name", type: "text" },
+          { name: "brandName", label: "Brand Name", type: "text" },
+          { name: "code", label: "code", type: "text" },
 
-        { name: "description", label: "Description", type: "textarea" },
-      ]}
-      columns={[
-        { accessorKey: "id", header: "ID", enableSorting: true },
-        { accessorKey: "name", header: "Name", enableSorting: true },
-        { accessorKey: "brandName", header: "Brand Name", enableSorting: true },
-        { accessorKey: "code", header: "Code", enableSorting: true },
-        { accessorKey: "barcode", header: "Barcode" },
-        { accessorKey: "categoryName", header: "Category" },
-        { accessorKey: "unitName", header: "Unit" },
-        { accessorKey: "type", header: "Type" },
-        { accessorKey: "isActive", header: "isActive" },
-        { accessorKey: "description", header: "Description" },
-      ]}
-      tableTitle={"Items List"}
-      tableSubTitle={"Pharmacy Items Record"}
-      mapEntityToForm={mapEntityToForm}
-      mapFormToPayload={(form) => ({
-        name: form.name,
-        genericName: form.genericName,
-        brandName: form.brandName,
-        code: form.code,
-        barcode: form.barcode,
-        type: Number(form.type),
-        unitId: Number(form.unitId),
-        categoryId: Number(form.categoryId),
-        description: form.description,
-      })}
-    />
+          {
+            name: "categoryId",
+            label: "Category",
+            type: "select",
+            options: categoryOptions,
+          },
+          {
+            name: "unitId",
+            label: "Unit",
+            type: "select",
+            options: unitsOptions,
+          },
+          {
+            name: "type",
+            label: "type",
+            type: "select",
+            options: itemTypeOptions,
+          },
+          { name: "isActive", label: "Is Active", type: "checkbox" },
+
+          { name: "description", label: "Description", type: "textarea" },
+        ]}
+        columns={[
+          { accessorKey: "id", header: "ID", enableSorting: true },
+          { accessorKey: "name", header: "Name", enableSorting: true },
+          {
+            accessorKey: "brandName",
+            header: "Brand Name",
+            enableSorting: true,
+          },
+          { accessorKey: "code", header: "Code", enableSorting: true },
+          { accessorKey: "barcode", header: "Barcode" },
+          { accessorKey: "categoryName", header: "Category" },
+          { accessorKey: "unitName", header: "Unit" },
+          { accessorKey: "type", header: "Type" },
+          { accessorKey: "isActive", header: "isActive" },
+          { accessorKey: "description", header: "Description" },
+        ]}
+        tableTitle={"Items List"}
+        tableSubTitle={"Pharmacy Items Record"}
+        mapEntityToForm={mapEntityToForm}
+        mapFormToPayload={(form) => ({
+          id: form.id,
+          name: form.name,
+          genericName: form.genericName,
+          brandName: form.brandName,
+          code: form.code,
+          barcode: form.barcode,
+          type: Number(form.type),
+          unitId: Number(form.unitId),
+          categoryId: Number(form.categoryId),
+          description: form.description,
+        })}
+      />
     </div>
-    
   );
 };
 

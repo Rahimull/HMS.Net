@@ -189,6 +189,42 @@ export default function ItemStockPage() {
     [],
   );
 
+    // ACTIONS
+  const actions = useMemo(()=> [
+    {
+      label: "View",
+      className: "text-blue-500",
+      icon: "👁",
+      onClick: (row) => viewBatch(row),
+    },
+    {
+      label: "Movement",
+      className: "text-purple-500",
+      icon: "✏️",
+      onClick: (row) => viewMovement(row),
+    },
+    ],);
+
+  // (row) => (
+  //         <div className="flex gap-2">
+  //           <Button
+  //             size="sm"
+  //             className="bg-blue-500 text-white"
+  //             onClick={() => viewBatch(row)}
+  //           >
+  //             View
+  //           </Button>
+
+  //           <Button
+  //             size="sm"
+  //             className="bg-purple-500 text-white"
+  //             onClick={() => viewMovement(row)}
+  //           >
+  //             Movement
+  //           </Button>
+  //         </div>
+  //       )
+
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
       {/* HEADER */}
@@ -252,25 +288,7 @@ export default function ItemStockPage() {
         onPaginationChange={setPagination}
         onSortingChange={setSorting}
         tableTitle="Batch Inventory"
-        actions={(row) => (
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              className="bg-blue-500 text-white"
-              onClick={() => viewBatch(row)}
-            >
-              View
-            </Button>
-
-            <Button
-              size="sm"
-              className="bg-purple-500 text-white"
-              onClick={() => viewMovement(row)}
-            >
-              Movement
-            </Button>
-          </div>
-        )}
+        actions={actions}
       />
 
       {/* DRAWER */}

@@ -12,7 +12,7 @@ const BaseCrudPage = ({
   tableTitle,
   tableSubTitle,
   service,
-  filters="",
+  filters = "",
   fields,
   columns,
   mapFormToPayload,
@@ -35,10 +35,7 @@ const BaseCrudPage = ({
     createItem,
     updateItem,
     deleteItem,
-  } = useCrud(service, {filters});
-
-
-  
+  } = useCrud(service, { filters });
 
   //  FIX: normalize entity for EDIT (important for enums/selects)
   const normalizeEntity = (entity) => {
@@ -61,13 +58,22 @@ const BaseCrudPage = ({
   };
 
   const handleSubmit = async (formData) => {
-    const payload = mapFormToPayload(formData);
+    try {
+      const payload = mapFormToPayload(formData);
 
-    if (editing) {
-      await updateItem(editing.id, payload);
-      setEditing(null);
-    } else {
-      await createItem(payload);
+      console.log("Editing: ", editing);
+      console.log("PayLoad: ", payload);
+      if (editing) {
+        await updateItem(editing.id, payload);
+        setEditing(null);
+      } else {
+        await createItem(payload);
+      }
+    } catch (err) {
+      console.log("ERROR:", err);
+      console.log("RESPONSE:", err?.response);
+      console.log("DATA:", err?.response?.data);
+      console.log("STATUS:", err?.response?.status);
     }
   };
 
@@ -81,9 +87,9 @@ const BaseCrudPage = ({
   const defaultActions = [
     {
       label: "Edit",
-      className:"text-blue-600",
+      className: "text-blue-600",
       icon: <Pencil size={14} />,
-      onClick: (row) => setEditing(row),
+      onClick: (row) => setEditing(row.original ?? row),
     },
     {
       label: "Delete",
@@ -92,8 +98,6 @@ const BaseCrudPage = ({
       onClick: (row) => deleteItem(row.id),
     },
   ];
-
-
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -118,20 +122,19 @@ const BaseCrudPage = ({
       {}
       {error && <p className="text-red-500">{error}</p>}
 
-
       {/* Table */}
       <DataTable
-          columns={columns}
-          title={tableTitle}
-          subTitle={tableSubTitle}
-          data={data}
-          pagination={pagination}
-          totalCount={totalCount}
-          onPaginationChange={setPagination}
-          onSortingChange={setSorting}
-          actions={actions.length ? actions : defaultActions}
-          loading={loading}
-        />
+        columns={columns}
+        title={tableTitle}
+        subTitle={tableSubTitle}
+        data={data}
+        pagination={pagination}
+        totalCount={totalCount}
+        onPaginationChange={setPagination}
+        onSortingChange={setSorting}
+        actions={actions.length ? actions : defaultActions}
+        loading={loading}
+      />
     </div>
   );
 };

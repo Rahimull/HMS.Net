@@ -202,6 +202,18 @@ export default function StockMovementPage() {
     [],
   );
 
+
+
+  // ACTIONS
+  const actions = useMemo(()=>[
+    {
+      label: "View",
+      icon: "👁",
+      className:"text-blue-500",
+      onClick: (row)=> openDetails(row),
+    }
+  ],[openDetails]);
+
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
       {/* ================= HEADER ================= */}
@@ -270,17 +282,7 @@ export default function StockMovementPage() {
         onPaginationChange={setPagination}
         onSortingChange={setSorting}
         tableTitle="Stock Movements"
-        actions={(row) => (
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              className="bg-blue-500 hover:bg-blue-600 text-white"
-              onClick={() => openDetails(row)}
-            >
-              View
-            </Button>
-          </div>
-        )}
+        actions={actions}
       />
 
       {/* ================= DRAWER ================= */}
