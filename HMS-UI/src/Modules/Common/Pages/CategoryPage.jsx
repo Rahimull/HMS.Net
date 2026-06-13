@@ -8,6 +8,7 @@ const CategoryPage = () => {
         title="Category"
         tableTitle="Category Table"
         service={CategoryApi}
+        filters={{}}
         fields={[
           {
             name: "name",

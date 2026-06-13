@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import useDebounce from "./useDebounce";
+import { toast } from "react-toastify";
 
 const useCrud = (service, { pageSize = 10, filters = {} } = {}) => {
   const [data, setData] = useState([]);
@@ -17,12 +18,8 @@ const useCrud = (service, { pageSize = 10, filters = {} } = {}) => {
     sortDir: "asc",
   });
 
-
-
-
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 300);
-
 
   const payload = {
   pagination,
@@ -37,8 +34,6 @@ const useCrud = (service, { pageSize = 10, filters = {} } = {}) => {
 };
 
 console.log("REQUEST =>", payload);
-
-
 
   /* ---------------- FETCH DATA ---------------- */
   const fetchData = useCallback(async () => {
@@ -93,15 +88,14 @@ console.log("REQUEST =>", payload);
       setError(null);
 
       await service.create(item);
+      toast.success("Create Successfully");
 
       // فقط state را تغییر بده، fetch خودش انجام می‌شود
       setPagination((p) => ({ ...p, pageIndex: 0 }));
     } catch (err) {
-      console.error(err);
-      console.log("STATUS:", err.response?.status);
-      console.log("RESPONSE DATA:", err.response?.data);
-      console.log("HEADERS:", err.response?.headers);
-      setError(err?.response?.data?.message || "Create failed");
+      const message = err?.response?.data?.message || "Create failed";
+      setError(message);
+      toast.error(message)
     } finally {
       setLoading(false);
     }
@@ -114,15 +108,12 @@ console.log("REQUEST =>", payload);
       setError(null);
 
       await service.update(id, item);
+      toast.info("Update Successfully")
       setPagination((p) => ({ ...p, pageIndex: 0 }));
     } catch (err) {
-      console.error(err);
-
-      console.log("STATUS:", err.response?.status);
-      console.log("RESPONSE DATA:", err.response?.data);
-      console.log("HEADERS:", err.response?.headers);
-
-      setError(err?.response?.data?.message || "Update failed");
+      const message = err?.response?.data?.message || "Update failed";
+     setError(message);
+     toast.error(message)
     } finally {
       setLoading(false);
     }
@@ -137,10 +128,12 @@ console.log("REQUEST =>", payload);
       setError(null);
 
       await service.delete(id);
+      toast.error("Delate Successfully");
       setPagination((p) => ({ ...p, pageIndex: 0 }));
     } catch (err) {
-      console.error(err);
-      setError(err?.response?.data?.message || "Delete failed");
+      const message = err?.response?.data?.message || "Delete failed";
+      setError(message);
+      setError(message);
     } finally {
       setLoading(false);
     }

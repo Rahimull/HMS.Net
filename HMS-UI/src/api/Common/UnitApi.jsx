@@ -4,9 +4,7 @@ const endpoint = "/Unit";
 
 const UnitApi = {
   getPaged: (queryParams) =>
-    Api.post(`${endpoint}/paged`, {
-      params: queryParams,
-    }),
+    Api.post(`${endpoint}/paged`, queryParams),
   getById: (id)=> Api.get(`${endpoint}/${id}`),
   create: (data) => Api.post(endpoint, data),
   update: (id, data) => Api.put(`${endpoint}/${id}`, data),

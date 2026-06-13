@@ -48,7 +48,7 @@ const Sidebar = () => {
         title: "Overview",
         items: [
           { name: "Dashboard", link: "/", icon: LayoutDashboard },
-          { name: "Product", link: "/product", icon: LayoutDashboard },
+          
           { name: "Units", link: "/unit", icon: LayoutDashboard },
           { name: "Category", link: "/Category", icon: LayoutDashboard },
         ],
@@ -75,53 +75,6 @@ const Sidebar = () => {
             link: "/medicalrecord",
             icon: FileText,
           },
-        ],
-      },
-      {
-        key: "doctors",
-        title: "Doctors",
-        items: [
-          {
-            name: "Appointment test Ui",
-            link: "/appointmentsUi",
-            icon: CalendarClock,
-          },
-          { name: "OK---> Doctors", link: "/doctors", icon: Stethoscope },
-          {
-            name: "OK---> Consultations",
-            link: "/consultations",
-            icon: ClipboardList,
-          },
-          { name: "OK---> Diagnosis", link: "/diagnosis", icon: ListChecks },
-          { name: "OK---> Prescription", link: "/prescription", icon: Pill },
-          {
-            name: "OK---> Prescription Details",
-            link: "/prescriptiondetails",
-            icon: Layers,
-          },
-          { name: "OK---> Schedule", link: "/schedule", icon: CalendarDays },
-        ],
-      },
-      {
-        key: "hr",
-        title: "HR",
-        items: [
-          { name: "OK---> Employees", link: "/hr/employees", icon: Briefcase },
-          { name: "OK---> Payroll", link: "/hr/payroll", icon: Wallet },
-          { name: "OK---> Shifts", link: "/hr/shifts", icon: CalendarDays },
-        ],
-      },
-      {
-        key: "finance",
-        title: "Finance",
-        items: [
-          { name: "Invoices", link: "/finance/invoices", icon: Receipt },
-          {
-            name: "Invoice Details",
-            link: "/finance/invoice-details",
-            icon: FileText,
-          },
-          { name: "Payments", link: "/finance/payments", icon: CreditCard },
         ],
       },
       {
@@ -175,7 +128,7 @@ const Sidebar = () => {
           },
 
           {
-            name: "OK---> Sales",
+            name: "Sales",
             link: "/pharmacy/sales",
             icon: BadgeDollarSign,
           },
@@ -186,6 +139,54 @@ const Sidebar = () => {
           },
         ],
       },
+      {
+        key: "doctors",
+        title: "Doctors",
+        items: [
+          {
+            name: "Appointment test Ui",
+            link: "/appointmentsUi",
+            icon: CalendarClock,
+          },
+          { name: "OK---> Doctors", link: "/doctors", icon: Stethoscope },
+          {
+            name: "OK---> Consultations",
+            link: "/consultations",
+            icon: ClipboardList,
+          },
+          { name: "OK---> Diagnosis", link: "/diagnosis", icon: ListChecks },
+          { name: "OK---> Prescription", link: "/prescription", icon: Pill },
+          {
+            name: "OK---> Prescription Details",
+            link: "/prescriptiondetails",
+            icon: Layers,
+          },
+          { name: "OK---> Schedule", link: "/schedule", icon: CalendarDays },
+        ],
+      },
+      {
+        key: "hr",
+        title: "HR",
+        items: [
+          { name: "OK---> Employees", link: "/hr/employees", icon: Briefcase },
+          { name: "OK---> Payroll", link: "/hr/payroll", icon: Wallet },
+          { name: "OK---> Shifts", link: "/hr/shifts", icon: CalendarDays },
+        ],
+      },
+      {
+        key: "finance",
+        title: "Finance",
+        items: [
+          { name: "Invoices", link: "/finance/invoices", icon: Receipt },
+          {
+            name: "Invoice Details",
+            link: "/finance/invoice-details",
+            icon: FileText,
+          },
+          { name: "Payments", link: "/finance/payments", icon: CreditCard },
+        ],
+      },
+      
     ],
     [],
   );

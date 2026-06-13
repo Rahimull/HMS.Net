@@ -23,6 +23,7 @@ const MedicalRecordPage = () => {
     <BaseCrudPage
       title="MedicalRecord"
       service={MedicalRecordApi}
+      filters={{}}
       fields={[
         {
           name: "patientId",

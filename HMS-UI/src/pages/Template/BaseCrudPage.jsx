@@ -1,14 +1,18 @@
-import { useState } from "react";
+import { Children, useState } from "react";
 import Loader from "../../components/common/Loader";
 import DataTable from "../../components/common/DataTable";
 import ReusableForm from "../../components/form/ResusableForm";
 import useCrud from "../../hooks/useCurd";
 import { Pencil, Trash2 } from "lucide-react";
+import { toast } from "react-toastify";
+import { ErrorMessage } from "formik";
 
 const BaseCrudPage = ({
   title,
   tableTitle,
+  tableSubTitle,
   service,
+  filters,
   fields,
   columns,
   mapFormToPayload,
@@ -31,7 +35,10 @@ const BaseCrudPage = ({
     createItem,
     updateItem,
     deleteItem,
-  } = useCrud(service);
+  } = useCrud(service, {filters});
+
+
+  
 
   //  FIX: normalize entity for EDIT (important for enums/selects)
   const normalizeEntity = (entity) => {
@@ -86,8 +93,10 @@ const BaseCrudPage = ({
     },
   ];
 
+
+
   return (
-    <div className="space-y-4">
+    <div className="p-6 bg-gray-100 min-h-screen">
       <h2 className="text-xl font-bold">{title}</h2>
 
       {/* Search */}
@@ -100,32 +109,29 @@ const BaseCrudPage = ({
 
       {/* Form */}
       <ReusableForm
+        key={editing ? editing.id : "create"}
         fields={fields}
         initialValues={editing ? normalizeEntity(editing) : null}
         onSubmit={handleSubmit}
         submitText={editing ? "Update" : "Add"}
       />
-
+      {}
       {error && <p className="text-red-500">{error}</p>}
 
 
       {/* Table */}
-      {loading ? (
-        <Loader text={`Fetching ${title}...`} />
-      ) : (
-        <DataTable
+      <DataTable
           columns={columns}
+          title={tableTitle}
+          subTitle={tableSubTitle}
           data={data}
           pagination={pagination}
           totalCount={totalCount}
-          onPaginationChange={handlePaginationChange}
-          onSortingChange={(sort) =>
-            setSorting(sort ?? { sortBy: null, sortDir: "asc" })
-          }
+          onPaginationChange={setPagination}
+          onSortingChange={setSorting}
           actions={actions.length ? actions : defaultActions}
           loading={loading}
         />
-      )}
     </div>
   );
 };

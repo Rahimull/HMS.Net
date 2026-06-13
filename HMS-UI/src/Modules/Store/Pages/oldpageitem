@@ -1,26 +1,14 @@
 import BaseCrudPage from "../../../pages/Template/BaseCrudPage";
 import ItemApi from "../../../api/store/ItemApi";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import UnitApi from "@/api/Common/UnitApi";
 import CategoryApi from "@/api/Common/Category";
-
+import { Eye, Printer } from "lucide-react";
 
 const ItemPage = () => {
   const [units, setUnits] = useState([]);
   const [category, setCategory] = useState([]);
 
- /* =========== SEARCH AND FILTERING ======= */
-  const [statusFilter, setStatusFilter] = useState("all");
-  
-    const [fromDate, setFromDate] = useState("");
-    const [toDate, setToDate] = useState("");
-  
-    /* ================= FILTER DATA ================= */
-    const filters = useMemo(()=>({
-      status: statusFilter,
-      fromDate,
-      toDate
-    }),[statusFilter, fromDate, toDate]);
 
 
   useEffect(() => {
@@ -55,12 +43,8 @@ const ItemPage = () => {
   });
 
   return (
-
-    <div className="p-6 bg-gray-100 min-h-screen">
-      
-      <BaseCrudPage
+    <BaseCrudPage
       title="Item"
-      filters={filters}
       service={ItemApi}
       fields={[
         { name: "name", label: "Name", type: "text", required: true },
@@ -102,8 +86,6 @@ const ItemPage = () => {
         { accessorKey: "isActive", header: "isActive" },
         { accessorKey: "description", header: "Description" },
       ]}
-      tableTitle={"Items List"}
-      tableSubTitle={"Pharmacy Items Record"}
       mapEntityToForm={mapEntityToForm}
       mapFormToPayload={(form) => ({
         name: form.name,
@@ -117,8 +99,6 @@ const ItemPage = () => {
         description: form.description,
       })}
     />
-    </div>
-    
   );
 };
 

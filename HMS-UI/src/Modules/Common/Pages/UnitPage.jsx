@@ -8,11 +8,13 @@ const UnitPage = () => {
         title="Unit"
         tableTitle="Unit Table"
         service={UnitApi}
+        filters={""}
         fields={[
           {
             name: "name",
             label: "Name",
             type: "text",
+            maxLength: 5,
             required: true,
           },
         ]}

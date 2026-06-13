@@ -40,6 +40,7 @@ const AppointmentPage = () => {
   <BaseCrudPage
     title="Appointment"
     service={AppointmentApi}
+    filters={{}}
     fields={[
       { name: "patientId", label: "Patients", type: "select", options:patientOption, required: true },
       { name: "doctorId", label: "Doctors", type: "select", options:doctorOption},

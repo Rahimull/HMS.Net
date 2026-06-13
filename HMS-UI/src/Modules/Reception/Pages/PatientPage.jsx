@@ -7,6 +7,7 @@ const PatientPage = () => (
   <BaseCrudPage
     title="Patient"
     service={PatientApi}
+    filters={{}}
     fields={[
       { name: "firstName", label: "First Name", type: "text", required: true },
       { name: "lastName", label: "Last Name", type: "text" },

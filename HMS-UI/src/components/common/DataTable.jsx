@@ -140,7 +140,7 @@ const DataTable = ({
                   {/* ACTIONS */}
 
                   {actions?.length > 0 && (
-                    <td className="px-4 py-2 text-center">
+                    <td className="px-4 py-2 flex justify-center">
                       <RowActions row={row.original} actions={actions} />
                     </td>
                   )}

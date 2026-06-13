@@ -6,6 +6,7 @@ const DepartmentPage = () => (
   <BaseCrudPage
     title="Departments"
     service={DepartmentApi}
+    filters={{}}
     fields={[
       { name: "name", label: "Department Name", type: "text", required: true },
       { name: "description", label: "Description", type: "textarea" },

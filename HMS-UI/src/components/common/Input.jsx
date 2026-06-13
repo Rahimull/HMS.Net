@@ -7,6 +7,7 @@ const Input = ({
   placeholder,
   className = "",
   options = [],
+  maxLength,
   error,
   disabled = false,
 }) => {
@@ -74,6 +75,7 @@ const Input = ({
           placeholder={placeholder}
           onChange={onChange}
           disabled={disabled}
+          maxLength={maxLength}
         />
       )}
 
