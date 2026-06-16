@@ -4,11 +4,9 @@ import KPI from "../component/KPI";
 import Input from "@/components/common/Input";
 import Chart from "@/components/common/Chart";
 import DataTable from "@/components/common/DataTable";
-import Button from "@/components/common/Button";
 import StockStatus from "../component/StockStatus";
 import Toast from "@/components/common/Toast";
 import { useNavigate } from "react-router-dom";
-import { Icon } from "lucide-react";
 
 export default function StockDashboard() {
   const [stock, setStock] = useState([]);

@@ -26,6 +26,9 @@ import {
   FlaskConical,
   BadgeDollarSign,
   Layers,
+  ArrowLeftRight,
+  PackageSearch,
+  PackageCheck,
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -81,39 +84,45 @@ const Sidebar = () => {
         key: "store",
         title: "Store",
         items: [
+          
           {
-            name: "StockManagement",
+            name: "Batch Management",
             link: "/store/StockManagement",
-            icon: Package,
-          },
-          {
-            name: "StockMovement",
-            link: "/store/StockMovement",
-            icon: Package,
-          },
-          { name: "PurchasesUi", link: "/store/PurchasesUi", icon: Package },
-          { name: "OK---> Items", link: "/store/items", icon: Package },
-          {
-            name: "OK---> Item Stocks",
-            link: "/store/item-stocks",
             icon: Boxes,
           },
           {
-            name: "OK---> Purchases",
+            name: "Stock Movement",
+            link: "/store/StockMovement",
+            icon: ArrowLeftRight,
+          },
+          {
+            name: "Current Stock",
+            link: "/store/currentStock",
+            icon: PackageCheck,
+          },
+          { name: "Items", link: "/store/items", icon: Package },
+          { name: "Suppliers", link: "/store/suppliers", icon: Truck },
+          { name: "Purchases", link: "/store/PurchasesUi", icon: Package },
+          {
+            name: "OK---> Purchases List",
             link: "/store/purchases",
             icon: ShoppingCart,
           },
+          
           {
-            name: "OK---> Purchase Details",
+            name: "NOt Item Stocks",
+            link: "/store/item-stocks",
+            icon: Boxes,
+          },
+          
+          
+          {
+            name: "NOt Purchase Details",
             link: "/store/purchase-details",
             icon: Layers,
           },
-          { name: "OK---> Suppliers", link: "/store/suppliers", icon: Truck },
-          {
-            name: "OK---> Current Stock",
-            link: "/store/currentStock",
-            icon: Truck,
-          },
+          
+          
         ],
       },
       {
