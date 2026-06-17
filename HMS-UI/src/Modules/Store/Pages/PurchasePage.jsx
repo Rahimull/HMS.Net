@@ -1,21 +1,22 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import PurchaseApi from "@/api/store/PurchaseApi";
 import DataTable from "@/components/common/DataTable";
-import { StockMovement } from ".";
-import StockMovementApi from "@/api/store/StockMovementApi";
 import { toast } from "react-toastify";
 
 const PurchasePage = ({ api }) => {
-  const [purchases, setPurchases] = useState([]);
   const [selected, setSelected] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [form, setForm] = useState(null);
 
-  /* ================= LOAD ================= */
-  useEffect(() => {
-    PurchaseApi.getPaged({ page: 1, pageSize: 100 })
-      .then(res => setPurchases(res.data.data.data ?? []));
-  }, []);
+  const [purchaseData, setPurchaseData] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [sorting, setSorting] = useState(null);
+  const [search, setSearch] = useState("");
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 50,
+  });
 
   const details = selected?.details ?? [];
 
@@ -24,9 +25,10 @@ const PurchasePage = ({ api }) => {
     setSelected(p);
     setForm({
       ...p,
-      details: p.details ?? []
+      details: p.details ?? [],
     });
     setEditMode(false);
+    console.log(p);
   };
 
   /* ================= UPDATE ================= */
@@ -37,13 +39,13 @@ const PurchasePage = ({ api }) => {
       supplierId: form.supplierId,
       purchaseDate: form.purchaseDate,
       notes: form.notes,
-      details: form.details.map(d => ({
+      details: form.details.map((d) => ({
         itemId: d.itemId,
         quantity: d.quantity,
         unitPrice: d.unitPrice,
         batchNumber: d.batchNumber,
-        expiryDate: d.expiryDate
-      }))
+        expiryDate: d.expiryDate,
+      })),
     });
 
     setEditMode(false);
@@ -51,38 +53,27 @@ const PurchasePage = ({ api }) => {
 
   /* ======== NEW PURCHASE LIST ================ */
 
-  const [puchaseData, setPurchaseData] = useState([]);
-  const [totalCount, setTotalCount] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [sorting, setSorting] = useState(null);
-  const [search, setSearch] = useState("");
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 50,
-  });
-
-const loadData = async () =>{
-  setLoading(true);
-  try{
-    const res = await StockMovementApi.getPaged(
-      {
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await PurchaseApi.getPaged({
         pagination: {
           pageIndex: pagination.pageIndex ?? 0,
           pageSize: pagination.pageSize || 10,
         },
         sorting: sorting
-        ? {
-          sortBy: sorting.id,
-          isDescending: sorting.desc,
-        }
-        : {
-          sortBy: "id",
-          isDescending: false,
-        }, 
+          ? {
+              sortBy: sorting.id,
+              isDescending: sorting.desc,
+            }
+          : {
+              sortBy: "id",
+              isDescending: false,
+            },
 
-        search : {
+        search: {
           searchTerm: search,
-        }
+        },
       });
 
       const Pageddata = res.data.data;
@@ -90,134 +81,95 @@ const loadData = async () =>{
 
       setPurchaseData(Array.isArray(data) ? data : []);
       setTotalCount(Pageddata.totalCount ?? 0);
-    }
-    catch(error){
+    } catch (error) {
       toast.error("Failed to load Purchases");
-      console.log(error)
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
-    finally{setLoading(false)}
-}
+  });
 
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      loadData();
+    }, 300);
 
-useEffect(()=>{
-  const delay = setTimeout(()=>{
-    loadData();
-  }, 300);
+    return () => clearTimeout(delay);
+  }, [pagination.pageIndex, pagination.pageSize, sorting, search]);
 
-  return ()=> clearTimeout(delay);
-},[pagination.pageIndex, pagination.pageSize, sorting, search]);
+  console.log("Data: ", purchaseData);
 
+  const columns = useMemo(() => [
+    {
+      accessorKey: "id",
+      header: "ID",
+      enableSorting: true,
+      cell: ({ row }) => <span># {row.original.id}</span>,
+    },
+    { accessorKey: "supplierName", header: "Supplier", enableSorting: true },
+    {
+      accessorKey: "date",
+      header: "Date",
+      cell: ({ row }) => (
+        <span>{new Date(row.original.purchaseDate).toLocaleDateString()}</span>
+      ),
+    },
+    {
+      accessorKey: "totalPrice",
+      header: "Price",
+      enableSorting: true,
+      cell: ({ row }) => (
+        <span className="text-green-600 font-semibold">
+          {row.original.totalPrice} Af
+        </span>
+      ),
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      enableSorting: true,
+      cell: () => (
+        <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700">
+          Completed
+        </span>
+      ),
+    },
+  ],[]);
 
-
-
-  const columns = useMemo(()=>[
-          { accessorKey: "id", header: "ID", enableSorting: true,
-            cell: ({row}) => (<span># {row.original.id}</span>)
-           },
-          { accessorKey: "supplierName", header: "Supplier", enableSorting: true },
-          {
-            accessorKey: "date",
-            header: "Date",
-            cell: ({row})=> (<span>
-              {new Date(row.original.purchaseDate).toLocaleDateString()}
-            </span>)
-          },
-          { accessorKey: "totalPrice", header: "Price", enableSorting: true,
-            cell: ({row})=> (<span className="text-green-600 font-semibold">{row.original.totalPrice} Af</span>)
-           },
-          { accessorKey: "status", header: "Status", enableSorting: true,
-            cell: ({row})=> (<span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700">
-                    Completed
-                  </span>)
-           },
-
-  ],);
+  const actions = useMemo(() => [
+    {
+      label: "View",
+      className: "text-blue-500",
+      icon: "👁",
+      onClick: (row) => handleSelect(row),
+    },
+  ],[handleSelect]);
 
   return (
     <div className="h-screen flex flex-col bg-gray-100">
-
       {/* ================= HEADER ================= */}
-      <div className="h-14 flex items-center justify-between px-6 bg-white border-b shadow-sm">
-        <h1 className="font-semibold text-gray-800">
-          Purchase Workspace
-        </h1>
-
-        <div className="text-xs text-gray-500">
-          Total Records: {purchases.length}
-        </div>
-      </div>
 
       {/* ================= MAIN ================= */}
       <div className="flex flex-1 overflow-hidden">
-
         {/* ================= TABLE ================= */}
-        <div className="flex-1 p-4 overflow-auto">
-
-          <div className="bg-white rounded-2xl shadow-sm border overflow-hidden">
-
-            {/* HEADER */}
-            <div className="grid grid-cols-5 text-xs font-semibold text-gray-600 bg-gray-50 p-3 border-b">
-              <div>ID</div>
-              <div>Supplier</div>
-              <div>Date</div>
-              <div>Total</div>
-              <div>Status</div>
-            </div>
-
-            {/* ROWS */}
-            {purchases.map(p => (
-              <div
-                key={p.id}
-                onClick={() => handleSelect(p)}
-                className={`grid grid-cols-5 p-3 text-sm cursor-pointer transition
-                hover:bg-blue-50 hover:shadow-sm
-                ${selected?.id === p.id ? "bg-blue-100" : ""}`}
-              >
-                <div className="font-medium">#{p.id}</div>
-
-                <div className="text-gray-700">
-                  {p.supplierName}
-                </div>
-
-                <div className="text-gray-500 text-xs">
-                  {new Date(p.purchaseDate).toLocaleDateString()}
-                </div>
-
-                <div className="text-green-600 font-semibold">
-                  {p.totalPrice}
-                </div>
-
-                <div>
-                  <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700">
-                    Completed
-                  </span>
-                </div>
-              </div>
-            ))}
-
-          </div>
+        <div className="flex-1 p-1 overflow-auto">
+          {/* TABLE */}
+          <DataTable
+            columns={columns}
+            data={purchaseData}
+            pagination={pagination}
+            totalCount={totalCount}
+            loading={loading}
+            onPaginationChange={setPagination}
+            onSortingChange={setSorting}
+            tableTitle="Purchase List"
+            subTitle="Pharmacy Purchase List"
+            actions={actions}
+          />
         </div>
-
-
-
-         {/* TABLE */}
-      <DataTable
-        columns={columns}
-        data={purchases}
-        pagination={pagination}
-        totalCount={totalCount}
-        loading={false}
-        onPaginationChange={setPagination}
-        onSortingChange={setSorting}
-        tableTitle="Purchase List"
-        subTitle="Pharmacy Purchase List"
-  
-        
-      />
 
         {/* ================= INSPECTOR ================= */}
         <div className="w-[400px] bg-white border-l p-5 overflow-auto">
-
           {!selected && (
             <div className="text-sm text-gray-400">
               Select a purchase to view details
@@ -228,7 +180,6 @@ useEffect(()=>{
             <>
               {/* HEADER */}
               <div className="flex justify-between items-start mb-4">
-
                 <div>
                   <h2 className="text-sm font-semibold">
                     Purchase #{selected.id}
@@ -245,17 +196,13 @@ useEffect(()=>{
                 >
                   {editMode ? "View Mode" : "Edit"}
                 </button>
-
               </div>
 
               {/* KPI CARDS */}
               <div className="grid grid-cols-2 gap-3 mb-5">
-
                 <div className="p-3 bg-gray-50 border rounded-xl">
                   <div className="text-xs text-gray-500">Items</div>
-                  <div className="text-sm font-semibold">
-                    {details.length}
-                  </div>
+                  <div className="text-sm font-semibold">{details.length}</div>
                 </div>
 
                 <div className="p-3 bg-green-50 border rounded-xl">
@@ -264,13 +211,11 @@ useEffect(()=>{
                     {selected.totalPrice}
                   </div>
                 </div>
-
               </div>
 
               {/* ================= EDIT MODE ================= */}
               {editMode ? (
                 <div className="space-y-3">
-
                   <textarea
                     className="w-full border rounded-lg p-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-200"
                     value={form?.notes || ""}
@@ -289,7 +234,6 @@ useEffect(()=>{
                       key={i}
                       className="p-3 border rounded-xl bg-gray-50 space-y-2"
                     >
-
                       <input
                         className="w-full border rounded p-1 text-xs"
                         value={d.quantity}
@@ -311,7 +255,6 @@ useEffect(()=>{
                         }}
                         placeholder="Price"
                       />
-
                     </div>
                   ))}
 
@@ -321,25 +264,19 @@ useEffect(()=>{
                   >
                     Save Changes
                   </button>
-
                 </div>
-
               ) : (
                 <>
                   {/* VIEW MODE */}
 
                   <div className="space-y-2 mb-4">
-
                     {details.map((d, i) => (
                       <div
                         key={i}
                         className="p-3 border rounded-xl bg-gray-50 hover:bg-gray-100 transition"
                       >
-
                         <div className="flex justify-between">
-                          <span className="text-sm">
-                            {d.itemName}
-                          </span>
+                          <span className="text-sm">{d.itemName}</span>
 
                           <span className="text-green-600 font-semibold text-sm">
                             {d.quantity}
@@ -349,10 +286,8 @@ useEffect(()=>{
                         <div className="text-xs text-gray-400 mt-1">
                           Batch: {d.batchNumber || "-"}
                         </div>
-
                       </div>
                     ))}
-
                   </div>
 
                   {/* TIMELINE */}
@@ -361,15 +296,11 @@ useEffect(()=>{
                     <p>✔ Stock updated</p>
                     <p>✔ Batch generated</p>
                   </div>
-
                 </>
               )}
-
             </>
           )}
-
         </div>
-
       </div>
     </div>
   );
