@@ -30,6 +30,8 @@ import StockManagement from "./Modules/Store/Pages/StockManagement";
 import CategoryPage from "./Modules/Common/Pages/CategoryPage";
 import UnitPage from "./Modules/Common/Pages/UnitPage";
 import CurrentStockPage from "./Modules/Store/Pages/CurrentStockPage"
+import UserPage from "./Modules/User/Pages/UsersPage";
+import LoginPage from "./Modules/User/Pages/LoginPage";
 
 
 export default function App() {
@@ -42,8 +44,10 @@ export default function App() {
 
         {/* optional /dashboard */}
         <Route path="dashboard" element={<Navigate to="/" replace />} />
+        <Route path="login" element={<LoginPage />} />
         <Route path="unit" element={<UnitPage />} />
         <Route path="category" element={<CategoryPage />} />
+        <Route path="User" element={<UserPage />} />
 
 
         {/* Reception */}
