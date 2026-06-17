@@ -1,10 +1,9 @@
-using System.Text.Json;
+using System.Text;
 using HMSApi.Data;
 using HMSApi.Middleware;
-using HMSApi.Models;
+using HMSApi.Modules.User.Entities;
 using HMSApi.Modules.Reception;
 using HMSApi.Modules.User;
-using HMSApi.Modules.User.Entities;
 using HMSApi.Mudoles.Common;
 using HMSApi.Mudoles.Doctors;
 using HMSApi.Mudoles.Finance;
@@ -13,28 +12,37 @@ using HMSApi.Mudoles.Pharmacy;
 using HMSApi.Mudoles.Store;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using Microsoft.OpenApi.Models;
+using HMSApi.Modules.Auth.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-// builder.Services.AddOpenApi();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
+#region DbContext
 builder.Services.AddDbContext<HMSDBC>(options =>
-    options.UseSqlite("Data Source=HMSDBC.db")
-);
+    options.UseSqlite("Data Source=HMSDBC.db"));
+#endregion
 
+#region Identity
+builder.Services
+    .AddIdentity<AppUser, IdentityRole<int>>()
+    .AddEntityFrameworkStores<HMSDBC>()
+    .AddDefaultTokenProviders();
+#endregion
 
+#region JWT CONFIG
+var jwtKey = builder.Configuration["Jwt:Key"]
+    ?? throw new Exception("JWT Key is missing");
 
-var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!);
+var key = Encoding.UTF8.GetBytes(jwtKey);
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
 .AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
@@ -49,17 +57,48 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         IssuerSigningKey = new SymmetricSecurityKey(key)
     };
 });
+#endregion
 
 builder.Services.AddAuthorization();
 
+#region Swagger (JWT SUPPORT)
+builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "HMS API",
+        Version = "v1"
+    });
 
-// Identity (اگر دارید)
-builder.Services
-    .AddIdentity<AppUser, IdentityRole<int>>()
-    .AddEntityFrameworkStores<HMSDBC>()
-    .AddDefaultTokenProviders();
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header
+    });
 
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new  OpenApiReference//OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
+#endregion
+
+#region Modules
 builder.Services.AddCommonModule();
 builder.Services.AddReceptionModule();
 builder.Services.AddDoctorModule();
@@ -68,18 +107,10 @@ builder.Services.AddHRModule();
 builder.Services.AddFinanceModule();
 builder.Services.AddStoreModule();
 builder.Services.AddUserModule();
+builder.Services.AddScoped<JwtService>();
+#endregion
 
-
-builder.Services.AddControllers();
-
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowReact",
-        p => p.WithOrigins("http://localhost:5173")
-              .AllowAnyMethod()
-              .AllowAnyHeader());
-});
+#region Controllers + JSON config
 builder.Services.AddControllers()
 .AddJsonOptions(options =>
 {
@@ -87,60 +118,48 @@ builder.Services.AddControllers()
         new System.Text.Json.Serialization.JsonStringEnumConverter()
     );
 });
+#endregion
 
-
-
-
+#region CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReact",
+        p => p.WithOrigins("http://localhost:5173")
+              .AllowAnyMethod()
+              .AllowAnyHeader());
+});
+#endregion
 
 var app = builder.Build();
 
+#region SEED DATABASE
+using (var scope = app.Services.CreateScope())
+{
+    await SeedRunner.RunAsync(scope.ServiceProvider);
+}
+#endregion
 
+#region Middleware Pipeline
 
+app.UseMiddleware<ExceptionMiddleware>();
 
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "HMSAPI v1");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "HMS API v1");
         c.RoutePrefix = string.Empty;
     });
 }
 
-// app.UseHttpsRedirection();
+app.UseCors("AllowReact");
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
-app.UseMiddleware<ExceptionMiddleware>();
-
-app.UseCors("AllowReact");
+#endregion
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
-
-
-
