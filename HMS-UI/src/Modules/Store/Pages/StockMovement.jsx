@@ -118,6 +118,11 @@ export default function StockMovementPage() {
   const columns = useMemo(
     () => [
       {
+        accessorKey: "id",
+        header: "ID",
+        enableSorting: true,
+      },
+      {
         accessorKey: "itemName",
         header: "Item",
       },

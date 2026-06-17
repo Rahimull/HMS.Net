@@ -15,6 +15,7 @@ using HMSApi.Modules.Reception.Entities;
 using HMSApi.Modules.Reports.Entities;
 using HMSApi.Modules.Store.Entities;
 using HMSApi.Modules.SupportServices.Entities;
+using HMSApi.Modules.User.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -133,6 +134,15 @@ public class HMSDBC : IdentityDbContext<AppUser, IdentityRole<int>, int>
 
         modelBuilder.Entity<PurchaseDetail>()
     .Ignore(x => x.SubTotal);
+
+        // User and Department Relations
+        modelBuilder.Entity<AppUser>()
+            .HasOne(u => u.Department)
+            .WithMany(d => d.Users)
+            .HasForeignKey(u => u.DepartmentId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+
 
         // Soft Delete Flag
 

@@ -3,6 +3,8 @@ using HMSApi.Data;
 using HMSApi.Middleware;
 using HMSApi.Models;
 using HMSApi.Modules.Reception;
+using HMSApi.Modules.User;
+using HMSApi.Modules.User.Entities;
 using HMSApi.Mudoles.Common;
 using HMSApi.Mudoles.Doctors;
 using HMSApi.Mudoles.Finance;
@@ -11,6 +13,10 @@ using HMSApi.Mudoles.Pharmacy;
 using HMSApi.Mudoles.Store;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +29,28 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<HMSDBC>(options =>
     options.UseSqlite("Data Source=HMSDBC.db")
 );
+
+
+
+var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+});
+
+builder.Services.AddAuthorization();
 
 
 
@@ -39,6 +67,8 @@ builder.Services.AddPharmacyModule();
 builder.Services.AddHRModule();
 builder.Services.AddFinanceModule();
 builder.Services.AddStoreModule();
+builder.Services.AddUserModule();
+
 
 builder.Services.AddControllers();
 

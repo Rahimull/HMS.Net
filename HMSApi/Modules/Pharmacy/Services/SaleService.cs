@@ -106,7 +106,8 @@ public class SaleService
                         Type = StockMovementType.Sale,
                         ReferenceId = sale.Id,
                         ReferenceType = StockReferenceType.Sale,
-                        Notes = "Sale deduction"
+                        Notes = "Sale deduction",
+                        UnitPrice = d.UnitPrice ?? 0m
                     });
                 }
 

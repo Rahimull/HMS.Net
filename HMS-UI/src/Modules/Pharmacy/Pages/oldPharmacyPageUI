@@ -182,18 +182,6 @@ const PharmacyPOS = () => {
   };
 
   // Barcode handler
-  // const handleBarcodeScan = (barcode)=>{
-  //   const item = item.find(
-  //     (x)=> x.barcode?.toString() === barcode.toString()
-  //   );
-  //   if(!item){
-  //     alert("Barcode Not Found")
-  //     return;
-  //   }
-  //   addToCart(item);
-  //   setSearch("");
-  // }
-
   const handleBarcodeScan = (barcode) => {
   const clean = String(barcode).trim();
 

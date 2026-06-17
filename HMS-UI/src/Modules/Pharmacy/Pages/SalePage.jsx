@@ -90,6 +90,15 @@ const SalesList = () => {
       ),
     },
     {
+      accessorKey: "totalProfit",
+      header: "Profit",
+      cell: ({ row }) => (
+        <span className="font-semibold text-emerald-600">
+          {row.original.totalProfit} AFN
+        </span>
+      ),
+    },
+    {
       accessorKey: "status",
       header: "status",
       cell: ({ row }) => (
@@ -106,6 +115,45 @@ const SalesList = () => {
     },
   ]
   , []);
+
+  const summary = useMemo(()=>{
+    return data.reduce(
+      (acc, sale)=>{
+        acc.totalSales += Number(sale.totalAmount || 0);
+        acc.totalProfit += Number(sale.totalProfit || 0);
+
+        return acc;
+      },
+      {
+        totalSales: 0,
+        totalProfit: 0,
+      }
+    );
+  },[data]);
+
+
+  const headerContent = (<>
+      <div className="bg-blue-50 px-4 py-2 rounded-lg border border-blue-100 min-w-[180px]">
+        <p className="text-xs text-gray-500">
+          Total Sales Amount
+        </p>
+
+        <p className="text-lg font-bold text-blue-700">
+          {summary.totalSales.toLocaleString()} AF
+        </p>
+      </div>
+
+      <div className="bg-green-50 px-4 py-2 rounded-lg border border-green-100 min-w-[180px]">
+        <p className="text-xs text-gray-500">
+          Total Profit
+        </p>
+
+        <p className="text-lg font-bold text-green-700">
+          {summary.totalProfit.toLocaleString()} AF
+        </p>
+      </div>
+    </>)
+
 
   // ACTIONS
   const actions = useMemo(()=> [
@@ -213,6 +261,7 @@ const SalesList = () => {
         onPaginationChange={setPagination}
         onSortingChange={setSorting}
         loading={loading}
+        headerContent={headerContent}
       />
 
       {/* ================= TOAST ================= */}
