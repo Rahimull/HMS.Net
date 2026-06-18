@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HMSApi.Modules.User.DTOs;
 
-public class CreateRoleDto
+public class UpdateRoleDto
 {
     [Required]
     [StringLength(50)]

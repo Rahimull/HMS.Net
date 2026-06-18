@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 
-import Dashbord from "@/pages/Dashbord";
+import Dashbord from "@/pages/dashbord/Dashbord";
 import PatientPage from "@/Modules/Reception/Pages/PatientPage";
 import PatientAppointmentUi from "@/Modules/Reception/Pages/PatientAppointmentUi";
 import DepartmentPage from "@/pages/DepartmentPage";
@@ -30,24 +30,36 @@ import StockManagement from "./Modules/Store/Pages/StockManagement";
 import CategoryPage from "./Modules/Common/Pages/CategoryPage";
 import UnitPage from "./Modules/Common/Pages/UnitPage";
 import CurrentStockPage from "./Modules/Store/Pages/CurrentStockPage"
-import UserPage from "./Modules/User/Pages/UsersPage";
-import LoginPage from "./Modules/User/Pages/LoginPage";
+import UserPage from "./pages/user/UsersPage";
+import LoginPage from "./pages/auth/LoginPage";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import RolePage from "./pages/role/RolePage";
 
 
 export default function App() {
   return (
     <Routes>
-      {/* ✅ Layout Parent */}
-      <Route path="/" element={<Layout />}>
-        {/* ✅ Dashboard inside Outlet */}
+
+      <Route path="/login" element={<LoginPage />} />
+      {/*  Protected Pages */}
+      <Route 
+        path="/" 
+        element={
+          <ProtectedRoute> 
+            <Layout /> 
+          </ProtectedRoute>
+        }>
+
+        {/*  Dashboard inside Outlet */}
         <Route index element={<Dashbord />} />
 
         {/* optional /dashboard */}
         <Route path="dashboard" element={<Navigate to="/" replace />} />
-        <Route path="login" element={<LoginPage />} />
+        
         <Route path="unit" element={<UnitPage />} />
         <Route path="category" element={<CategoryPage />} />
         <Route path="User" element={<UserPage />} />
+        <Route path="Role" element={<RolePage />} />
 
 
         {/* Reception */}

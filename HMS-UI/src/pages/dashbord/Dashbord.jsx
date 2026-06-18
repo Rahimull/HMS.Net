@@ -1,12 +1,12 @@
-import Layout from "../components/layout/Layout";
+import Layout from "../../components/layout/Layout";
 import {
   Card,
   CardHeader,
   CardContent,
   CardFooter
 } from "@/components/common/Card";
-import ReusableForm from "../components/form/ResusableForm";
-import BaseCrudPage from "./Template/BaseCrudPage";
+import ReusableForm from "../../components/form/ResusableForm";
+import BaseCrudPage from "../Template/BaseCrudPage";
 
 
 

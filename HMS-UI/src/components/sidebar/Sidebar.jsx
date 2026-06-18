@@ -55,6 +55,7 @@ const Sidebar = () => {
           { name: "Units", link: "/unit", icon: LayoutDashboard },
           { name: "Category", link: "/Category", icon: LayoutDashboard },
           { name: "User", link: "/User", icon: LayoutDashboard },
+          { name: "Role", link: "/Role", icon: LayoutDashboard },
         ],
       },
       {
