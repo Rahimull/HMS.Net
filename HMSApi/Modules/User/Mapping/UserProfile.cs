@@ -44,7 +44,10 @@ public class UserProfile : Profile
         // ENTITY → LIST DTO
         // =========================
         CreateMap<AppUser, UserListDto>()
-            .ForMember(dest => dest.DepartmentName,
-                opt => opt.MapFrom(src => src.Department != null ? src.Department.Name : null));
+    .ForMember(dest => dest.DepartmentName,
+        opt => opt.MapFrom(src =>
+            src.Department != null ? src.Department.Name : null));
+
+        CreateMap<AppUser, DetailsUserDto>();
     }
 }

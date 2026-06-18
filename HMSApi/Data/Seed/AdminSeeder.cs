@@ -25,7 +25,14 @@ public static class AdminSeeder
 
             if (result.Succeeded)
             {
-                await userManager.AddToRoleAsync(admin, "Admin");
+                // await userManager.AddToRoleAsync(admin, "Admin");
+
+                var roles = await userManager.GetRolesAsync(admin);
+
+                if (!roles.Contains("Admin"))
+                {
+                    await userManager.AddToRoleAsync(admin, "Admin");
+                }
             }
         }
     }

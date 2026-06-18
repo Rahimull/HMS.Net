@@ -28,6 +28,12 @@ public class HMSDBC : IdentityDbContext<AppUser, IdentityRole<int>, int>
     public HMSDBC(DbContextOptions<HMSDBC> options) : base(options) { }
 
 
+    // User Module
+    public DbSet<Permission> Permissions => Set<Permission>();
+    public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Unit> Units => Set<Unit>();
 
@@ -80,7 +86,7 @@ public class HMSDBC : IdentityDbContext<AppUser, IdentityRole<int>, int>
     public DbSet<OPDVisits> OPDVisits => Set<OPDVisits>();
 
     // Pharmacy Modules
- 
+
     public DbSet<Sale> Sales => Set<Sale>();
     public DbSet<SaleDetails> Salesdetails => Set<SaleDetails>();
 
@@ -111,6 +117,28 @@ public class HMSDBC : IdentityDbContext<AppUser, IdentityRole<int>, int>
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // User Modules Relations
+
+        // RolePermission    
+        modelBuilder.Entity<RolePermission>()
+            .HasIndex(x => new { x.RoleId, x.PermissionId })
+            .IsUnique();
+
+        //   RefreshToken → User relation
+        modelBuilder.Entity<RefreshToken>()
+        .HasOne<AppUser>()
+        .WithMany()
+        .HasForeignKey(x => x.UserId)
+        .OnDelete(DeleteBehavior.Cascade);
+
+        // AuditLog → User relation
+        modelBuilder.Entity<AuditLog>()
+            .HasOne<AppUser>()
+            .WithMany()
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+
         // Patient (1) <-> MedicalRecord (1)
         modelBuilder.Entity<Patient>()
             .HasOne(p => p.MedicalRecord)

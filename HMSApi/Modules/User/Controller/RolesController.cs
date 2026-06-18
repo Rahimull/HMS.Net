@@ -1,8 +1,10 @@
+using HMSApi.Data;
 using HMSApi.Modules.User.DTOs;
 using HMSApi.Modules.User.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HMSApi.Modules.User.Controllers;
 
@@ -13,17 +15,19 @@ public class RolesController : ControllerBase
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly RoleManager<IdentityRole<int>> _roleManager;
+    private readonly HMSDBC _context;
 
     public RolesController(
         RoleManager<IdentityRole<int>> roleManager,
-        UserManager<AppUser> userManager)
+        UserManager<AppUser> userManager,
+        HMSDBC context)
     {
         _roleManager = roleManager;
         _userManager = userManager;
+        _context = context;
     }
 
     // ================= GET ALL =================
-
     [HttpGet]
     public IActionResult GetRoles()
     {
@@ -32,7 +36,7 @@ public class RolesController : ControllerBase
             .Select(r => new RoleDto
             {
                 Id = r.Id,
-                Name = r.Name!,
+                Name = r.Name ?? "",
                 UserCount = _userManager
                     .GetUsersInRoleAsync(r.Name!)
                     .Result
@@ -43,7 +47,6 @@ public class RolesController : ControllerBase
     }
 
     // ================= GET BY ID =================
-
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
@@ -57,16 +60,14 @@ public class RolesController : ControllerBase
         return Ok(new RoleDto
         {
             Id = role.Id,
-            Name = role.Name!,
+            Name = role.Name ?? "",
             UserCount = users.Count
         });
     }
 
     // ================= CREATE =================
-
     [HttpPost]
-    public async Task<IActionResult> Create(
-        [FromBody] CreateRoleDto dto)
+    public async Task<IActionResult> Create([FromBody] CreateRoleDto dto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -75,10 +76,7 @@ public class RolesController : ControllerBase
             return BadRequest("Role already exists");
 
         var result = await _roleManager.CreateAsync(
-            new IdentityRole<int>
-            {
-                Name = dto.Name
-            });
+            new IdentityRole<int> { Name = dto.Name });
 
         if (!result.Succeeded)
             return BadRequest(result.Errors);
@@ -87,11 +85,8 @@ public class RolesController : ControllerBase
     }
 
     // ================= UPDATE =================
-
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(
-        int id,
-        [FromBody] UpdateRoleDto dto)
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateRoleDto dto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -117,7 +112,6 @@ public class RolesController : ControllerBase
     }
 
     // ================= DELETE =================
-
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
@@ -129,8 +123,7 @@ public class RolesController : ControllerBase
         var users = await _userManager.GetUsersInRoleAsync(role.Name!);
 
         if (users.Any())
-            return BadRequest(
-                "Cannot delete role because users are assigned to it.");
+            return BadRequest("Cannot delete role because users are assigned");
 
         var result = await _roleManager.DeleteAsync(role);
 
@@ -140,34 +133,63 @@ public class RolesController : ControllerBase
         return Ok("Role deleted successfully");
     }
 
-    // ================= ASSIGN ROLE =================
-
+    // ================= ASSIGN ROLE TO USER =================
     [HttpPost("assign")]
-    public async Task<IActionResult> AssignRole(
-        [FromBody] AssignRoleDto dto)
+    public async Task<IActionResult> AssignRoles([FromBody] AssignRoleDto dto)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
-        var user = await _userManager
-            .FindByIdAsync(dto.UserId.ToString());
+        var user = await _userManager.FindByIdAsync(dto.UserId.ToString());
 
         if (user == null)
             return NotFound("User not found");
 
-        if (!await _roleManager.RoleExistsAsync(dto.RoleName))
-            return NotFound("Role not found");
+        // remove all current roles
+        var currentRoles = await _userManager.GetRolesAsync(user);
+        await _userManager.RemoveFromRolesAsync(user, currentRoles);
 
-        if (await _userManager.IsInRoleAsync(user, dto.RoleName))
-            return BadRequest(
-                "User already has this role");
+        // get role names from ids
+        var roles = _roleManager.Roles
+            .Where(r => dto.RoleIds.Contains(r.Id))
+            .Select(r => r.Name!)
+            .ToList();
 
-        var result = await _userManager
-            .AddToRoleAsync(user, dto.RoleName);
+        // assign new roles
+        await _userManager.AddToRolesAsync(user, roles);
 
-        if (!result.Succeeded)
-            return BadRequest(result.Errors);
+        return Ok("Roles updated successfully");
+    }
+    // ================= ASSIGN PERMISSIONS TO ROLE =================
+    [HttpPost("{id}/permissions")]
+    public async Task<IActionResult> AssignPermissions(int id, [FromBody] AssignPermissionsDto dto)
+    {
+        if (id != dto.RoleId)
+            return BadRequest("Role mismatch");
 
-        return Ok("Role assigned successfully");
+        var oldPermissions = _context.RolePermissions
+            .Where(x => x.RoleId == id);
+
+        _context.RolePermissions.RemoveRange(oldPermissions);
+
+        var newPermissions = dto.PermissionIds.Select(pid => new RolePermission
+        {
+            RoleId = id,
+            PermissionId = pid
+        });
+
+        await _context.RolePermissions.AddRangeAsync(newPermissions);
+        await _context.SaveChangesAsync();
+
+        return Ok("Permissions updated successfully");
+    }
+
+    // ================= GET ROLE PERMISSIONS =================
+    [HttpGet("{id}/permissions")]
+    public async Task<IActionResult> GetRolePermissions(int id)
+    {
+        var permissions = await _context.RolePermissions
+            .Where(x => x.RoleId == id)
+            .Select(x => x.PermissionId)
+            .ToListAsync();
+
+        return Ok(permissions);
     }
 }

@@ -6,6 +6,7 @@ import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
 import { toast } from "react-toastify";
 import UserModal from "./UserModal";
+import UserRoleModal from "./UserRoleModel";
 
 // بعداً می‌سازیم
 // import UserModal from "../components/UserModal";
@@ -24,6 +25,7 @@ const UserPage = () => {
   const [sorting, setSorting] = useState(null);
 
   const [openModal, setOpenModal] = useState(false);
+  const [openRoleModal, setOpenRoleModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
   /* ================= LOAD DATA ================= */
@@ -73,6 +75,10 @@ const UserPage = () => {
   const handleCreate = () => {
     setSelectedUser(null);
     setOpenModal(true);
+  };
+  const handleAssignRole = (row) => {
+    setSelectedUser(row);
+    setOpenRoleModal(true);
   };
 
   const handleEdit = (row) => {
@@ -146,6 +152,12 @@ const UserPage = () => {
       icon: "🔄",
       onClick: (row) => handleToggle(row),
     },
+    {
+      label: "Roles",
+      className: "text-purple-600",
+      icon: "🧩",
+      onClick: (row) => handleAssignRole(row),
+    },
   ];
 
   return (
@@ -157,9 +169,7 @@ const UserPage = () => {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <Button onClick={handleCreate}>
-          Add User
-        </Button>
+        <Button onClick={handleCreate}>Add User</Button>
       </FilterCard>
 
       <DataTable
@@ -175,14 +185,20 @@ const UserPage = () => {
       />
 
       {/* بعداً اضافه می‌کنیم */}
-      
+
       <UserModal
         open={openModal}
         onClose={() => setOpenModal(false)}
         user={selectedUser}
         onSuccess={loadData}
       />
-     
+
+      <UserRoleModal 
+        open={openRoleModal}
+        onClose={() => setOpenRoleModal(false)}
+        user={selectedUser}
+        onSuccess={loadData}
+      />
     </>
   );
 };

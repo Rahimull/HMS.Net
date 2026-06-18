@@ -15,18 +15,22 @@ const RolePage = () => {
   const [openModal, setOpenModal] = useState(false);
 
   const [selectedRole, setSelectedRole] = useState(null);
-
+const [loading, setLoading] = useState(false);
   const loadData = async () => {
+    setLoading(true);
     try {
       const res = await RolesApi.getAll();
 
       setRoles(res.data ?? []);
+      setLoading(false)
     } catch (err) {
       console.log(err);
-
+    setLoading(true)
       toast.error("Failed to load roles");
     }
   };
+
+  console.log(roles)
 
   useEffect(() => {
     loadData();
@@ -71,16 +75,31 @@ const RolePage = () => {
 
   const columns = [
     {
-      header: "ID",
-      accessor: "id",
+      header: "id",
+      accessorKey: "id",
     },
     {
       header: "Role Name",
-      accessor: "name",
+      accessorKey: "name",
     },
     {
       header: "Users",
-      accessor: "userCount",
+      accessorKey: "userCount",
+    },
+  ];
+
+   const actions = [
+    {
+      label: "Edit",
+      className: "text-blue-600",
+      icon: "✏️",
+      onClick: (row) => handleEdit(row),
+    },
+    {
+      label: "Delete",
+      className: "text-red-600",
+      icon: "🔄",
+      onClick: (row) => handleDelete(row),
     },
   ];
 
@@ -100,8 +119,8 @@ const RolePage = () => {
       <DataTable
         columns={columns}
         data={roles}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
+        actions={actions}
+        
       />
 
       <RoleModal

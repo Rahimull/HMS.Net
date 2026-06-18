@@ -16,4 +16,6 @@ public class AppUser : IdentityUser<int>
     public int? DepartmentId { get; set; }
     public Department? Department { get; set; }
     public string? ProfileImage { get; set; }
+    public ICollection<RefreshToken>? RefreshTokens { get; set; }
+public ICollection<AuditLog>? AuditLogs { get; set; }
 }

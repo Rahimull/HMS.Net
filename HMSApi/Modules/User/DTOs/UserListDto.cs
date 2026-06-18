@@ -22,5 +22,5 @@ public class UserListDto
 
     public string? ProfileImage { get; set; }
 
-    public IList<string> Roles { get; set; } = [];
+    public List<string> Roles { get; set; } = new();
 }

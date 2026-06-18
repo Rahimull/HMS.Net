@@ -16,5 +16,6 @@ public static class SeedRunner
         await RoleSeeder.SeedAsync(roleManager);
         await DepartmentSeeder.SeedAsync(context);
         await AdminSeeder.SeedAsync(userManager);
+        await PermissionSeeder.SeedAsync(context);
     }
 }

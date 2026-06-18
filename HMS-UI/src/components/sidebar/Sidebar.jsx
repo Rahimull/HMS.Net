@@ -29,14 +29,17 @@ import {
   ArrowLeftRight,
   PackageSearch,
   PackageCheck,
+  Shield,
+  User,
 } from "lucide-react";
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [query, setQuery] = useState("");
   const location = useLocation();
+  
 
-  // ✅ nested route support: /patient/edit/1 should keep /patient active
+  // nested route support: /patient/edit/1 should keep /patient active
   const isPathActive = (itemLink) => {
     const path = location.pathname.toLowerCase();
     const link = itemLink.toLowerCase();
@@ -54,8 +57,8 @@ const Sidebar = () => {
           
           { name: "Units", link: "/unit", icon: LayoutDashboard },
           { name: "Category", link: "/Category", icon: LayoutDashboard },
-          { name: "User", link: "/User", icon: LayoutDashboard },
-          { name: "Role", link: "/Role", icon: LayoutDashboard },
+          { name: "User", link: "/User", icon: User },
+          { name: "Role", link: "/Role", icon: Shield },
         ],
       },
       {
