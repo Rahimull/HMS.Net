@@ -37,7 +37,6 @@ const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [query, setQuery] = useState("");
   const location = useLocation();
-  
 
   // nested route support: /patient/edit/1 should keep /patient active
   const isPathActive = (itemLink) => {
@@ -50,19 +49,24 @@ const Sidebar = () => {
   const groups = useMemo(
     () => [
       {
-        key: "overview",
-        title: "Overview",
+        key: "Dashboard",
+        title: "dashboard",
         items: [
           { name: "Dashboard", link: "/", icon: LayoutDashboard },
-          
-          { name: "Units", link: "/unit", icon: LayoutDashboard },
-          { name: "Category", link: "/Category", icon: LayoutDashboard },
-          { name: "User", link: "/User", icon: User },
-          { name: "Role", link: "/Role", icon: Shield },
-        ],
+        ]
       },
       {
-        complate: 1,
+        key: "masterData",
+        title: "Master Data",
+        items: [
+          { name: "Units", link: "/unit", icon: LayoutDashboard },
+          { name: "Category", link: "/Category", icon: LayoutDashboard },
+          { name: "Items", link: "/store/items", icon: Package },
+          { name: "Suppliers", link: "/store/suppliers", icon: Truck },
+        ],
+      },
+
+      {
         key: "reception",
         title: "Reception",
         items: [
@@ -89,7 +93,6 @@ const Sidebar = () => {
         key: "store",
         title: "Store",
         items: [
-          
           {
             name: "Batch Management",
             link: "/store/StockManagement",
@@ -105,29 +108,25 @@ const Sidebar = () => {
             link: "/store/currentStock",
             icon: PackageCheck,
           },
-          { name: "Items", link: "/store/items", icon: Package },
-          { name: "Suppliers", link: "/store/suppliers", icon: Truck },
+
           { name: "Purchases", link: "/store/PurchasesUi", icon: Package },
           {
             name: "OK---> Purchases List",
             link: "/store/purchases",
             icon: ShoppingCart,
           },
-          
+
           {
             name: "NOt Item Stocks",
             link: "/store/item-stocks",
             icon: Boxes,
           },
-          
-          
+
           {
             name: "NOt Purchase Details",
             link: "/store/purchase-details",
             icon: Layers,
           },
-          
-          
         ],
       },
       {
@@ -200,7 +199,14 @@ const Sidebar = () => {
           { name: "Payments", link: "/finance/payments", icon: CreditCard },
         ],
       },
-      
+      {
+        key: "user",
+        title: "User Management",
+        items: [
+          { name: "User", link: "/User", icon: User },
+          { name: "Role", link: "/Role", icon: Shield },
+        ],
+      },
     ],
     [],
   );
@@ -208,7 +214,7 @@ const Sidebar = () => {
   // ✅ open/close state for dropdown groups
   const [openGroups, setOpenGroups] = useState(() => {
     const obj = {};
-    groups.forEach((g) => (obj[g.key] = true));
+    groups.forEach((g) => (obj[g.key] = false));
     return obj;
   });
 
@@ -280,7 +286,7 @@ const Sidebar = () => {
   return (
     <aside
       className={[
-        "h-screen bg-blue-900 text-white flex flex-col border-r border-blue-800/60",
+        "h-screen bg-blue-900 text-white flex flex-col shrink-0 border-r border-blue-800/60 ",
         collapsed ? "w-20" : "w-72",
         "transition-all duration-200",
       ].join(" ")}

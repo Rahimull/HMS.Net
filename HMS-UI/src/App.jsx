@@ -18,18 +18,18 @@ import SchedulesPage from "@/Modules/Doctor/Pages/SchedulePage";
 
 import { EmployeePage, PayrollPage, ShiftPage } from "@/Modules/HR/Pages";
 import { InvoiceDetailsPage, InvoicePage, PaymentPage } from "@/Modules/Finance/Pages";
-import { ItemPage, ItemStockPage, PuchasePage, SuplierPage, PuchaseDetailsPage, StockMovement } from "@/Modules/Store/Pages";
+import { ItemPage, ItemStockPage, PuchasePage, SuplierPage, PuchaseDetailsPage, StockMovement } from "@/pages/Store/Pages";
 import {SalePage, SaleDetailsPage } from "@/Modules/Pharmacy/Pages";
 
 import AppointmentsUi from "./Modules/Reception/Pages/AppointmentsUI";
 import PharmacyPageUi from "./Modules/Pharmacy/Pages/PharmacyPageUi";
 
 // Store
-import PurchasesUi from "./Modules/Store/Pages/PurchasesUi";
-import StockManagement from "./Modules/Store/Pages/StockManagement";
+import PurchasesUi from "./pages/Store/Pages/PurchasesUi";
+import StockManagement from "./pages/Store/Pages/StockManagement";
 import CategoryPage from "./Modules/Common/Pages/CategoryPage";
 import UnitPage from "./Modules/Common/Pages/UnitPage";
-import CurrentStockPage from "./Modules/Store/Pages/CurrentStockPage"
+import CurrentStockPage from "./pages/Store/Pages/CurrentStockPage"
 import UserPage from "./pages/user/UsersPage";
 import LoginPage from "./pages/auth/LoginPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
