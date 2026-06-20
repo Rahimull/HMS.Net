@@ -10,7 +10,6 @@ const UserRoleModal = ({ open, onClose, user }) => {
   const [selected, setSelected] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  /* ================= LOAD DATA ================= */
   useEffect(() => {
     if (!open || !user?.id) return;
 
@@ -18,15 +17,11 @@ const UserRoleModal = ({ open, onClose, user }) => {
       try {
         setLoading(true);
 
-        const rolesRes = await RolesApi.getAll();
-        setRoles(rolesRes?.data ?? []);
+        const res = await RolesApi.getAll();
+        setRoles(res.data ?? []);
 
-        const userRolesRes = await UserApi.getRoles(user.id);
-
-        const mapped = (userRolesRes ?? []).map((r) => r.id);
-        setSelected(mapped);
+        setSelected(user.roleIds ?? []);
       } catch (err) {
-        console.error(err);
         toast.error("Failed to load roles");
       } finally {
         setLoading(false);
@@ -36,22 +31,15 @@ const UserRoleModal = ({ open, onClose, user }) => {
     load();
   }, [open, user]);
 
-  /* ================= TOGGLE ROLE ================= */
-  const toggleRole = (id) => {
+  const toggle = (id) => {
     setSelected((prev) =>
       prev.includes(id)
-        ? prev.filter((x) => x !== id)
+        ? prev.filter(x => x !== id)
         : [...prev, id]
     );
   };
 
-  /* ================= SAVE ================= */
   const handleSave = async () => {
-    if (!user?.id) {
-      toast.error("No user selected");
-      return;
-    }
-
     try {
       setLoading(true);
 
@@ -59,47 +47,42 @@ const UserRoleModal = ({ open, onClose, user }) => {
         roleIds: selected,
       });
 
-      toast.success("Roles assigned successfully");
+      toast.success("Roles updated");
       onClose();
     } catch (err) {
-      console.error(err);
-      toast.error("Failed to assign roles");
+      toast.error("Failed to save roles");
     } finally {
       setLoading(false);
     }
   };
 
-  /* ================= GUARD ================= */
-  if (!open || !user?.id) return null;
+  if (!open || !user) return null;
 
   return (
     <Modal open={open} onClose={onClose} title="Assign Roles">
+
       <div className="space-y-2">
-        {loading ? (
-          <p className="text-gray-500">Loading...</p>
-        ) : (
-          roles.map((role) => (
-            <label key={role.id} className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={selected.includes(role.id)}
-                onChange={() => toggleRole(role.id)}
-              />
-              {role.name}
-            </label>
-          ))
-        )}
+        {roles.map((r) => (
+          <label key={r.id} className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={selected.includes(r.id)}
+              onChange={() => toggle(r.id)}
+            />
+            {r.name}
+          </label>
+        ))}
       </div>
 
-      <div className="flex justify-end gap-2 mt-6">
+      <div className="flex justify-end gap-2 mt-4">
         <Button variant="secondary" onClick={onClose}>
           Cancel
         </Button>
-
-        <Button onClick={handleSave} disabled={loading}>
-          {loading ? "Saving..." : "Save"}
+        <Button onClick={handleSave}>
+          Save
         </Button>
       </div>
+
     </Modal>
   );
 };

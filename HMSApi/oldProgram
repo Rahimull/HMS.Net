@@ -20,11 +20,8 @@ using HMSApi.Modules.Auth.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 #region DbContext
-// builder.Services.AddDbContext<HMSDBC>(options =>
-//     options.UseSqlite("Data Source=HMSDBC.db"));
 builder.Services.AddDbContext<HMSDBC>(options =>
-    options.UseSqlite(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite("Data Source=HMSDBC.db"));
 #endregion
 
 #region Identity
@@ -146,23 +143,15 @@ using (var scope = app.Services.CreateScope())
 
 app.UseMiddleware<ExceptionMiddleware>();
 
-// if (app.Environment.IsDevelopment())
-// {
-//     app.UseSwagger();
-//     app.UseSwaggerUI(c =>
-//     {
-//         c.SwaggerEndpoint("/swagger/v1/swagger.json", "HMS API v1");
-//         c.RoutePrefix = string.Empty;
-//     });
-// }
-
-app.UseSwagger();
-
-app.UseSwaggerUI(c =>
+if (app.Environment.IsDevelopment())
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "HMS API v1");
-    c.RoutePrefix = string.Empty;
-});
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "HMS API v1");
+        c.RoutePrefix = string.Empty;
+    });
+}
 
 app.UseCors("AllowReact");
 

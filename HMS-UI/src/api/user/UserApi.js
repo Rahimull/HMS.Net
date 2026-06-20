@@ -9,6 +9,7 @@ const UserApi = {
   update: (id, data) => Api.put(`${endpoint}/${id}`, data),
   toggleStatus: (id) => Api.put(`${endpoint}/${id}/toggle-status`),
   delete: (id) => Api.delete(`${endpoint}/${id}`),
+  assignRoles: (id, data)=> Api.post(`${endpoint}/${id}/roles`, data)
 
 };
 

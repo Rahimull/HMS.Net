@@ -7,6 +7,7 @@ import Button from "@/components/common/Button";
 import { toast } from "react-toastify";
 import UserModal from "./UserModal";
 import UserRoleModal from "./UserRoleModel";
+import RolePermissionModal from "./RolePermissionModal";
 
 // بعداً می‌سازیم
 // import UserModal from "../components/UserModal";
@@ -26,7 +27,9 @@ const UserPage = () => {
 
   const [openModal, setOpenModal] = useState(false);
   const [openRoleModal, setOpenRoleModal] = useState(false);
+  const [openPermModal, setOpenPermModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedRole, setSelectedRole] = useState(null);
 
   /* ================= LOAD DATA ================= */
   const loadData = async () => {
@@ -158,7 +161,27 @@ const UserPage = () => {
       icon: "🧩",
       onClick: (row) => handleAssignRole(row),
     },
+    {
+      label: "Permissions",
+      className: "text-red-600",
+      icon: "🔐",
+      onClick: (row) => {
+        setSelectedRole(row);
+        setOpenPermModal(true);
+      },
+    },
   ];
+
+
+  const closeRoleModal = () => {
+  setOpenRoleModal(false);
+  setSelectedUser(null);
+};
+
+const closePermModal = () => {
+  setOpenPermModal(false);
+  setSelectedRole(null);
+};
 
   return (
     <>
@@ -193,11 +216,21 @@ const UserPage = () => {
         onSuccess={loadData}
       />
 
-      <UserRoleModal 
+      <UserRoleModal
         open={openRoleModal}
         onClose={() => setOpenRoleModal(false)}
         user={selectedUser}
         onSuccess={loadData}
+      />
+
+      <RolePermissionModal
+        onSuccess={loadData}
+        open={openPermModal}
+        onClose={() => {
+          setOpenPermModal(false);
+          setSelectedRole(null);
+        }}
+        role={selectedRole}
       />
     </>
   );

@@ -114,6 +114,12 @@ const [loading, setLoading] = useState(false);
         <Button onClick={handleCreate}>
           Add Role
         </Button>
+        <Button onClick={() => {
+  setSelectedRole(row);
+  setOpenPermissionModal(true);
+}}>
+  Permissions
+</Button>
       </div>
 
       <DataTable
