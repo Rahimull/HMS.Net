@@ -18,8 +18,8 @@ import SchedulesPage from "@/Modules/Doctor/Pages/SchedulePage";
 
 import { EmployeePage, PayrollPage, ShiftPage } from "@/Modules/HR/Pages";
 import { InvoiceDetailsPage, InvoicePage, PaymentPage } from "@/Modules/Finance/Pages";
-import { ItemPage, ItemStockPage, PuchasePage, SuplierPage, PuchaseDetailsPage, StockMovement } from "@/pages/Store/Pages";
-import {SalePage, SaleDetailsPage } from "@/Modules/Pharmacy/Pages";
+import { ItemPage, PuchasePage, SuplierPage, StockMovement } from "@/pages/Store/Pages";
+import {SalePage} from "@/Modules/Pharmacy/Pages";
 
 import AppointmentsUi from "./Modules/Reception/Pages/AppointmentsUI";
 import PharmacyPageUi from "./Modules/Pharmacy/Pages/PharmacyPageUi";
@@ -97,16 +97,13 @@ export default function App() {
         <Route path="store/items/:id" element={<StockManagement />} />
         <Route path="store/PurchasesUi" element={<PurchasesUi />} />
         <Route path="store/items" element={<ItemPage />} />
-        <Route path="store/item-stocks" element={<ItemStockPage />} />
         <Route path="store/purchases" element={<PuchasePage />} />
-        <Route path="store/purchase-details" element={<PuchaseDetailsPage />} />
         <Route path="store/suppliers" element={<SuplierPage />} />
         <Route path="store/currentstock" element={<CurrentStockPage />} />
 
         {/* Pharmacy */}
         <Route path="pharmacy/PharmacyPageUi" element={<PharmacyPageUi />} />
         <Route path="pharmacy/sales" element={<SalePage />} />
-        <Route path="pharmacy/sale-details" element={<SaleDetailsPage />} />
       </Route>
 
       {/* 404 */}

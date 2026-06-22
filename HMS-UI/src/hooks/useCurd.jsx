@@ -95,7 +95,8 @@ console.log("REQUEST =>", payload);
     } catch (err) {
       const message = err?.response?.data?.message || "Create failed";
       setError(message);
-      toast.error(message)
+      toast.error(message);
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -113,7 +114,8 @@ console.log("REQUEST =>", payload);
     } catch (err) {
       const message = err?.response?.data?.message || "Update failed";
      setError(message);
-     toast.error(message)
+     toast.error(message);
+     throw err;
     } finally {
       setLoading(false);
     }
@@ -134,6 +136,7 @@ console.log("REQUEST =>", payload);
       const message = err?.response?.data?.message || "Delete failed";
       setError(message);
       setError(message);
+      throw err;
     } finally {
       setLoading(false);
     }

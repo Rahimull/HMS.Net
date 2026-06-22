@@ -74,6 +74,7 @@ const BaseCrudPage = ({
       console.log("RESPONSE:", err?.response);
       console.log("DATA:", err?.response?.data);
       console.log("STATUS:", err?.response?.status);
+      throw err;
     }
   };
 

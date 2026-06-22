@@ -12,9 +12,10 @@ const UnitPage = () => {
         fields={[
           {
             name: "name",
-            label: "Name",
+            label: "Name [*,  🔑]",
+            placeholder: "Enter Unit",
             type: "text",
-            maxLength: 5,
+            maxLength: 100,
             required: true,
           },
         ]}

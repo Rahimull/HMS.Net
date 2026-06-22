@@ -49,6 +49,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity>
     // CRUD
     public async Task AddAsync(TEntity entity)
     {
+        
         await _dbSet.AddAsync(entity);
         await _context.SaveChangesAsync();
     }

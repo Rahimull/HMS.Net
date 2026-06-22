@@ -64,16 +64,16 @@ const ItemPage = () => {
         fields={[
           {
             name: "barcode",
-            label: "Barcode *",
+            label: "Barcode [*,  🔑]",
             type: "text",
             placeholder: "Scan Barcode...",
             autoFocus: true,
             required: true,
           },
-          { name: "name", label: "Name *", type: "text", required: true
+          { name: "name", label: "Name [*,  🔑]", type: "text", required: true, placeholder:"Item Name"
            },
-          { name: "genericName", label: "Generic Name", type: "text" },
-          { name: "brandName", label: "Brand Name", type: "text" },
+          { name: "genericName", label: "Generic Name", type: "text", placeholder:"Item Gendric Name" },
+          { name: "brandName", label: "Brand Name", type: "text", placeholder:"Brand Name" },
 
           {
             name: "categoryId",
@@ -96,7 +96,7 @@ const ItemPage = () => {
             options: itemTypeOptions,
             required: true,
           },
-          { name: "isActive", label: "Is Active *", type: "checkbox"},
+          { name: "isActive", label: "Is Active", type: "checkbox"},
 
           { name: "description", label: "Description", type: "textarea" },
         ]}

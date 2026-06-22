@@ -12,27 +12,24 @@ export default function usePurchaseLookup() {
       try {
         const [supplierRes, itemRes] = await Promise.all([
           SuplierApi.getPaged({
-            page: 1,
-            pageSize: 1000,
+            pagination: {
+              pageIndex: 0,
+              pageSize: 1000,
+            },
           }),
           ItemApi.getPaged({
-            page: 1,
-            pageSize: 1000,
+            pagination: {
+              pageIndex: 0,
+              pageSize: 1000,
+            }
           }),
         ]);
 
-        setSuppliers(
-          supplierRes.data.data.data || []
-        );
-     
-        setItems(
-          itemRes.data.data.data || []
-        );
+        setSuppliers(supplierRes.data.data.data || []);
+
+        setItems(itemRes.data.data.data || []);
       } catch (error) {
-        console.error(
-          "Error loading lookup data",
-          error
-        );
+        console.error("Error loading lookup data", error);
       } finally {
         setLoading(false);
       }
@@ -47,21 +44,24 @@ export default function usePurchaseLookup() {
         label: s.name,
         value: s.id,
       })),
-    [suppliers]
+    [suppliers],
   );
 
+
+  
   const itemOptions = useMemo(
     () =>
       items.map((i) => ({
         label: i.name,
         value: i.id,
         price: i.price,
+        category: i.categoryName,
+        unit: i.unitName,
       })),
-    [items]
+    [items],
   );
-
   
-
+ 
   return {
     suppliers,
     items,

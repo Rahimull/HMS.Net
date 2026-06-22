@@ -12,8 +12,10 @@ const CategoryPage = () => {
         fields={[
           {
             name: "name",
-            label: "Name",
+            label: "Name [*,  🔑]",
             type: "text",
+            placeholder:"Enter Category",
+            maxLength: 100,
             required: true,
           },
         ]}

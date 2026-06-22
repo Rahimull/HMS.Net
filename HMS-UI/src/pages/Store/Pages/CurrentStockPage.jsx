@@ -1,5 +1,5 @@
 import CurrentStockApi from "@/api/store/CurrentStockApi";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import KPI from "../component/KPI";
 import Input from "@/components/common/Input";
 import Chart from "@/components/common/Chart";
@@ -12,42 +12,64 @@ export default function StockDashboard() {
   const [stock, setStock] = useState([]);
   const [search, setSearch] = useState("");
   const [toast, setToast] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 5,
+    pageSize: 100,
   });
 
   const [totalCount, setTotalCount] = useState(0);
   const [sorting, setSorting] = useState(null);
 
   /* ================= LOAD DATA ================= */
-  const loadData = async () => {
+  const loadData = useCallback( async () => {
+  setLoading(true);
     try {
       const res = await CurrentStockApi.getPaged({
-        page: pagination.pageIndex + 1,
-        pageSize: pagination.pageSize,
-        sortBy: sorting?.sortBy,
-        sortDir: sorting?.sortDir,
+        pagination: {
+          pageIndex: pagination.pageIndex ?? 0,
+          pageSize: pagination.pageSize || 1000,
+        },
+        sorting: sorting
+          ? {
+              sortBy: sorting.id,
+              isDescending: sorting.desc,
+            }
+          : {
+              sortBy: "id",
+              isDescending: false,
+            },
+
+        search: {
+          searchTerm: search,
+        },
       });
 
-      const data = res.data.data.data ?? res.data.data ?? [];
-      setStock(Array.isArray(data) ? data : []);
-      setTotalCount(res.data.data.totalCount ?? data.length);
+      const Pageddata = res.data.data;
+      const data = Pageddata.data ?? [];
 
-    } catch (err) {
-      setToast({ message: "Failed to load data", type: "error" });
+      setStock(Array.isArray(data) ? data : []);
+      setTotalCount(Pageddata.totalCount ?? 0);
+    } catch (error) {
+      toast.error("Failed to load CurrentStock");
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
-  };
+  
+  });
+
+
 
   /* ================= INITIAL LOAD ================= */
   useEffect(() => {
     loadData();
-  }, [pagination, sorting]);
+  }, [pagination.pageIndex, pagination.pageSize, sorting, search]);
 
   /* ================= AUTO REFRESH ================= */
   useEffect(() => {
-    const interval = setInterval(loadData, 10000);
+    const interval = setInterval(loadData, 100000);
     return () => clearInterval(interval);
   }, []); // فقط یکبار
 
@@ -165,12 +187,13 @@ export default function StockDashboard() {
         data={filtered}
         pagination={pagination}
         totalCount={totalCount}
-        loading={false}
+        loading={loading}
         onPaginationChange={setPagination}
         onSortingChange={setSorting}
         tableTitle="Current Stock"
         subTitle="Pharmacy Current Stock"
        actions={actions}
+      
         
       />
 

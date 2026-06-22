@@ -54,7 +54,7 @@ console.log("Items:", itemOptions);
 
   return (
     <div className="flex gap-4 p-2 bg-gray-100 min-h-screen">
-      {/* LEFT PANEL */}
+      {/* LEFT PANEL FOR FUPPLIER INFORMATIONS */}
       <div className="w-1/4 bg-white p-4 rounded-xl shadow sticky top-4">
         <PurchaseHeader
           header={header}
@@ -69,7 +69,7 @@ console.log("Items:", itemOptions);
         />
       </div>
 
-      {/* RIGHT PANEL */}
+      {/* RIGHT PANEL FOR ITEMS INFORMATIONS */}
       <div className="flex-1 bg-white p-4 rounded-xl shadow">
         <PurchaseTable
           lines={lines}

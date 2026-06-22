@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations.Schema;
 using HMSApi.Common.Enums;
 using HMSApi.Models;
 using HMSApi.Modules.Common.Entities;

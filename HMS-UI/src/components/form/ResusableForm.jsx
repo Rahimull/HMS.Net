@@ -5,7 +5,6 @@ import Input from "../common/Input";
 const ReusableForm = ({
   fields,
   onSubmit,
-  // onSuccess,
   initialValues = null,
   submitText = "Submit",
 }) => {
@@ -31,6 +30,7 @@ const ReusableForm = ({
   // ---------------------------
   const [formData, setFormData] = useState(initialState);
   const [errors, setErrors] = useState({});
+  const [serverErrors, setServerErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
   // ---------------------------
@@ -67,6 +67,7 @@ const ReusableForm = ({
     let valid = true;
 
     fields.forEach((f) => {
+      console.log("Field: ", f);
       if (f.required) {
         if (f.type === "checkbox") {
           if (!formData[f.name]) {
@@ -81,7 +82,6 @@ const ReusableForm = ({
         }
       }
     });
-
     setErrors(newErrors);
     return valid;
   };
@@ -97,14 +97,33 @@ const ReusableForm = ({
     try {
       setLoading(true);
 
+      console.log("Before Submit");
       await onSubmit(formData);
+      console.log("After Submit");
 
       if (!initialValues) {
         setFormData(initialState);
       }
     } catch (error) {
-      console.error("Form Submit Error:", error);
-    } finally {
+  const response = error.response?.data;
+
+  console.log("API ERROR:", response);
+
+  if (response?.errors) {
+    const formattedErrors = {};
+
+    Object.keys(response.errors).forEach((key) => {
+      formattedErrors[key] = response.errors[key][0];
+    });
+
+    setServerErrors(formattedErrors);
+    return;
+  }
+
+  setServerErrors({
+    general: response?.message || "Error occurred"
+  });
+} finally {
       setLoading(false);
     }
   };
@@ -132,9 +151,9 @@ const ReusableForm = ({
               value={formData[field.name] || ""}
               onChange={handleChange}
               options={field.options || []}
-              maxLength={field.maxLength || 100 }
+              maxLength={field.maxLength || 100}
               placeholder={field.placeholder}
-              error={errors[field.name]}
+              error={ serverErrors[field.name] || errors[field.name]}
             />
           </div>
         ))}

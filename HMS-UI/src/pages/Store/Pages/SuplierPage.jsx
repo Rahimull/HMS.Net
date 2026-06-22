@@ -9,15 +9,18 @@ const SuplierPage = () => (
     fields={[
       {
         name: "name",
-        label: "Name",
+        label: "Name [*,  🔑]",
         type: "text",
         required: true,
+        maxLength: 100,
+        placeholder:"Suppliers Name"
       },
       {
         name: "contactInfo",
-        label: "Contact Information",
+        label: "Contact Information *",
         type: "text",
         placeholder: "Phone / Email",
+        maxLength: 50,
         required: true,
       },
       {

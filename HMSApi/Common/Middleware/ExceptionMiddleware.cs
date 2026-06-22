@@ -1,7 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Text.Json;
+using HMSApi.Common.Enums;
 using HMSApi.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace HMSApi.Middleware;
 
@@ -34,6 +36,10 @@ public class ExceptionMiddleware
         {
             await HandleException(context, HttpStatusCode.Unauthorized, ex);
         }
+        catch (DbUpdateException ex)
+        {
+            await HandleUniqueConstrainException(context, ex);
+        }
         catch (Exception ex)
         {
             await HandleException(context, HttpStatusCode.InternalServerError, ex, isServerError: true);
@@ -61,4 +67,27 @@ public class ExceptionMiddleware
 
         await context.Response.WriteAsync(JsonSerializer.Serialize(response));
     }
+
+    private async Task HandleUniqueConstrainException(
+        HttpContext context,
+        DbUpdateException ex
+    )
+    {
+        context.Response.StatusCode = StatusCodes.Status409Conflict;
+        context.Response.ContentType = "application/json";
+
+        var response = new
+        {
+            success = false,
+            message = "Already exists",
+            error = ex.Message,
+           
+            traceId = context.TraceIdentifier
+        };
+
+        await context.Response.WriteAsync(
+            JsonSerializer.Serialize(response)
+        );
+    }
+
 }

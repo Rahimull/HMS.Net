@@ -51,9 +51,7 @@ const Sidebar = () => {
       {
         key: "Dashboard",
         title: "dashboard",
-        items: [
-          { name: "Dashboard", link: "/", icon: LayoutDashboard },
-        ]
+        items: [{ name: "Dashboard", link: "/", icon: LayoutDashboard }],
       },
       {
         key: "masterData",
@@ -63,6 +61,44 @@ const Sidebar = () => {
           { name: "Category", link: "/Category", icon: LayoutDashboard },
           { name: "Items", link: "/store/items", icon: Package },
           { name: "Suppliers", link: "/store/suppliers", icon: Truck },
+        ],
+      },
+      {
+        key: "store",
+        title: "Store & Pharmacy",
+        items: [
+          {
+            name: "Sales Page",
+            link: "/pharmacy/PharmacyPageUi",
+            icon: FlaskConical,
+          },
+
+          {
+            name: "Sales List",
+            link: "/pharmacy/sales",
+            icon: BadgeDollarSign,
+          },
+          { name: "Purchases", link: "/store/PurchasesUi", icon: Package },
+          {
+            name: "Purchases List",
+            link: "/store/purchases",
+            icon: ShoppingCart,
+          },
+          {
+            name: "Batch Management",
+            link: "/store/StockManagement",
+            icon: Boxes,
+          },
+          {
+            name: "Stock Movement",
+            link: "/store/StockMovement",
+            icon: ArrowLeftRight,
+          },
+          {
+            name: "Current Stock",
+            link: "/store/currentStock",
+            icon: PackageCheck,
+          },
         ],
       },
 
@@ -85,69 +121,6 @@ const Sidebar = () => {
           {
             name: "OK---> Medical Record",
             link: "/medicalrecord",
-            icon: FileText,
-          },
-        ],
-      },
-      {
-        key: "store",
-        title: "Store",
-        items: [
-          {
-            name: "Batch Management",
-            link: "/store/StockManagement",
-            icon: Boxes,
-          },
-          {
-            name: "Stock Movement",
-            link: "/store/StockMovement",
-            icon: ArrowLeftRight,
-          },
-          {
-            name: "Current Stock",
-            link: "/store/currentStock",
-            icon: PackageCheck,
-          },
-
-          { name: "Purchases", link: "/store/PurchasesUi", icon: Package },
-          {
-            name: "OK---> Purchases List",
-            link: "/store/purchases",
-            icon: ShoppingCart,
-          },
-
-          {
-            name: "NOt Item Stocks",
-            link: "/store/item-stocks",
-            icon: Boxes,
-          },
-
-          {
-            name: "NOt Purchase Details",
-            link: "/store/purchase-details",
-            icon: Layers,
-          },
-        ],
-      },
-      {
-        key: "pharmacy",
-
-        title: "Pharmacy",
-        items: [
-          {
-            name: "PharmacyPageUi",
-            link: "/pharmacy/PharmacyPageUi",
-            icon: FlaskConical,
-          },
-
-          {
-            name: "Sales",
-            link: "/pharmacy/sales",
-            icon: BadgeDollarSign,
-          },
-          {
-            name: "OK---> Sale Details",
-            link: "/pharmacy/sale-details",
             icon: FileText,
           },
         ],
