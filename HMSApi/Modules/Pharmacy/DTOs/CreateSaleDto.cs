@@ -1,3 +1,5 @@
+using HMSApi.Common.Enums;
+
 namespace HMSApi.Modules.Pharmacy.DTOs;
 
 
@@ -7,7 +9,8 @@ public class CreateSaleDto
 
     public string? Notes { get; set; }
 
-    public bool IsPaid { get; set; }
+    // public bool IsPaid { get; set; }
+    public decimal PaidAmount { get; set; }
 
     public int? PatientId { get; set; }
 

@@ -29,6 +29,12 @@ public class PharmacyProfile : Profile
             // .ForCtorParam("MedicineName", opt => opt.MapFrom(src => src.Medicine.Name))
             ;
 
+        
+        // SalePayment Mappings
+        CreateMap<CreateSalePaymentDto, SalePayment>();
+        CreateMap<UpdateSalePaymentDto, SalePayment>();
+        CreateMap<SalePayment, SalePaymentDto>()
+
 
     }
 }

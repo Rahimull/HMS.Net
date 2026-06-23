@@ -179,7 +179,7 @@ export default function StockDashboard() {
       />
 
       {/* CHART */}
-      <Chart data={chartData.slice(0, 10)} />
+      <Chart data={chartData.slice(0, 100)} />
 
       {/* TABLE */}
       <DataTable

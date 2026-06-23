@@ -1,3 +1,5 @@
+using HMSApi.Common.Enums;
+
 namespace HMSApi.Modules.Pharmacy.DTOs;
 
 
@@ -10,7 +12,10 @@ public class SaleDto
     public decimal TotalAmount { get; set; }
     public decimal TotalProfit { get; set; }
 
-    public bool IsPaid { get; set; }
+    // public bool IsPaid { get; set; }
+    public decimal PaidAmount { get; set; }
+    public decimal RemainingAmount { get; set; }
+    public PaymentStatus PaymentStatus { get; set; }
 
     public string? Notes { get; set; }
 

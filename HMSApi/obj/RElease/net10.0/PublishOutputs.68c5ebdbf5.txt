@@ -1,4 +1,5 @@
 D:\HMS.Net\HMSApi\publish\HMSApi.exe
+D:\HMS.Net\HMSApi\publish\publish\publish\publish\web.config
 D:\HMS.Net\HMSApi\publish\publish\publish\web.config
 D:\HMS.Net\HMSApi\publish\publish\web.config
 D:\HMS.Net\HMSApi\publish\appsettings.Development.json
@@ -13,6 +14,11 @@ D:\HMS.Net\HMSApi\publish\publish\publish\appsettings.json
 D:\HMS.Net\HMSApi\publish\publish\publish\HMSApi.deps.json
 D:\HMS.Net\HMSApi\publish\publish\publish\HMSApi.runtimeconfig.json
 D:\HMS.Net\HMSApi\publish\publish\publish\HMSApi.staticwebassets.endpoints.json
+D:\HMS.Net\HMSApi\publish\publish\publish\publish\appsettings.Development.json
+D:\HMS.Net\HMSApi\publish\publish\publish\publish\appsettings.json
+D:\HMS.Net\HMSApi\publish\publish\publish\publish\HMSApi.deps.json
+D:\HMS.Net\HMSApi\publish\publish\publish\publish\HMSApi.runtimeconfig.json
+D:\HMS.Net\HMSApi\publish\publish\publish\publish\HMSApi.staticwebassets.endpoints.json
 D:\HMS.Net\HMSApi\publish\HMSApi.dll
 D:\HMS.Net\HMSApi\publish\HMSApi.runtimeconfig.json
 D:\HMS.Net\HMSApi\publish\HMSApi.pdb

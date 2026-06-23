@@ -202,3 +202,15 @@ D:\HMS.Net\HMSApi\bin\RElease\net10.0\publish\publish\appsettings.json
 D:\HMS.Net\HMSApi\bin\RElease\net10.0\publish\publish\HMSApi.deps.json
 D:\HMS.Net\HMSApi\bin\RElease\net10.0\publish\publish\HMSApi.runtimeconfig.json
 D:\HMS.Net\HMSApi\bin\RElease\net10.0\publish\publish\HMSApi.staticwebassets.endpoints.json
+D:\HMS.Net\HMSApi\bin\RElease\net10.0\publish\publish\publish\web.config
+D:\HMS.Net\HMSApi\bin\RElease\net10.0\publish\publish\publish\appsettings.Development.json
+D:\HMS.Net\HMSApi\bin\RElease\net10.0\publish\publish\publish\appsettings.json
+D:\HMS.Net\HMSApi\bin\RElease\net10.0\publish\publish\publish\HMSApi.deps.json
+D:\HMS.Net\HMSApi\bin\RElease\net10.0\publish\publish\publish\HMSApi.runtimeconfig.json
+D:\HMS.Net\HMSApi\bin\RElease\net10.0\publish\publish\publish\HMSApi.staticwebassets.endpoints.json
+D:\HMS.Net\HMSApi\bin\RElease\net10.0\publish\publish\publish\publish\web.config
+D:\HMS.Net\HMSApi\bin\RElease\net10.0\publish\publish\publish\publish\appsettings.Development.json
+D:\HMS.Net\HMSApi\bin\RElease\net10.0\publish\publish\publish\publish\appsettings.json
+D:\HMS.Net\HMSApi\bin\RElease\net10.0\publish\publish\publish\publish\HMSApi.deps.json
+D:\HMS.Net\HMSApi\bin\RElease\net10.0\publish\publish\publish\publish\HMSApi.runtimeconfig.json
+D:\HMS.Net\HMSApi\bin\RElease\net10.0\publish\publish\publish\publish\HMSApi.staticwebassets.endpoints.json

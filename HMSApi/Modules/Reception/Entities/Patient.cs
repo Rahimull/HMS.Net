@@ -53,4 +53,5 @@ public class Patient : BaseEntity
     public ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
     public ICollection<PatientCare> PatientCare { get; set; } = new List<PatientCare>();
     public ICollection<VitalSigns> VitalSigns { get; set; } = new List<VitalSigns>();
+    public ICollection<Sale> Sales {get; set;} = new List<Sale>();
 }
