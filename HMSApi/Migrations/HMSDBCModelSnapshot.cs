@@ -1329,20 +1329,29 @@ namespace HMSApi.Migrations
                     b.Property<int?>("DoctorId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("InvoiceNumber")
+                        .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsPaid")
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Notes")
                         .HasColumnType("TEXT");
 
+                    b.Property<decimal>("PaidAmount")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int?>("PatientId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PaymentStatus")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("PrescriptionId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("RemainingAmount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("SaleDate")
                         .HasColumnType("TEXT");
@@ -1356,6 +1365,11 @@ namespace HMSApi.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DoctorId");
+
+                    b.HasIndex("InvoiceNumber")
+                        .IsUnique();
+
+                    b.HasIndex("PatientId");
 
                     b.ToTable("Sales");
                 });
@@ -1402,6 +1416,37 @@ namespace HMSApi.Migrations
                     b.HasIndex("SaleId");
 
                     b.ToTable("Salesdetails");
+                });
+
+            modelBuilder.Entity("HMSApi.Modules.Pharmacy.Entities.SalePayment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("SaleId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SaleId");
+
+                    b.ToTable("SalePayments");
                 });
 
             modelBuilder.Entity("HMSApi.Modules.Radiology.Entities.ImagingOrders", b =>
@@ -2948,9 +2993,17 @@ namespace HMSApi.Migrations
 
             modelBuilder.Entity("HMSApi.Modules.Pharmacy.Entities.Sale", b =>
                 {
-                    b.HasOne("HMSApi.Modules.Doctors.Entities.Doctor", null)
+                    b.HasOne("HMSApi.Modules.Doctors.Entities.Doctor", "Doctor")
                         .WithMany("Sale")
                         .HasForeignKey("DoctorId");
+
+                    b.HasOne("HMSApi.Modules.Reception.Entities.Patient", "Patient")
+                        .WithMany("Sales")
+                        .HasForeignKey("PatientId");
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Patient");
                 });
 
             modelBuilder.Entity("HMSApi.Modules.Pharmacy.Entities.SaleDetails", b =>
@@ -2976,6 +3029,17 @@ namespace HMSApi.Migrations
                     b.Navigation("Item");
 
                     b.Navigation("ItemStock");
+
+                    b.Navigation("Sale");
+                });
+
+            modelBuilder.Entity("HMSApi.Modules.Pharmacy.Entities.SalePayment", b =>
+                {
+                    b.HasOne("HMSApi.Modules.Pharmacy.Entities.Sale", "Sale")
+                        .WithMany("SalePayments")
+                        .HasForeignKey("SaleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Sale");
                 });
@@ -3395,6 +3459,8 @@ namespace HMSApi.Migrations
             modelBuilder.Entity("HMSApi.Modules.Pharmacy.Entities.Sale", b =>
                 {
                     b.Navigation("SaleDetails");
+
+                    b.Navigation("SalePayments");
                 });
 
             modelBuilder.Entity("HMSApi.Modules.Radiology.Entities.ImagingOrders", b =>
@@ -3438,6 +3504,8 @@ namespace HMSApi.Migrations
                         .IsRequired();
 
                     b.Navigation("PatientCare");
+
+                    b.Navigation("Sales");
 
                     b.Navigation("VitalSigns");
                 });

@@ -8,6 +8,6 @@ public class UpdateSaleDto
     public string? Notes { get; set; }
     public int? DoctorId { get; set; }
     public int? PrescriptionId { get; set; }
-    public List<UpdateSaleDetailsDto> Details { get; set; }
+    public List<UpdateSaleDetailsDto> SaleDetails { get; set; }
         = new();
 }

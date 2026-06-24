@@ -65,6 +65,7 @@ public class PurchaseService
                 ItemId = d.ItemId,
                 Quantity = d.Quantity,
                 UnitPrice = d.UnitPrice,
+                SalePrice = d.SalePrice,
                 BatchNumber = d.BatchNumber,
                 ExpiryDate = d.ExpiryDate
             }).ToList();
@@ -99,6 +100,7 @@ public class PurchaseService
                     InitialQuantity = d.Quantity,
                     RemainingQuantity = d.Quantity,
                     BuyPrice = d.UnitPrice,
+                    SalePrice = d.SalePrice,
                     BatchNumber = d.BatchNumber!, // now guaranteed
                     ExpiryDate = d.ExpiryDate
                 };

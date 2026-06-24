@@ -16,48 +16,65 @@ public class SaleService
     : BaseService<Sale, SaleDto, CreateSaleDto, UpdateSaleDto>, ISaleService
 {
     private readonly HMSDBC _context;
+    private readonly ILogger<SaleService> _logger;
 
     public SaleService(
         ISaleRepository repo,
         IMapper mapper,
-        HMSDBC context
+        HMSDBC context,
+        ILogger<SaleService> logger
     ) : base(repo, mapper)
     {
         _context = context;
+        _logger = logger;
     }
 
     protected override ISpecification<Sale> BuildSpecification(QueryParams query)
-    {
-        return new SaleSpecification(query);
-    }
+        => new SaleSpecification(query);
 
-    // ================= CREATE SALE (FEFO + STOCK SAFE) =================
     public override async Task<SaleDto> AddAsync(CreateSaleDto dto)
     {
-        using var transaction = await _context.Database.BeginTransactionAsync();
+        await using var transaction = await _context.Database.BeginTransactionAsync();
 
         try
         {
+            dto.PatientId = dto.PatientId > 0 ? dto.PatientId : null;
+            dto.DoctorId = dto.DoctorId > 0 ? dto.DoctorId : null;
+            dto.PrescriptionId = dto.PrescriptionId > 0 ? dto.PrescriptionId : null;
+            // ================= VALIDATION =================
+            if (dto.PatientId.HasValue &&
+                !await _context.Patients.AnyAsync(x => x.Id == dto.PatientId))
+                throw new Exception($"Invalid PatientId: {dto.PatientId}");
+
+            if (dto.DoctorId.HasValue &&
+                !await _context.Doctors.AnyAsync(x => x.Id == dto.DoctorId))
+                throw new Exception($"Invalid DoctorId: {dto.DoctorId}");
+
+            if (dto.PrescriptionId.HasValue &&
+                !await _context.Prescriptions.AnyAsync(x => x.Id == dto.PrescriptionId))
+                throw new Exception($"Invalid PrescriptionId: {dto.PrescriptionId}");
+
+            // ================= CREATE SALE =================
             var sale = new Sale
             {
                 SaleDate = dto.SaleDate ?? DateTime.UtcNow,
                 Notes = dto.Notes,
-                IsPaid = dto.IsPaid,
                 PatientId = dto.PatientId,
                 DoctorId = dto.DoctorId,
-                PrescriptionId = dto.PrescriptionId
+                PrescriptionId = dto.PrescriptionId,
+                PaidAmount = dto.PaidAmount,
+                PaymentStatus = PaymentStatus.Pending
             };
 
             decimal totalAmount = 0;
             decimal totalProfit = 0;
 
-            foreach (var d in dto.Details)
+            // ================= SALE DETAILS =================
+            foreach (var d in dto.SaleDetails)
             {
-                var item = await _context.Items.FindAsync(d.ItemId);
-                if (item == null)
-                    throw new Exception($"Item not found: {d.ItemId}");
+                var item = await _context.Items.FindAsync(d.ItemId)
+                    ?? throw new Exception($"Item not found: {d.ItemId}");
 
-                // FEFO STOCK
                 var stocks = await _context.ItemStocks
                     .Where(x => x.ItemId == d.ItemId && x.RemainingQuantity > 0)
                     .OrderBy(x => x.ExpiryDate ?? DateOnly.MaxValue)
@@ -67,9 +84,8 @@ public class SaleService
                     throw new Exception($"No stock available for {item.Name}");
 
                 int remaining = d.Quantity;
-                int totalUsed = 0;
-
-                var unitDiscount = d.Discount / d.Quantity;
+                decimal unitPrice = d.UnitPrice ?? 0m;
+                decimal unitDiscount = d.Discount / d.Quantity;
 
                 foreach (var stock in stocks)
                 {
@@ -79,63 +95,94 @@ public class SaleService
 
                     stock.RemainingQuantity -= usedQty;
                     remaining -= usedQty;
-                    totalUsed += usedQty;
 
-                    var unitProfit = (d.UnitPrice - stock.BuyPrice - unitDiscount);
-                    var lineTotal = usedQty * (d.UnitPrice - unitDiscount) ?? 0m;
+                    var netUnitPrice = unitPrice - unitDiscount;
+                    var lineTotal = usedQty * netUnitPrice;
+                    var profit = usedQty * (netUnitPrice - stock.BuyPrice);
 
                     totalAmount += lineTotal;
-                    totalProfit += usedQty * unitProfit ?? 0m;
+                    totalProfit += profit;
 
                     sale.SaleDetails.Add(new SaleDetails
                     {
                         ItemId = d.ItemId,
                         ItemStockId = stock.Id,
                         Quantity = usedQty,
-                        UnitPrice = d.UnitPrice ?? 0m,
+                        UnitPrice = unitPrice,
                         BuyPrice = stock.BuyPrice,
-                        Discount = d.Discount,
-                        // TotalPrice = lineTotal
+                        Discount = d.Discount
                     });
 
-                    // STOCK MOVEMENT (OUT)
                     _context.Set<StockMovement>().Add(new StockMovement
                     {
                         ItemStockId = stock.Id,
                         Quantity = -usedQty,
                         Type = StockMovementType.Sale,
-                        ReferenceId = sale.Id,
                         ReferenceType = StockReferenceType.Sale,
                         Notes = "Sale deduction",
-                        UnitPrice = d.UnitPrice ?? 0m
+                        UnitPrice = unitPrice
                     });
                 }
 
                 if (remaining > 0)
                     throw new Exception($"Not enough stock for {item.Name}");
 
-                // CURRENT STOCK UPDATE
-                var current = await _context.CurrentStocks
+                var currentStock = await _context.CurrentStocks
                     .FirstOrDefaultAsync(x => x.ItemId == d.ItemId);
 
-                if (current != null)
+                if (currentStock != null)
                 {
-                    current.Quantity -= totalUsed;
-                    current.LastUpdate = DateTime.UtcNow;
+                    currentStock.Quantity -= d.Quantity;
+                    currentStock.LastUpdate = DateTime.UtcNow;
                 }
             }
 
+            // ================= TOTALS =================
             sale.TotalAmount = totalAmount;
-            sale.TotalProfit = totalProfit;
+            sale.TotalProfit = Math.Max(0, totalProfit);
 
+            sale.RemainingAmount = Math.Max(0, sale.TotalAmount - sale.PaidAmount);
+
+            if (sale.PaidAmount == 0)
+            {
+                sale.PaymentStatus = PaymentStatus.Pending;
+            }
+            else if (sale.PaidAmount < sale.TotalAmount)
+            {
+                sale.PaymentStatus = PaymentStatus.PartialPaid;
+            }
+            else if (sale.PaidAmount == sale.TotalAmount)
+            {
+                sale.PaymentStatus = PaymentStatus.Paid;
+            }
+            else
+            {
+                sale.PaymentStatus = PaymentStatus.OverPaid; // یا Overpaid اگر enum داری
+            }
+
+            // ================= PAYMENT =================
+            if (dto.PaidAmount > 0)
+            {
+                sale.SalePayments.Add(new SalePayment
+                {
+                    Amount = dto.PaidAmount,
+                    PaymentDate = DateTime.UtcNow,
+                    Notes = "Initial payment",
+                    Sale = sale
+                });
+            }
+
+            // ================= SAVE =================
             await _context.Sales.AddAsync(sale);
             await _context.SaveChangesAsync();
 
             await transaction.CommitAsync();
 
-            // RETURN DTO
+            // ================= RETURN =================
             var result = await _context.Sales
                 .Where(x => x.Id == sale.Id)
+                .Include(x => x.Patient)
+                .Include(x => x.Doctor)
                 .Include(x => x.SaleDetails)
                     .ThenInclude(d => d.Item)
                 .Select(x => new SaleDto
@@ -144,10 +191,22 @@ public class SaleService
                     SaleDate = x.SaleDate,
                     TotalAmount = x.TotalAmount,
                     TotalProfit = x.TotalProfit,
-                    IsPaid = x.IsPaid,
+                    PaidAmount = x.PaidAmount,
+                    RemainingAmount = x.RemainingAmount,
+                    PaymentStatus = x.PaymentStatus,
                     Notes = x.Notes,
 
-                    Details = x.SaleDetails.Select(d => new SaleDetailsDto
+                    PatientId = x.PatientId,
+                    PatientName = x.Patient != null
+                        ? x.Patient.FirstName + " " + x.Patient.LastName
+                        : null,
+
+                    DoctorId = x.DoctorId,
+                    DoctorName = x.Doctor != null
+                        ? x.Doctor.FirstName + " " + x.Doctor.LastName
+                        : null,
+
+                    SaleDetails = x.SaleDetails.Select(d => new SaleDetailsDto
                     {
                         Id = d.Id,
                         ItemId = d.ItemId,
@@ -165,7 +224,8 @@ public class SaleService
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            throw new Exception("Sale failed: " + ex.Message);
+            _logger.LogError(ex, "Sale failed");
+            throw;
         }
     }
 }

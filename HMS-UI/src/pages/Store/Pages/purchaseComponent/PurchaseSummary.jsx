@@ -5,7 +5,8 @@ const PurchaseSummary = ({total, loading, onSave})=>{
 
     return(
         <>
-            <div className="mt-6 p-3 bg-green-100 rounded">
+            <div >
+                <div className="mt-6 p-3 bg-green-100 rounded">
                 <div className="text-sm">
                     Total
                 </div>
@@ -20,6 +21,7 @@ const PurchaseSummary = ({total, loading, onSave})=>{
             >
                 {loading ? "Saving..." : "confirm Order"}
             </button>
+            </div>
         </>
     );
 }

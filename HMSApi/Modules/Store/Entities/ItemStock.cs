@@ -18,6 +18,9 @@ public class ItemStock : BaseEntity
     [Column(TypeName = "decimal(18,2)")]
     public decimal BuyPrice { get; set; }
 
+      [Column(TypeName = "decimal(18,2)")]
+    public decimal SalePrice { get; set; }
+
     public string BatchNumber { get; set; } = null!;
     public DateOnly? ExpiryDate { get; set; }
 

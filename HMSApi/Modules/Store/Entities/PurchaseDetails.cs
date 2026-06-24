@@ -7,6 +7,7 @@ public class PurchaseDetail : BaseEntity
 {
     public int Quantity { get; set; }
     public decimal UnitPrice { get; set; }
+    public decimal SalePrice { get; set; }
 
     [NotMapped]
     public decimal SubTotal => Quantity * UnitPrice;

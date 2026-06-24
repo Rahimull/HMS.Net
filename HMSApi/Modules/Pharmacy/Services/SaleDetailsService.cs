@@ -11,13 +11,13 @@ namespace HMSApi.Modules.Pharmacy.Services;
 public class SaleDetailsService
     : BaseService<SaleDetails, SaleDetailsDto, CreateSaleDetailsDto, UpdateSaleDetailsDto>, ISaleDetailsService
 {
-    
+
     public SaleDetailsService(
-        ISaleDetailsRepository repo, 
-        IMapper mapper 
-        
+        ISaleDetailsRepository repo,
+        IMapper mapper
+
         )
-        : base(repo, mapper) {}
+        : base(repo, mapper) { }
 
     protected override ISpecification<SaleDetails> BuildSpecification(QueryParams query)
     {

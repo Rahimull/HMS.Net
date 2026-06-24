@@ -18,6 +18,7 @@ public static class DoctorModule
         // ===============================
         services.AddScoped<ISaleRepository, SaleRepository>();
         services.AddScoped<ISaleDetailsRepository, SaleDetailsRepository>();
+        services.AddScoped<ISalePaymentRepository, SalePaymentRepository>();
     
         
 
@@ -26,6 +27,7 @@ public static class DoctorModule
         // ===============================
         services.AddScoped<ISaleService, SaleService>();
         services.AddScoped<ISaleDetailsService, SaleDetailsService>();
+        services.AddScoped<ISalePaymentService, SalePaymentService>();
 
 
 

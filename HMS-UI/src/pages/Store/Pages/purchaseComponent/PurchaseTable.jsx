@@ -10,11 +10,13 @@ const PurchaseTable = ({
     return(
         <>
             {/* HEADER */}
-            <div className="grid grid-cols-5 text-sm font-bold border-b pb-2 mb-2">
+            <div className="grid grid-cols-7 text-sm font-bold border-b pb-2 mb-2">
                 <div>Product</div>
                 <div>Qty</div>
                 <div>Price</div>
+                <div>Sale Price</div>
                 <div>Expiry</div>
+                <div>Bar Code</div>
                 <div>Total</div>
             </div>
 

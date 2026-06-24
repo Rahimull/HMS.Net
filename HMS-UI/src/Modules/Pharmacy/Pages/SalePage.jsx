@@ -16,14 +16,16 @@ const SalesList = () => {
 
   const [selectedSale, setSelectedSale] = useState(null);
   const [showView, setShowView] = useState(false);
-  
 
   /* ================= FILTER DATA ================= */
-  const filters = useMemo(()=>({
-    status: statusFilter,
-    fromDate,
-    toDate
-  }),[statusFilter, fromDate, toDate]);
+  const filters = useMemo(
+    () => ({
+      status: statusFilter,
+      fromDate,
+      toDate,
+    }),
+    [statusFilter, fromDate, toDate],
+  );
 
   /* ================= LOAD DATA ================= */
 
@@ -38,9 +40,7 @@ const SalesList = () => {
     setSearch,
     loading,
     deleteItem,
-  } = useCrud(SaleApi, {filters});
-
-
+  } = useCrud(SaleApi, { filters });
 
   /* VIEW */
   const handleView = (sale) => {
@@ -55,70 +55,89 @@ const SalesList = () => {
   };
 
   // TABLE DATA AND COLUMNS
-  const columns = useMemo (()=>
-    [
-    {
-      accessorKey: "id",
-      header: "invoice",
-      enableSorting: true,
-      cell: ({ row }) => <span>INV-{row.original.id}</span>,
-    },
-    {
-      accessorKey: "saleDate",
-      header: "Date",
-      cell: ({ row }) => (
-        <span>{new Date(row.original.saleDate).toLocaleDateString()}</span>
-      ),
-    },
-    {
-      accessorKey: "patient",
-      header: "patient",
-      cell: ({ row }) => row.original.patient || "Walk-in",
-    },
-    {
-      accessorKey: "doctor",
-      header: "doctor",
-      cell: ({ row }) => row.original.doctor || "-",
-    },
-    {
-      accessorKey: "totalAmount",
-      header: "total",
-      cell: ({ row }) => (
-        <span className="font-semibold text-emerald-600">
-          {row.original.totalAmount} AFN
-        </span>
-      ),
-    },
-    {
-      accessorKey: "totalProfit",
-      header: "Profit",
-      cell: ({ row }) => (
-        <span className="font-semibold text-emerald-600">
-          {row.original.totalProfit} AFN
-        </span>
-      ),
-    },
-    {
-      accessorKey: "status",
-      header: "status",
-      cell: ({ row }) => (
-        <span
-          className={`px-3 py-1 rounded-full text-xs font-medium ${
-            row.original.isPaid
-              ? "bg-emerald-100 text-emerald-700"
-              : "bg-red-100 text-red-700"
-          }`}
-        >
-          {row.original.isPaid ? "Paid" : "Unpaid"}
-        </span>
-      ),
-    },
-  ]
-  , []);
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "id",
+        header: "invoice",
+        enableSorting: true,
+        cell: ({ row }) => <span>INV-{row.original.id}</span>,
+      },
+      {
+        accessorKey: "saleDate",
+        header: "Date",
+        cell: ({ row }) => (
+          <span>{new Date(row.original.saleDate).toLocaleDateString()}</span>
+        ),
+      },
+      {
+        accessorKey: "patient",
+        header: "patient",
+        cell: ({ row }) => row.original.patient || "Walk-in",
+      },
+      {
+        accessorKey: "doctor",
+        header: "doctor",
+        cell: ({ row }) => row.original.doctor || "-",
+      },
+      {
+        accessorKey: "totalAmount",
+        header: "total",
+        cell: ({ row }) => (
+          <span className="font-semibold text-emerald-600">
+            {row.original.totalAmount} AFN
+          </span>
+        ),
+      },
+      {
+        accessorKey: "totalProfit",
+        header: "Profit",
+        cell: ({ row }) => (
+          <span className="font-semibold text-emerald-600">
+            {row.original.totalProfit} AFN
+          </span>
+        ),
+      },
+      {
+        accessorKey: "totalAmount",
+        header: "Total",
+      },
+      {
+        accessorKey: "paidAmount",
+        header: "Paid",
+      },
+      {
+        accessorKey: "remainingAmount",
+        header: "Remaining",
+      },
+      {
+        accessorKey: "paymentStatus",
+        header: "Status",
+        cell: ({ row }) => {
+          const status = row.original.paymentStatus;
 
-  const summary = useMemo(()=>{
+          return (
+            <span
+              className={`px-3 py-1 rounded-full text-xs font-medium ${
+                status === "Paid"
+                  ? "bg-emerald-100 text-emerald-700"
+                  : status === "PartialPaid"
+                    ? "bg-yellow-100 text-yellow-700"
+                    : "bg-red-100 text-red-700"
+              }`}
+            >
+              {status}
+            </span>
+          );
+        },
+      },
+    ],
+    [],
+  );
+
+  const summary = useMemo(() => {
     return data.reduce(
-      (acc, sale)=>{
+      (acc, sale) => {
         acc.totalSales += Number(sale.totalAmount || 0);
         acc.totalProfit += Number(sale.totalProfit || 0);
 
@@ -127,16 +146,14 @@ const SalesList = () => {
       {
         totalSales: 0,
         totalProfit: 0,
-      }
+      },
     );
-  },[data]);
+  }, [data]);
 
-
-  const headerContent = (<>
+  const headerContent = (
+    <>
       <div className="bg-blue-50 px-4 py-2 rounded-lg border border-blue-100 min-w-[180px]">
-        <p className="text-xs text-gray-500">
-          Total Sales Amount
-        </p>
+        <p className="text-xs text-gray-500">Total Sales Amount</p>
 
         <p className="text-lg font-bold text-blue-700">
           {summary.totalSales.toLocaleString()} AF
@@ -144,38 +161,39 @@ const SalesList = () => {
       </div>
 
       <div className="bg-green-50 px-4 py-2 rounded-lg border border-green-100 min-w-[180px]">
-        <p className="text-xs text-gray-500">
-          Total Profit
-        </p>
+        <p className="text-xs text-gray-500">Total Profit</p>
 
         <p className="text-lg font-bold text-green-700">
           {summary.totalProfit.toLocaleString()} AF
         </p>
       </div>
-    </>)
-
+    </>
+  );
 
   // ACTIONS
-  const actions = useMemo(()=> [
-    {
-      label: "View",
-      className: "text-blue-400",
-      icon: "👁",
-      onClick: (row) => handleView(row),
-    },
-    {
-      label: "Print",
-      className: "text-green-400",
-      icon: "✏️",
-      onClick: (row) => handlePrint(row.id),
-    },
-    {
-      label: "Delete",
-      icon: "🗑",
-      danger: true,
-      onClick: (row) => deleteItem(row.id),
-    },
-  ],[deleteItem]);
+  const actions = useMemo(
+    () => [
+      {
+        label: "View",
+        className: "text-blue-400",
+        icon: "👁",
+        onClick: (row) => handleView(row),
+      },
+      {
+        label: "Print",
+        className: "text-green-400",
+        icon: "✏️",
+        onClick: (row) => handlePrint(row.id),
+      },
+      {
+        label: "Delete",
+        icon: "🗑",
+        danger: true,
+        onClick: (row) => deleteItem(row.id),
+      },
+    ],
+    [deleteItem],
+  );
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">

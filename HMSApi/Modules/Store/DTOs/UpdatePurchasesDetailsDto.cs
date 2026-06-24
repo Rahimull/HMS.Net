@@ -13,6 +13,7 @@ public class UpdatePurchaseDetailDto
 
     [Range(0, double.MaxValue)]
     public decimal UnitPrice { get; set; }
+    public decimal SalePrice { get; set; }
 
     public string? BatchNumber { get; set; }
     public DateOnly? ExpiryDate { get; set; }

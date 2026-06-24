@@ -18,6 +18,6 @@ public class CreateSaleDto
 
     public int? PrescriptionId { get; set; }
 
-    public List<CreateSaleDetailsDto> Details { get; set; }
+    public List<CreateSaleDetailsDto> SaleDetails { get; set; }
         = new();
 }

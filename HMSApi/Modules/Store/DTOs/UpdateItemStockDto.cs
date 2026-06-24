@@ -11,6 +11,7 @@ public class UpdateItemStockDto
 
     [Range(0, int.MaxValue)]
     public int RemainingQuantity { get; set; }
+    public decimal SalePrice { get; set; }
 
     public DateOnly? ExpiryDate { get; set; }
 

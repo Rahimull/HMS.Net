@@ -157,14 +157,25 @@ const PharmacyPOS = () => {
     try {
       setLoading(true);
 
+      const total = subtotal;
+      const paid = total;
+
       const payload = {
         saleDate: new Date(),
-        isPaid: true,
-        details: cart.map((i) => ({
+        paidAmount: paid,
+        remainingAgmount: total - paid,
+        paymentStatus: total -paid <= 0 ? 2 : paid > 0 ? 1 : 0,
+
+        patientId: null,
+        doctorId: null,
+        prescriptionId: null,
+
+        saleDetails: cart.map((i) => ({
           itemId: i.itemId,
           itemStockId: i.batchId,
           quantity: i.qty,
           unitPrice: i.salePrice,
+          buyPrice: i.buyPrice,
           discount: 0,
         })),
       };
@@ -175,7 +186,7 @@ const PharmacyPOS = () => {
       setShowInvoice(false);
     } catch (err) {
       console.error(err);
-      alert("Sale Failed");
+      alert(err?.response?.data?.message || "Sale Failed");
     } finally {
       setLoading(false);
     }

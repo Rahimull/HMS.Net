@@ -18,6 +18,9 @@ public class CreateItemStockDto
     [Range(0, double.MaxValue)]
     public decimal BuyPrice { get; set; }
 
+
+    public decimal SalePrice { get; set; }
+
     public string? BatchNumber { get; set; }
 
     public DateOnly? ExpiryDate { get; set; }

@@ -76,12 +76,15 @@ public class ExceptionMiddleware
         context.Response.StatusCode = StatusCodes.Status409Conflict;
         context.Response.ContentType = "application/json";
 
+        var message = ex.InnerException?.Message ?? ex.Message;
+        var errors = ParseUniqueError(message);
+
         var response = new
         {
             success = false,
             message = "Already exists",
             error = ex.Message,
-           
+
             traceId = context.TraceIdentifier
         };
 
@@ -89,5 +92,28 @@ public class ExceptionMiddleware
             JsonSerializer.Serialize(response)
         );
     }
+
+
+
+
+
+    private static Dictionary<string, string[]> ParseUniqueError(string message)
+{
+    var errors = new Dictionary<string, string[]>();
+
+    if (message.Contains("Items.Barcode"))
+        errors["barcode"] = new[] { "Barcode already exists" };
+
+    else if (message.Contains("Categories.Name"))
+        errors["name"] = new[] { "Name already exists" };
+
+    else if (message.Contains("Suppliers.Name"))
+        errors["name"] = new[] { "Supplier already exists" };
+
+    else
+        errors["general"] = new[] { "Duplicate value exists" };
+
+    return errors;
+}
 
 }

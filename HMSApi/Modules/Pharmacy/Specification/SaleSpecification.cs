@@ -8,7 +8,11 @@ public class SaleSpecification : BaseSpecification<Sale>
     public SaleSpecification(QueryParams query)
     {
         /* ---------- Include Patient, Doctors and Prescriptin ---------- */
-       
+        AddInclude(x => x.Patient);
+        AddInclude(x => x.Doctor);
+        AddInclude(x => x.SaleDetails);
+        AddInclude(x => x.SalePayments);
+
 
         /* ---------- SEARCH ---------- */
         var term = query.Search?.SearchTerm;
