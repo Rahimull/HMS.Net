@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import RolesApi from "@/api/user/RolesApi";
 import UserApi from "@/api/user/UserApi";
-import Modal from "@/components/common/modal/Modal";
+import Modal from "@/components/modal/Modal";
 import Button from "@/components/common/Button";
 import { toast } from "react-toastify";
 

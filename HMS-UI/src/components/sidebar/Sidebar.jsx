@@ -72,6 +72,11 @@ const Sidebar = () => {
             link: "/pharmacy/PharmacyPageUi",
             icon: FlaskConical,
           },
+          {
+            name: "Sales PagePOS",
+            link: "/pharmacy/PharmacyPOS",
+            icon: FlaskConical,
+          },
 
           {
             name: "Sales List",

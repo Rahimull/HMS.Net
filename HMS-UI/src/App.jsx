@@ -19,10 +19,10 @@ import SchedulesPage from "@/Modules/Doctor/Pages/SchedulePage";
 import { EmployeePage, PayrollPage, ShiftPage } from "@/Modules/HR/Pages";
 import { InvoiceDetailsPage, InvoicePage, PaymentPage } from "@/Modules/Finance/Pages";
 import { ItemPage, PuchasePage, SuplierPage, StockMovement } from "@/pages/Store/Pages";
-import {SalePage} from "@/Modules/Pharmacy/Pages";
+import {SalePage} from "@/Modules/Pharmacy";
 
 import AppointmentsUi from "./Modules/Reception/Pages/AppointmentsUI";
-import PharmacyPageUi from "./Modules/Pharmacy/Pages/PharmacyPageUi";
+import PharmacyPageUi from "./Modules/Pharmacy/PharmacyPageUi";
 
 // Store
 import PurchasesUi from "./pages/Store/Pages/PurchasesUi";
@@ -34,6 +34,7 @@ import UserPage from "./pages/user/UsersPage";
 import LoginPage from "./pages/auth/LoginPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import RolePage from "./pages/role/RolePage";
+import PharmacyPOS from "./Modules/Pharmacy/PharmacyPOS";
 
 
 export default function App() {
@@ -103,6 +104,7 @@ export default function App() {
 
         {/* Pharmacy */}
         <Route path="pharmacy/PharmacyPageUi" element={<PharmacyPageUi />} />
+        <Route path="pharmacy/PharmacyPOS" element={<PharmacyPOS />} />
         <Route path="pharmacy/sales" element={<SalePage />} />
       </Route>
 

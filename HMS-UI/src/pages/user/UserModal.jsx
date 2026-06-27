@@ -3,7 +3,7 @@ import UserApi from "@/api/user/UserApi";
 import DepartmentApi from "@/api/DepartmentApi";
 import RolesApi from "@/api/user/RolesApi";
 
-import Modal from "@/components/common/modal/Modal";
+import Modal from "@/components/modal/Modal";
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
 

@@ -99,6 +99,7 @@ const ReusableForm = ({
 
       console.log("Before Submit");
       await onSubmit(formData);
+      console.log(formData)
       console.log("After Submit");
 
       if (!initialValues) {

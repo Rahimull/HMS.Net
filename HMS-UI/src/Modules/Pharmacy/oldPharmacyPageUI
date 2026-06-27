@@ -28,8 +28,6 @@ const PharmacyPOS = () => {
     );
   }, []);
 
- 
-
   /* ================= GROUP BY ITEM ================= */
   const items = useMemo(() => {
     const map = {};
@@ -45,14 +43,13 @@ const PharmacyPOS = () => {
         };
       }
 
-      
-
       map[s.itemId].quantity += s.remainingQuantity;
 
       map[s.itemId].batches.push({
         id: s.id,
         batchNumber: s.batchNumber,
         buyPrice: s.buyPrice,
+        salePrice: s.salePrice,
         qty: s.remainingQuantity,
         expiryDate: s.expiryDate,
       });
@@ -61,16 +58,13 @@ const PharmacyPOS = () => {
     return Object.values(map);
   }, [stocks]);
 
-
   /* ================= FILTER ================= */
   const filtered = useMemo(() => {
     const term = search.toLowerCase();
     return items.filter(
       (x) =>
         x.barcode?.toString() === term ||
-        x.itemName?.toLowerCase().includes(search.toLowerCase(term)
-        
-  ),
+        x.itemName?.toLowerCase().includes(search.toLowerCase(term)),
     );
   }, [items, search]);
 
@@ -104,7 +98,7 @@ const PharmacyPOS = () => {
           expiryDate: batch.expiryDate,
 
           buyPrice: batch.buyPrice,
-          salePrice: batch.buyPrice, // default
+          salePrice: batch.salePrice,
 
           qty: 1,
           max: batch.qty,
@@ -127,7 +121,7 @@ const PharmacyPOS = () => {
               batchNumber: batch.batchNumber,
               expiryDate: batch.expiryDate,
               buyPrice: batch.buyPrice,
-              salePrice: batch.buyPrice,
+              salePrice: batch.salePrice,
               max: batch.qty,
             }
           : c,
@@ -164,7 +158,7 @@ const PharmacyPOS = () => {
         saleDate: new Date(),
         paidAmount: paid,
         remainingAgmount: total - paid,
-        paymentStatus: total -paid <= 0 ? 2 : paid > 0 ? 1 : 0,
+        paymentStatus: total - paid <= 0 ? 2 : paid > 0 ? 1 : 0,
 
         patientId: null,
         doctorId: null,
@@ -194,20 +188,18 @@ const PharmacyPOS = () => {
 
   // Barcode handler
   const handleBarcodeScan = (barcode) => {
-  const clean = String(barcode).trim();
+    const clean = String(barcode).trim();
 
-  const item = items.find(
-    (x) => String(x.barcode).trim() === clean
-  );
+    const item = items.find((x) => String(x.barcode).trim() === clean);
 
-  if (!item) {
-    alert("Barcode Not Found");
-    return;
-  }
+    if (!item) {
+      alert("Barcode Not Found");
+      return;
+    }
 
-  addToCart(item);
-  setSearch("");
-};
+    addToCart(item);
+    setSearch("");
+  };
 
   return (
     <div className="h-screen flex bg-gray-100">
@@ -229,7 +221,7 @@ const PharmacyPOS = () => {
               placeholder="Scan Barcode..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={(e)=> {
+              onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
                   handleBarcodeScan(e.target.value);
@@ -268,10 +260,11 @@ const PharmacyPOS = () => {
               <p className="text-xs text-gray-500 mt-2">
                 Stock: {item.quantity}
               </p>
-
-              <p className="text-xs text-gray-400">
-                Barcode: {item.barcode}
+              <p className="text-xs text-emerald-600 font-semibold">
+                Sale Price: {item.batches[0]?.salePrice}
               </p>
+
+              <p className="text-xs text-gray-400">Barcode: {item.barcode}</p>
               <p className="text-xs text-gray-400">
                 Batches: {item.batches.length}
               </p>
@@ -373,16 +366,15 @@ const PharmacyPOS = () => {
         {/* FOOTER */}
         <div className="p-4 border-t">
           <div className="flex">
-              <input 
-                className="w-full border mt-2 px-2 py-1 text-xs" 
-                type="number" 
-                placeholder="Discount"
-                value={discount}
-                onChange={(e)=> setDiscount(+e.target.value)}
-                />
-            </div>
+            <input
+              className="w-full border mt-2 px-2 py-1 text-xs"
+              type="number"
+              placeholder="Discount"
+              value={discount}
+              onChange={(e) => setDiscount(+e.target.value)}
+            />
+          </div>
           <div className="flex justify-between">
-            
             <span>Total</span>
             <span>{subtotal.toFixed(2)}</span>
           </div>

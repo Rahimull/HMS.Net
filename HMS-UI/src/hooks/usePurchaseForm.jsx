@@ -5,7 +5,8 @@ const emptyLine = () => ({
   id: Date.now() + Math.random(),
   itemId: "",
   qty: 1,
-  price: 0,
+  price: 0,  // Buy Price
+  salePrice: 0, // Sale Price
   expiryDate: "",
   error: {},
 });
@@ -72,6 +73,7 @@ export default function usePurchaseForm({
 
             if (item) {
               updated.price = item.price;
+              updated.salePrice = item.salePrice || item.price;
             }
           }
 
@@ -98,7 +100,10 @@ export default function usePurchaseForm({
         id: detail.id,
         itemId: detail.itemId,
         qty: detail.quantity,
+
         price: detail.unitPrice,
+        salePrice: detail.salePrice,
+
         expiryDate: detail.expiryDate ? detail.expiryDate.split("T")[0] : "",
         error: {},
       })),
@@ -171,6 +176,7 @@ export default function usePurchaseForm({
           itemId: Number(line.itemId),
           quantity: Number(line.qty),
           unitPrice: Number(line.price),
+          salePrice: Number(line.salePrice),
           batchNumber: "",
           expiryDate: line.expiryDate || null,
         })),

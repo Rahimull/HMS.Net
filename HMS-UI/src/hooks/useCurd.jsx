@@ -33,19 +33,10 @@ const useCrud = (service, { pageSize = 10, filters = {} } = {}) => {
   filters,
 };
 
-console.log("REQUEST =>", payload);
+
 
   /* ---------------- FETCH DATA ---------------- */
   const fetchData = useCallback(async () => {
-    console.log(
-      "FETCH",
-      "pageIndex:",
-      pagination.pageIndex,
-      "pageSize:",
-      pagination.pageSize,
-      "search:",
-      debouncedSearch,
-    );
     try {
       setLoading(true);
       setError(null);
@@ -142,12 +133,7 @@ console.log("REQUEST =>", payload);
     }
   };
 
-  console.log(
-    "FETCH CALLED WITH:",
-    pagination.pageIndex,
-    pagination.pageSize,
-    debouncedSearch,
-  );
+  
 
   return {
     data,
