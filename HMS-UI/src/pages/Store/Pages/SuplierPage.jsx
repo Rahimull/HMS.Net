@@ -1,45 +1,98 @@
+import SuplierApi from "@/api/store/SuplierApi";
+import { useMemo, useState } from "react";
+import useCreatUpdateForm from "@/hooks/useCreateUpdateForm";
+import useLoadData from "@/hooks/useLoadData";
+import DataTable from "@/components/common/DataTable";
+import FilterCard from "@/components/filter/FilterCard";
+import { Label } from "recharts";
+import Input from "@/components/common/Input";
+import CreateUpdateSupplier from "./CreateUpdateSupplier";
 
-import BaseCrudPage from "../../../pages/Template/BaseCrudPage";
-import SuplierApi from "../../../api/store/SuplierApi";
 
-const SuplierPage = () => (
-  <BaseCrudPage
-    title="Suppliers"
-    service={SuplierApi}
-    fields={[
-      {
-        name: "name",
-        label: "Name [*,  🔑]",
-        type: "text",
-        required: true,
-        maxLength: 100,
-        placeholder:"Suppliers Name"
-      },
-      {
-        name: "contactInfo",
-        label: "Contact Information *",
-        type: "text",
-        placeholder: "Phone / Email",
-        maxLength: 50,
-        required: true,
-      },
-      {
-        name: "address",
-        label: "Address",
-        type: "textarea",
-      },
-    ]}
-    columns={[
-      { accessorKey: "name", header: "Name", enableSorting: true },
-      { accessorKey: "contactInfo", header: "Contact Info" },
-      { accessorKey: "address", header: "Address" },
-    ]}
-    mapFormToPayload={(form) => ({
-      name: form.name,
-      contactInfo: form.contactInfo,
-      address: form.address,
-    })}
-  />
-);
+const SupplierPage = () => {
 
-export default SuplierPage;
+  // for load data
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const filters = useMemo(
+    () => ({
+      status: filterStatus,
+      fromDate,
+      toDate,
+    }),
+    [filterStatus, fromDate, toDate],
+  );
+
+  const curd = useCreatUpdateForm(SuplierApi);
+
+  const {
+    data,
+    totalCount,
+    pagination,
+    setPagination,
+    sorting,
+    setSorting,
+    search,
+    setSearch,
+    dataLoading,
+  } = useLoadData(SuplierApi, { filters, refreshKey:curd.refreshKey });
+
+   const columns = [
+    { accessorKey: "id", header: "ID", enableSorting: true },
+    { accessorKey: "name", header: "Name", enableSorting: true },
+    { accessorKey: "address", header: "Address  ", enableSorting: true },
+  ];
+
+
+  return (
+    <>
+      <FilterCard 
+        title="Supplier Filters"
+        subtitle="Filter Pharmacy Suppliers"
+        onApply={() => console.log("Applay")}
+        onReset={()=>{
+          setSearch("");
+          setFilterStatus("");
+          setFromDate("");
+          setToDate("");
+          setPagination((p)=>({
+            ...p, pageIndex: 0,
+          }))
+        }}
+      >
+        {/* SERACH */} 
+        <div>
+          <Label name="search" />
+          <Input 
+            type="text"
+            placeholder="Supplier Name"
+            value={search}
+            onChange={(e)=> {setSearch(e.target.value)}}
+          />
+        </div>
+       
+      </FilterCard>
+      <CreateUpdateSupplier curd={curd} />
+
+      {/* Data Table */}
+      <DataTable
+        columns={columns}
+        data={data}
+        title="Supplier List"
+        subTitle="Pharmacy Supplier List"
+        pagination={pagination}
+        onPaginationChange={setPagination}
+        onSortingChange={setSorting}
+        loading={dataLoading}
+        headerContent=""
+        actions={curd.defaultAction}
+        totalCount={totalCount}
+        onAddBtn={curd.openCreate}
+        onAddBtnText="Add"
+      />
+    </>
+  );
+};
+
+export default SupplierPage;

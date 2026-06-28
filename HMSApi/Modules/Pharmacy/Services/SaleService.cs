@@ -17,6 +17,7 @@ public class SaleService
 {
     private readonly HMSDBC _context;
     private readonly ILogger<SaleService> _logger;
+    private readonly ISaleRepository _saleRepository;
 
     public SaleService(
         ISaleRepository repo,
@@ -27,6 +28,17 @@ public class SaleService
     {
         _context = context;
         _logger = logger;
+        _saleRepository = repo;
+    }
+
+    private async Task<string> GenerateInvoiceNumber()
+    {
+        var lastInvoiceNumber = await _saleRepository.Query()
+            .OrderByDescending(x => x.Id)
+            .FirstOrDefaultAsync();
+
+        var nextNumber = (lastInvoiceNumber?.Id ?? 0) + 1;
+        return $"INV{nextNumber:D5}";
     }
 
     protected override ISpecification<Sale> BuildSpecification(QueryParams query)
@@ -63,8 +75,10 @@ public class SaleService
                 DoctorId = dto.DoctorId,
                 PrescriptionId = dto.PrescriptionId,
                 PaidAmount = dto.PaidAmount,
-                PaymentStatus = PaymentStatus.Pending
+                PaymentStatus = PaymentStatus.Pending,
+                InvoiceNumber = await GenerateInvoiceNumber()
             };
+
 
             decimal totalAmount = 0;
             decimal totalProfit = 0;
@@ -228,4 +242,7 @@ public class SaleService
             throw;
         }
     }
+
+
+
 }

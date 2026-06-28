@@ -35,6 +35,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import RolePage from "./pages/role/RolePage";
 import PharmacyPOS from "./Modules/Pharmacy/PharmacyPOS";
+import SalePaymentPage from "./pages/Store/Pages/SalePaymentPage";
 
 
 export default function App() {
@@ -101,6 +102,7 @@ export default function App() {
         <Route path="store/purchases" element={<PuchasePage />} />
         <Route path="store/suppliers" element={<SuplierPage />} />
         <Route path="store/currentstock" element={<CurrentStockPage />} />
+        <Route path="store/SalePayment" element={<SalePaymentPage />} />
 
         {/* Pharmacy */}
         <Route path="pharmacy/PharmacyPageUi" element={<PharmacyPageUi />} />

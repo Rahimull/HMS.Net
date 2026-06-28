@@ -26,6 +26,7 @@ public class SaleDto
     public string? DoctorName { get; set; }
 
     public int? PrescriptionId { get; set; }
+    public string? InvoiceNumber { get; set; }
 
     public List<SaleDetailsDto> SaleDetails { get; set; }
         = new();

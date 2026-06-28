@@ -142,25 +142,62 @@ const TestFrom = ({
       className="space-y-4 bg-white p-4 rounded shadow mt-6"
     >
       {/* Fields */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
         {fields.map((field) => (
+          // <div
+          //   key={field.name}
+          //   className={field.col === 2 ? "col-span-2" : "col-span-1"}
+          // >
+          //   <Input
+          //     label={field.label}
+          //     name={field.name}
+          //     type={field.type || "text"}
+          //     autoFocus={field.autoFocus || false}
+          //     value={formData[field.name] || ""}
+          //     onChange={handleChange}
+          //     options={field.options || []}
+          //     maxLength={field.maxLength || 100}
+          //     placeholder={field.placeholder}
+          //     error={ serverErrors[field.name] || errors[field.name]}
+          //   />
+          // </div>
+
           <div
-            key={field.name}
-            className={field.col === 2 ? "col-span-2" : "col-span-1"}
-          >
-            <Input
-              label={field.label}
-              name={field.name}
-              type={field.type || "text"}
-              autoFocus={field.autoFocus || false}
-              value={formData[field.name] || ""}
-              onChange={handleChange}
-              options={field.options || []}
-              maxLength={field.maxLength || 100}
-              placeholder={field.placeholder}
-              error={ serverErrors[field.name] || errors[field.name]}
-            />
-          </div>
+  key={field.name}
+  className={field.col === 2 ? "col-span-2" : "col-span-1"}
+>
+  <div className="flex items-end gap-2">
+    {/* Start Adornment */}
+    {field.startAdornment && (
+      <div className="pb-1">
+        {field.startAdornment}
+      </div>
+    )}
+
+    {/* Input */}
+    <div className="flex-1">
+      <Input
+        label={field.label}
+        name={field.name}
+        type={field.type || "text"}
+        autoFocus={field.autoFocus || false}
+        value={formData[field.name] || ""}
+        onChange={handleChange}
+        options={field.options || []}
+        maxLength={field.maxLength || 100}
+        placeholder={field.placeholder}
+        error={serverErrors[field.name] || errors[field.name]}
+      />
+    </div>
+
+    {/* End Adornment */}
+    {field.endAdornment && (
+      <div className="pb-1">
+        {field.endAdornment}
+      </div>
+    )}
+  </div>
+</div>
         ))}
       </div>
 

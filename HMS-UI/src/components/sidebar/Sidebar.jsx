@@ -104,6 +104,11 @@ const Sidebar = () => {
             link: "/store/currentStock",
             icon: PackageCheck,
           },
+          {
+            name: "Sale Payment",
+            link: "/store/SalePayment",
+            icon: PackageCheck,
+          },
         ],
       },
 

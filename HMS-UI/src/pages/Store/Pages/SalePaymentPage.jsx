@@ -1,4 +1,4 @@
-import ItemApi from "@/api/store/ItemApi";
+import SalePaymentApi from "@/api/store/SalePaymentApi";
 import { useMemo, useState } from "react";
 import useCreatUpdateForm from "@/hooks/useCreateUpdateForm";
 import useLoadData from "@/hooks/useLoadData";
@@ -6,9 +6,12 @@ import DataTable from "@/components/common/DataTable";
 import FilterCard from "@/components/filter/FilterCard";
 import { Label } from "recharts";
 import Input from "@/components/common/Input";
-import CreateUpdateItem from "./CreateUpdateItem";
+import CreateUpdateSalePayment from "./CreateUpdateSalePayment";
 
-const ItemPage = () => {
+
+
+const SalePaymentPage = () => {
+
   // for load data
   const [filterStatus, setFilterStatus] = useState("all");
   const [fromDate, setFromDate] = useState("");
@@ -22,7 +25,7 @@ const ItemPage = () => {
     [filterStatus, fromDate, toDate],
   );
 
-  const curd = useCreatUpdateForm(ItemApi);
+  const curd = useCreatUpdateForm(SalePaymentApi);
 
   const {
     data,
@@ -34,63 +37,51 @@ const ItemPage = () => {
     search,
     setSearch,
     dataLoading,
-  } = useLoadData(ItemApi, { filters, refreshKey: curd.refreshKey });
+  } = useLoadData(SalePaymentApi, { filters, refreshKey:curd.refreshKey });
 
-  const columns = [
+   const columns = [
     { accessorKey: "id", header: "ID", enableSorting: true },
     { accessorKey: "name", header: "Name", enableSorting: true },
-    {
-      accessorKey: "brandName",
-      header: "Brand Name",
-      enableSorting: true,
-    },
-    { accessorKey: "code", header: "Code", enableSorting: true },
-    { accessorKey: "barcode", header: "Barcode" },
-    { accessorKey: "categoryName", header: "Category" },
-    { accessorKey: "unitName", header: "Unit" },
-    { accessorKey: "type", header: "Type" },
-    { accessorKey: "isActive", header: "isActive" },
-    { accessorKey: "description", header: "Description" },
+    { accessorKey: "address", header: "Address  ", enableSorting: true },
   ];
+
 
   return (
     <>
-      <FilterCard
-        title="Item Filters"
-        subtitle="Filter Pharmacy Items"
+      <FilterCard 
+        title="Sale Payment Filters"
+        subtitle="Filter Pharmacy Sale Payments"
         onApply={() => console.log("Applay")}
-        onReset={() => {
+        onReset={()=>{
           setSearch("");
           setFilterStatus("");
           setFromDate("");
           setToDate("");
-          setPagination((p) => ({
-            ...p,
-            pageIndex: 0,
-          }));
+          setPagination((p)=>({
+            ...p, pageIndex: 0,
+          }))
         }}
       >
-        {/* SERACH */}
+        {/* SERACH */} 
         <div>
           <Label name="search" />
-          <Input
+          <Input 
             type="text"
-            placeholder="Item Name"
+            placeholder="Sale Payment Name"
             value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-            }}
+            onChange={(e)=> {setSearch(e.target.value)}}
           />
         </div>
+       
       </FilterCard>
-      <CreateUpdateItem curd={curd} />
+      <CreateUpdateSalePayment curd={curd} />
 
       {/* Data Table */}
       <DataTable
         columns={columns}
         data={data}
-        title="Item List"
-        subTitle="Pharmacy Item List"
+        title="Sale Payment List"
+        subTitle="Pharmacy Sale Payment List"
         pagination={pagination}
         onPaginationChange={setPagination}
         onSortingChange={setSorting}
@@ -105,4 +96,4 @@ const ItemPage = () => {
   );
 };
 
-export default ItemPage;
+export default SalePaymentPage;
